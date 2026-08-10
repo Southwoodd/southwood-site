@@ -31,7 +31,6 @@ export default function LeadForm() {
     sendingLabel,
     successTitle,
     successText,
-    errorText,
     missingKeyText,
     requiredError,
     topicRequiredError,
