@@ -7,6 +7,7 @@ import {
 } from 'react';
 import { Link } from 'react-router-dom';
 import { content } from '../data/content.js';
+import ScramblePress from './ScramblePress';
 import './LeadForm.css';
 
 type Status = 'idle' | 'sending' | 'success' | 'error';
@@ -245,7 +246,7 @@ export default function LeadForm() {
           <p className="label">/ Done</p>
           <p className="lead-form__success-title">{successTitle}</p>
           <p className="lead-form__success-text">{successText}</p>
-          <button
+          <ScramblePress
             type="button"
             className="btn btn--ghost"
             onClick={() => {
@@ -256,7 +257,7 @@ export default function LeadForm() {
             }}
           >
             {resetLabel}
-          </button>
+          </ScramblePress>
         </div>
       ) : (
         <form
@@ -459,13 +460,13 @@ export default function LeadForm() {
             </p>
           ) : null}
 
-          <button
+          <ScramblePress
             type="submit"
             className="btn btn--primary lead-form__submit"
             disabled={busy}
           >
             {busy ? sendingLabel : cta}
-          </button>
+          </ScramblePress>
         </form>
       )}
     </>

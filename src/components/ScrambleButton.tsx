@@ -2,15 +2,15 @@ import {
   type AnchorHTMLAttributes,
   type MouseEvent,
 } from 'react';
-import { useScramble } from 'use-scramble';
+import { ScrambleFace } from './ScramblePress';
+import { useHudScramble } from './useHudScramble';
 
-type Props = AnchorHTMLAttributes<HTMLAnchorElement> & {
+type Props = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'children'> & {
   children: string;
 };
 
 /**
- * Основная кнопка со scramble через библиотеку use-scramble.
- * На hover — прокрутка/замена символами (цифры и спецсимволы, без букв).
+ * Ссылка-кнопка со scramble на hover.
  */
 export default function ScrambleButton({
   children,
@@ -20,22 +20,7 @@ export default function ScrambleButton({
   ...rest
 }: Props) {
   const text = children;
-
-  const { ref, replay } = useScramble({
-    text,
-    playOnMount: false,
-    // Мягкий темп
-    speed: 0.4,
-    tick: 1,
-    step: 1,
-    scramble: 6,
-    seed: 2,
-    chance: 1,
-    // Unicode 33–57: !"#$%&'()*+,-./ и цифры 0–9 — без букв
-    range: [33, 57],
-    overflow: true,
-    ignore: [' '],
-  });
+  const { ref, replay } = useHudScramble(text);
 
   const handleEnter = (e: MouseEvent<HTMLAnchorElement>) => {
     replay();
@@ -50,13 +35,7 @@ export default function ScrambleButton({
       onMouseLeave={onMouseLeave}
       aria-label={text}
     >
-      <span className="scramble-btn">
-        {/* Невидимый оригинал фиксирует ширину кнопки */}
-        <span className="scramble-btn__ghost" aria-hidden="true">
-          {text}
-        </span>
-        <span className="scramble-btn__live" ref={ref} aria-hidden="true" />
-      </span>
+      <ScrambleFace text={text} liveRef={ref} />
     </a>
   );
 }

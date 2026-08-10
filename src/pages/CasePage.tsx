@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import OpenLeadCta from '../components/OpenLeadCta';
 import ScrambleButton from '../components/ScrambleButton';
+import ScrambleLink from '../components/ScrambleLink';
 import { content } from '../data/content.js';
 import { fadeUp, staggerContainer } from '../motion/presets';
 import './CasePage.css';
@@ -60,9 +61,9 @@ export default function CasePage() {
           <div className="container case-page__missing">
             <h1>{ui.notFoundTitle}</h1>
             <p>{ui.notFoundText}</p>
-            <Link className="btn btn--primary" to={ui.backHref}>
+            <ScrambleLink className="btn btn--primary" to={ui.backHref}>
               {ui.backLabel}
-            </Link>
+            </ScrambleLink>
           </div>
         </main>
         <Footer />

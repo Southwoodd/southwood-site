@@ -83,6 +83,15 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   text-wrap: balance;
+  min-width: 0;
+}
+
+.compare__tab-label .scramble-btn {
+  display: inline-grid;
+  justify-items: start;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
 }
 
 .compare__panel {

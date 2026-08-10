@@ -2,7 +2,43 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useState } from 'react';
 import { content } from '../data/content.js';
 import { easeHud, fadeUp, viewportOnce } from '../motion/presets';
+import { ScrambleFace } from './ScramblePress';
+import { useHudScramble } from './useHudScramble';
 import './Compare.css';
+
+function CompareTab({
+  label,
+  index,
+  active,
+  onSelect,
+}: {
+  label: string;
+  index: number;
+  active: boolean;
+  onSelect: () => void;
+}) {
+  const { ref, replay } = useHudScramble(label);
+
+  return (
+    <button
+      type="button"
+      role="tab"
+      id={`compare-tab-${index}`}
+      aria-selected={active}
+      aria-controls="compare-panel"
+      className={active ? 'compare__tab is-active' : 'compare__tab'}
+      onClick={onSelect}
+      onMouseEnter={() => replay()}
+    >
+      <span className="compare__tab-index">
+        {String(index + 1).padStart(2, '0')}
+      </span>
+      <span className="compare__tab-label">
+        <ScrambleFace text={label} liveRef={ref} />
+      </span>
+    </button>
+  );
+}
 
 export default function Compare() {
   const { num, h2, columns, rows, note } = content.compare;
@@ -42,23 +78,13 @@ export default function Compare() {
             aria-label="Критерии сравнения"
           >
             {rows.map((item, i) => (
-              <button
+              <CompareTab
                 key={item.label}
-                type="button"
-                role="tab"
-                id={`compare-tab-${i}`}
-                aria-selected={active === i}
-                aria-controls="compare-panel"
-                className={
-                  active === i ? 'compare__tab is-active' : 'compare__tab'
-                }
-                onClick={() => setActive(i)}
-              >
-                <span className="compare__tab-index">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <span className="compare__tab-label">{item.label}</span>
-              </button>
+                label={item.label}
+                index={i}
+                active={active === i}
+                onSelect={() => setActive(i)}
+              />
             ))}
           </div>
 
