@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { motion, useReducedMotion } from 'motion/react';
 import { content } from '../data/content.js';
 import {
@@ -57,27 +58,24 @@ export default function Cases() {
         viewport={viewportOnce}
       >
         {items.map((item) => (
-          <motion.a
-            className="case-link"
-            href={item.href}
-            key={item.title}
-            variants={slideIn}
-          >
-            <motion.div
-              className="container case-link__inner"
-              whileHover={reduce ? undefined : { x: 6 }}
-              transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-            >
-              <div className="case-link__meta">
-                <span className="label case-link__tag">{item.tag}</span>
-                <span className="case-link__go" aria-hidden="true">
-                  <ArrowIcon />
-                </span>
-              </div>
-              <h3 className="case-link__title">{item.title}</h3>
-              <p className="case-link__result">{item.result}</p>
-            </motion.div>
-          </motion.a>
+          <motion.div key={item.title} variants={slideIn}>
+            <Link className="case-link" to={item.href}>
+              <motion.div
+                className="container case-link__inner"
+                whileHover={reduce ? undefined : { x: 6 }}
+                transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+              >
+                <div className="case-link__meta">
+                  <span className="label case-link__tag">{item.tag}</span>
+                  <span className="case-link__go" aria-hidden="true">
+                    <ArrowIcon />
+                  </span>
+                </div>
+                <h3 className="case-link__title">{item.title}</h3>
+                <p className="case-link__result">{item.result}</p>
+              </motion.div>
+            </Link>
+          </motion.div>
         ))}
       </motion.div>
     </section>

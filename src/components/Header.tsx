@@ -1,29 +1,48 @@
 import { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { content } from '../data/content.js';
 import './Header.css';
+
+function resolveNavHref(href: string, pathname: string) {
+  if (!href.startsWith('#')) return href;
+  return pathname === '/' ? href : `/${href}`;
+}
 
 export default function Header() {
   const { brand, name, nav, telegramLabel, telegramHref } = content.header;
   const [open, setOpen] = useState(false);
+  const { pathname } = useLocation();
 
   useEffect(() => {
     document.body.classList.toggle('menu-open', open);
     return () => document.body.classList.remove('menu-open');
   }, [open]);
 
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
   return (
     <header className="header">
       <div className="container header__inner">
-        <a className="header__brand" href="#top" aria-label={`${brand}, ${name}`}>
+        <Link
+          className="header__brand"
+          to="/"
+          aria-label={`${brand}, ${name}`}
+        >
           <span className="header__logo">{brand}</span>
           <span className="label header__name">{name}</span>
-        </a>
+        </Link>
 
         <nav className="header__nav" aria-label="Основная навигация">
           {nav.map((item) => (
-            <a key={item.href} className="header__link" href={item.href}>
+            <Link
+              key={item.href}
+              className="header__link"
+              to={resolveNavHref(item.href, pathname)}
+            >
               {item.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -51,21 +70,17 @@ export default function Header() {
         </div>
       </div>
 
-      <div
-        className="header__mobile"
-        id="mobile-menu"
-        hidden={!open}
-      >
+      <div className="header__mobile" id="mobile-menu" hidden={!open}>
         <nav className="header__mobile-nav" aria-label="Мобильная навигация">
           {nav.map((item) => (
-            <a
+            <Link
               key={item.href}
               className="header__mobile-link"
-              href={item.href}
+              to={resolveNavHref(item.href, pathname)}
               onClick={() => setOpen(false)}
             >
               {item.label}
-            </a>
+            </Link>
           ))}
         </nav>
       </div>

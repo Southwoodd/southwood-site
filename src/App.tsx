@@ -1,33 +1,39 @@
-import Header from './components/Header';
-import Hero from './components/Hero';
-import Recognition from './components/Recognition';
-import Zones from './components/Zones';
-import Cases from './components/Cases';
-import Pricing from './components/Pricing';
-import Compare from './components/Compare';
-import About from './components/About';
-import Boundaries from './components/Boundaries';
-import Faq from './components/Faq';
-import FinalCta from './components/FinalCta';
-import Footer from './components/Footer';
+import { useEffect } from 'react';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import CasePage from './pages/CasePage';
+
+function ScrollAndHash() {
+  const { pathname, hash } = useLocation();
+
+  useEffect(() => {
+    if (hash) {
+      const id = hash.slice(1);
+      requestAnimationFrame(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          return;
+        }
+        window.scrollTo(0, 0);
+      });
+      return;
+    }
+    window.scrollTo(0, 0);
+  }, [pathname, hash]);
+
+  return null;
+}
 
 export default function App() {
   return (
     <>
-      <Header />
-      <main>
-        <Hero />
-        <Recognition />
-        <Zones />
-        <Cases />
-        <Pricing />
-        <Compare />
-        <About />
-        <Boundaries />
-        <Faq />
-        <FinalCta />
-      </main>
-      <Footer />
+      <ScrollAndHash />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/cases/:slug" element={<CasePage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </>
   );
 }

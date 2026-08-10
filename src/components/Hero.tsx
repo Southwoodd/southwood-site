@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { motion, useReducedMotion } from 'motion/react';
 import { content } from '../data/content.js';
 import ScrambleButton from './ScrambleButton';
@@ -8,6 +9,8 @@ import {
   staggerContainer,
 } from '../motion/presets';
 import './Hero.css';
+
+const MotionLink = motion.create(Link);
 
 function ArrowIcon() {
   return (
@@ -93,9 +96,9 @@ export default function Hero() {
           </motion.p>
         </motion.div>
 
-        <motion.a
+        <MotionLink
           className="hero-card"
-          href={card.href}
+          to={card.href}
           variants={panelScan}
           initial={reduce ? false : 'hidden'}
           animate="show"
@@ -119,7 +122,7 @@ export default function Hero() {
               <ArrowIcon />
             </span>
           </span>
-        </motion.a>
+        </MotionLink>
       </div>
 
       <motion.div

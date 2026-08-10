@@ -5,13 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build && node -e \"import('node:fs').then(fs=>fs.copyFileSync('dist/index.html','dist/404.html'))\"",
     "preview": "vite preview"
   },
   "dependencies": {
     "motion": "^12.43.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-router-dom": "^7.18.2",
     "use-scramble": "^2.2.15"
   },
   "devDependencies": {
