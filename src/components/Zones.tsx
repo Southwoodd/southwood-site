@@ -32,36 +32,39 @@ export default function Zones() {
         </div>
       </motion.div>
 
-      <motion.ul
-        className="zones__list"
-        variants={staggerContainer(0.1, 0.05)}
-        initial={reduce ? false : 'hidden'}
-        whileInView="show"
-        viewport={viewportOnce}
-      >
-        {items.map((item) => (
-          <motion.li className="zone-row" key={item.title} variants={slideIn}>
-            <div className="container zone-row__inner">
-              <h3 className="zone-row__title">{item.title}</h3>
+      <div className="container">
+        <motion.ul
+          className="zones__grid"
+          variants={staggerContainer(0.1, 0.05)}
+          initial={reduce ? false : 'hidden'}
+          whileInView="show"
+          viewport={viewportOnce}
+        >
+          {items.map((item) => (
+            <motion.li className="zone-card" key={item.title} variants={slideIn}>
+              <div className="zone-card__top">
+                <span className="label zone-card__n">/ {item.n}</span>
+                <h3 className="zone-card__title">{item.title}</h3>
+              </div>
 
-              <div className="zone-row__chain">
-                <div className="zone-row__step">
+              <div className="zone-card__body">
+                <div className="zone-card__step">
                   <span className="label">Боль</span>
                   <p>{item.pain}</p>
                 </div>
-                <div className="zone-row__step">
+                <div className="zone-card__step">
                   <span className="label">Собираю</span>
                   <p>{item.build}</p>
                 </div>
-                <div className="zone-row__step zone-row__step--result">
+                <div className="zone-card__step zone-card__step--result">
                   <span className="label">Результат</span>
                   <p>{item.result}</p>
                 </div>
               </div>
-            </div>
-          </motion.li>
-        ))}
-      </motion.ul>
+            </motion.li>
+          ))}
+        </motion.ul>
+      </div>
     </section>
   );
 }
