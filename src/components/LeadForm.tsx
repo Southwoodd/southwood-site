@@ -70,6 +70,17 @@ export default function LeadForm() {
     }
   }, [status]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('sent') !== '1') return;
+    setStatus('success');
+    setToast({ type: 'success', text: successAnnounce });
+    params.delete('sent');
+    const next = params.toString();
+    const url = `${window.location.pathname}${next ? `?${next}` : ''}${window.location.hash || '#final-cta'}`;
+    window.history.replaceState({}, '', url);
+  }, [successAnnounce]);
+
   const setField = (name: string, value: string) => {
     setValues((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
@@ -111,7 +122,7 @@ export default function LeadForm() {
     el?.focus();
   };
 
-  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (status === 'sending') return;
 
@@ -148,11 +159,18 @@ export default function LeadForm() {
     const contact = values.contact?.trim() ?? '';
     const message = values.message?.trim() ?? '';
 
+    // Обычный browser POST (не fetch): Web3Forms/Cloudflare режут XHR с наших IP/origin.
+    const post = document.createElement('form');
+    post.method = 'POST';
+    post.action = 'https://api.web3forms.com/submit';
+    post.acceptCharset = 'UTF-8';
+    post.style.display = 'none';
+
     const payload: Record<string, string> = {
       access_key: ACCESS_KEY,
       subject: `Заявка с southwood.pw — ${topic} — ${name}`,
       from_name: `Southwood · ${name}`,
-      // Подписи 1:1 как на форме — так же придут в письмо
+      redirect: `${window.location.origin}/?sent=1#final-cta`,
       Имя: name,
       Компания: company,
       'Telegram или телефон': contact,
@@ -161,32 +179,16 @@ export default function LeadForm() {
       botcheck: '',
     };
 
-    try {
-      // FormData — без JSON-preflight; Web3Forms так и рассчитан на client-side
-      const body = new FormData();
-      for (const [key, value] of Object.entries(payload)) {
-        body.append(key, value);
-      }
-
-      const res = await fetch('https://api.web3forms.com/submit', {
-        method: 'POST',
-        body,
-      });
-      const data = (await res.json()) as { success?: boolean; message?: string };
-      if (!res.ok || !data.success) {
-        throw new Error(data.message || 'submit failed');
-      }
-      setStatus('success');
-      setToast({ type: 'success', text: successAnnounce });
-      setValues(
-        Object.fromEntries(fields.map((f: FieldDef) => [f.name, ''])),
-      );
-      setTopic(topics[0]?.value ?? 'Диагностика');
-    } catch {
-      setStatus('error');
-      setBanner(errorText);
-      setToast({ type: 'error', text: errorText });
+    for (const [key, value] of Object.entries(payload)) {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = key;
+      input.value = value;
+      post.appendChild(input);
     }
+
+    document.body.appendChild(post);
+    post.submit();
   };
 
   const busy = status === 'sending';
