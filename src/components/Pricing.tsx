@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from 'motion/react';
 import { content } from '../data/content.js';
-import ScrambleButton from './ScrambleButton';
+import OpenLeadCta from './OpenLeadCta';
 import {
   fadeUp,
   panelScan,
@@ -10,7 +10,7 @@ import {
 import './Pricing.css';
 
 export default function Pricing() {
-  const { num, h2, items, cta, ctaHref } = content.pricing;
+  const { num, h2, items, cta } = content.pricing;
   const [lead, ...rest] = items;
   const reduce = useReducedMotion();
 
@@ -31,9 +31,7 @@ export default function Pricing() {
           <p className="label pricing__num">{num}</p>
           <h2 id="pricing-title">{h2}</h2>
           <div className="pricing__cta-wrap">
-            <ScrambleButton className="btn btn--primary" href={ctaHref}>
-              {cta}
-            </ScrambleButton>
+            <OpenLeadCta className="btn btn--primary">{cta}</OpenLeadCta>
           </div>
         </motion.header>
 

@@ -84,7 +84,7 @@ export default function LeadForm() {
     setToast({ type: 'success', text: successAnnounce });
     params.delete('sent');
     const next = params.toString();
-    const url = `${window.location.pathname}${next ? `?${next}` : ''}${window.location.hash || '#final-cta'}`;
+    const url = `${window.location.pathname}${next ? `?${next}` : ''}${window.location.hash || ''}`;
     window.history.replaceState({}, '', url);
   }, [successAnnounce]);
 
@@ -181,7 +181,7 @@ export default function LeadForm() {
       access_key: ACCESS_KEY,
       subject,
       from_name: `Southwood · ${name}`,
-      redirect: `${window.location.origin}/?sent=1#final-cta`,
+      redirect: `${window.location.origin}/?sent=1`,
       Имя: name,
       Компания: company,
       'Telegram или телефон': contact,

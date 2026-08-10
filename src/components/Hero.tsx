@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { motion, useReducedMotion } from 'motion/react';
 import { content } from '../data/content.js';
+import OpenLeadCta from './OpenLeadCta';
 import ScrambleButton from './ScrambleButton';
 import {
   easeHud,
@@ -84,9 +85,7 @@ export default function Hero() {
           </motion.p>
 
           <motion.div className="hero__cta" variants={fadeUp}>
-            <ScrambleButton className="btn btn--primary" href={h.ctaPrimaryHref}>
-              {h.ctaPrimary}
-            </ScrambleButton>
+            <OpenLeadCta className="btn btn--primary">{h.ctaPrimary}</OpenLeadCta>
             <ScrambleButton
               className="btn btn--ghost"
               href={h.ctaTelegramHref}

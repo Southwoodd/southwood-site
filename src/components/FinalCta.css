@@ -25,7 +25,13 @@
 .final-cta__form-wrap {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 18px;
+}
+
+.final-cta__btn {
+  min-height: 52px;
+  padding-inline: 26px;
 }
 
 .final-cta__note {

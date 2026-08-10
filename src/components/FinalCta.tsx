@@ -1,11 +1,11 @@
 import { motion, useReducedMotion } from 'motion/react';
 import { content } from '../data/content.js';
 import { fadeUp, viewportOnce } from '../motion/presets';
-import LeadForm from './LeadForm';
+import OpenLeadCta from './OpenLeadCta';
 import './FinalCta.css';
 
 export default function FinalCta() {
-  const { h2, sub, note, telegramHref, telegramLabel } = content.finalCta;
+  const { h2, sub, note, telegramHref, telegramLabel, cta } = content.finalCta;
   const reduce = useReducedMotion();
 
   return (
@@ -33,7 +33,9 @@ export default function FinalCta() {
           whileInView="show"
           viewport={viewportOnce}
         >
-          <LeadForm />
+          <OpenLeadCta className="btn btn--primary final-cta__btn">
+            {cta}
+          </OpenLeadCta>
           <p className="final-cta__note">
             {note}{' '}
             <a href={telegramHref} target="_blank" rel="noopener noreferrer">

@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { motion, useReducedMotion } from 'motion/react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import OpenLeadCta from '../components/OpenLeadCta';
 import ScrambleButton from '../components/ScrambleButton';
 import { content } from '../data/content.js';
 import { fadeUp, staggerContainer } from '../motion/presets';
@@ -194,12 +195,9 @@ export default function CasePage() {
             </div>
 
             <motion.div className="case-page__cta" variants={fadeUp}>
-              <ScrambleButton
-                className="btn btn--primary"
-                href={ui.ctaPrimaryHref}
-              >
+              <OpenLeadCta className="btn btn--primary">
                 {ui.ctaPrimary}
-              </ScrambleButton>
+              </OpenLeadCta>
               <ScrambleButton
                 className="btn btn--ghost"
                 href={ui.ctaTelegramHref}
