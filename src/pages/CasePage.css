@@ -95,6 +95,50 @@
   color: var(--signal);
 }
 
+.case-block__features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+
+.case-block__features > li {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.case-block__feature-title {
+  margin: 0 0 8px;
+  font-family: var(--font-sans);
+  font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--signal);
+}
+
+.case-block__stack {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.case-block__stack li {
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
 .case-page__term {
   margin-top: 16px;
   color: var(--ink-dim);

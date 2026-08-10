@@ -8,12 +8,20 @@ import { content } from '../data/content.js';
 import { fadeUp, staggerContainer } from '../motion/presets';
 import './CasePage.css';
 
+type CaseFeature = {
+  title: string;
+  text: string;
+};
+
 type CaseBody = {
   tag: string;
   title: string;
   result: string;
   context: string;
+  problem?: string;
   done: string[];
+  features?: CaseFeature[];
+  stack?: string[];
   outcome: string;
   term: string;
   linkLabel?: string;
@@ -92,6 +100,13 @@ export default function CasePage() {
               <p className="case-block__text">{page.context}</p>
             </motion.section>
 
+            {page.problem ? (
+              <motion.section className="case-block" variants={fadeUp}>
+                <h2 className="case-block__label">{ui.problemLabel}</h2>
+                <p className="case-block__text">{page.problem}</p>
+              </motion.section>
+            ) : null}
+
             <motion.section className="case-block" variants={fadeUp}>
               <h2 className="case-block__label">{ui.doneLabel}</h2>
               <ul className="case-block__list">
@@ -100,6 +115,31 @@ export default function CasePage() {
                 ))}
               </ul>
             </motion.section>
+
+            {page.features?.length ? (
+              <motion.section className="case-block" variants={fadeUp}>
+                <h2 className="case-block__label">{ui.featuresLabel}</h2>
+                <ul className="case-block__features">
+                  {page.features.map((f) => (
+                    <li key={f.title}>
+                      <h3 className="case-block__feature-title">{f.title}</h3>
+                      <p className="case-block__text">{f.text}</p>
+                    </li>
+                  ))}
+                </ul>
+              </motion.section>
+            ) : null}
+
+            {page.stack?.length ? (
+              <motion.section className="case-block" variants={fadeUp}>
+                <h2 className="case-block__label">{ui.stackLabel}</h2>
+                <ul className="case-block__stack">
+                  {page.stack.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </motion.section>
+            ) : null}
 
             <motion.section className="case-block" variants={fadeUp}>
               <h2 className="case-block__label">{ui.outcomeLabel}</h2>
