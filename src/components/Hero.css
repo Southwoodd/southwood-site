@@ -57,12 +57,18 @@
 
 .hero__title {
   margin-bottom: 22px;
-  max-width: 14ch;
+  max-width: 16ch;
   font-size: clamp(2.35rem, 6.2vw, 4.75rem);
   line-height: 0.96;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
   text-shadow: 0 0 48px rgba(234, 255, 0, 0.22);
+}
+
+.hero__title-word {
+  display: inline-block;
+  white-space: nowrap;
 }
 
 .hero__sub {

@@ -78,7 +78,12 @@ export default function Hero() {
             className="hero__title"
             variants={fadeUp}
           >
-            {h.h1}
+            {h.h1.split(/\s+/).map((word, i, arr) => (
+              <span className="hero__title-word" key={`${word}-${i}`}>
+                {word}
+                {i < arr.length - 1 ? ' ' : ''}
+              </span>
+            ))}
           </motion.h1>
           <motion.p className="lead hero__sub" variants={fadeUp}>
             {h.sub}
