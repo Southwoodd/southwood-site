@@ -2,7 +2,6 @@ import { motion, useReducedMotion } from 'motion/react';
 import { content } from '../data/content.js';
 import {
   fadeUp,
-  panelScan,
   staggerContainer,
   viewportOnce,
 } from '../motion/presets';
@@ -32,7 +31,7 @@ export default function Recognition() {
 
         <motion.ul
           className="recognition__grid"
-          variants={staggerContainer(0.07, 0.08)}
+          variants={staggerContainer(0.05, 0.04)}
           initial={reduce ? false : 'hidden'}
           whileInView="show"
           viewport={viewportOnce}
@@ -41,7 +40,7 @@ export default function Recognition() {
             <motion.li
               className="recognition-card"
               key={item.title}
-              variants={panelScan}
+              variants={fadeUp}
             >
               <span className="label recognition-card__n">
                 {String(i + 1).padStart(2, '0')}
