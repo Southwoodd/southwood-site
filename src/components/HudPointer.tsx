@@ -1,14 +1,67 @@
 import { useEffect, useRef, useState } from 'react';
 import './HudPointer.css';
 
-const INTERACTIVE =
-  'a, button, [role="button"], input, textarea, select, label, summary, .btn, .scramble-btn';
+/** Кликабельное — показываем руку робота вместо прицела */
+const CLICKABLE =
+  'a[href], button:not(:disabled), [role="button"], [role="tab"], summary, .btn, .header__link, .faq-item__btn, .compare__tab, .case-link, .scramble-btn';
 
 function canUseHudPointer() {
   if (typeof window === 'undefined') return false;
   const fine = window.matchMedia('(pointer: fine) and (hover: hover)').matches;
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   return fine && !reduce;
+}
+
+function RobotHandIcon() {
+  return (
+    <svg
+      className="hud-cursor__hand"
+      width="28"
+      height="32"
+      viewBox="0 0 28 32"
+      fill="none"
+      aria-hidden="true"
+    >
+      {/* Ладонь / корпус */}
+      <path
+        className="hud-cursor__hand-fill"
+        d="M8 14V8.5a2 2 0 0 1 4 0V13M12 13V6.5a2 2 0 0 1 4 0V13M16 13V7.5a2 2 0 0 1 4 0V15.5c0 4.5-2.2 8-6.5 9.5L9 27.5V18"
+        strokeWidth="1.4"
+        strokeLinejoin="miter"
+      />
+      <path
+        className="hud-cursor__hand-fill"
+        d="M8 14c-2.2 0-4 1.6-4 3.8V22c0 1.5.7 2.8 2 3.5L9 27.5"
+        strokeWidth="1.4"
+        strokeLinejoin="miter"
+      />
+      {/* Большой палец */}
+      <path
+        className="hud-cursor__hand-fill"
+        d="M8 16.5c-2.8.2-4.5 2-4.5 4.2"
+        strokeWidth="1.4"
+      />
+      {/* Суставы */}
+      <circle className="hud-cursor__hand-joint" cx="10" cy="10" r="1.1" />
+      <circle className="hud-cursor__hand-joint" cx="14" cy="8.5" r="1.1" />
+      <circle className="hud-cursor__hand-joint" cx="18" cy="9.5" r="1.1" />
+      <circle className="hud-cursor__hand-joint" cx="12" cy="18" r="1.2" />
+      {/* Указатель — кончик = хотспот */}
+      <path
+        className="hud-cursor__hand-fill"
+        d="M12 13V3.2a1.6 1.6 0 0 1 3.2 0V13"
+        strokeWidth="1.5"
+        strokeLinejoin="miter"
+      />
+      <rect
+        className="hud-cursor__hand-tip"
+        x="12.4"
+        y="1.2"
+        width="2.4"
+        height="2.4"
+      />
+    </svg>
+  );
 }
 
 export default function HudPointer() {
@@ -59,7 +112,7 @@ export default function HudPointer() {
       const show = visible.current && !overText.current;
       root.style.opacity = show ? '1' : '0';
       root.style.transform = `translate3d(${c.x}px, ${c.y}px, 0)`;
-      root.dataset.state = interactive.current ? 'lock' : 'aim';
+      root.dataset.state = interactive.current ? 'hand' : 'aim';
       root.dataset.surface = onInk.current ? 'ink' : 'signal';
 
       if (coordsRef.current) {
@@ -96,8 +149,8 @@ export default function HudPointer() {
       overText.current = Boolean(
         el.closest('input, textarea, select, [contenteditable="true"]'),
       );
-      interactive.current = Boolean(el.closest(INTERACTIVE)) && !overText.current;
-      /* Желтый фон: шапка и primary-кнопки — курсор в черный, иначе сливается */
+      interactive.current =
+        Boolean(el.closest(CLICKABLE)) && !overText.current;
       onInk.current = Boolean(
         el.closest('.header, .btn--primary, [data-cursor-ink]'),
       );
@@ -125,13 +178,14 @@ export default function HudPointer() {
   if (!active) return null;
 
   return (
-    <div className="hud-cursor" ref={rootRef} aria-hidden="true">
+    <div className="hud-cursor" ref={rootRef} aria-hidden="true" data-state="aim">
       <div className="hud-cursor__cross">
         <span className="hud-cursor__box" />
         <span className="hud-cursor__h" />
         <span className="hud-cursor__v" />
         <span className="hud-cursor__dot" />
       </div>
+      <RobotHandIcon />
       <span className="hud-cursor__coords" ref={coordsRef}>
         X:0000 Y:0000
       </span>

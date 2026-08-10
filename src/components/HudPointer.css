@@ -9,7 +9,7 @@
   pointer-events: none;
   opacity: 0;
   will-change: transform, opacity;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.12s ease;
   mix-blend-mode: normal;
 }
 
@@ -27,10 +27,6 @@
   border: 1px solid var(--signal);
   opacity: 0.85;
   box-shadow: 0 0 8px rgba(234, 255, 0, 0.2);
-  transition:
-    inset 0.15s ease,
-    opacity 0.15s ease,
-    box-shadow 0.15s ease;
 }
 
 .hud-cursor__h,
@@ -80,17 +76,42 @@
   opacity: 0.78;
 }
 
-.hud-cursor[data-state='lock'] .hud-cursor__box {
-  inset: -2px;
-  opacity: 1;
-  box-shadow: 0 0 12px rgba(234, 255, 0, 0.35);
+/* Рука робота: кончик указателя = точка курсора */
+.hud-cursor__hand {
+  display: none;
+  width: 28px;
+  height: 32px;
+  margin: -2px 0 0 -2px;
+  flex-shrink: 0;
+  overflow: visible;
+  filter: drop-shadow(0 0 6px rgba(234, 255, 0, 0.35));
 }
 
-.hud-cursor[data-state='lock'] .hud-cursor__coords {
-  opacity: 1;
+.hud-cursor__hand-fill {
+  fill: none;
+  stroke: var(--signal);
 }
 
-/* На желтом фоне (#eaff00) — черный прицел */
+.hud-cursor__hand-joint {
+  fill: var(--signal);
+  stroke: none;
+}
+
+.hud-cursor__hand-tip {
+  fill: var(--signal);
+  stroke: none;
+}
+
+.hud-cursor[data-state='hand'] .hud-cursor__cross,
+.hud-cursor[data-state='hand'] .hud-cursor__coords {
+  display: none;
+}
+
+.hud-cursor[data-state='hand'] .hud-cursor__hand {
+  display: block;
+}
+
+/* На желтом фоне — черная рука / прицел */
 .hud-cursor[data-surface='ink'] .hud-cursor__box {
   border-color: var(--on-accent);
   box-shadow: 0 0 12px rgba(7, 7, 7, 0.25);
@@ -109,8 +130,17 @@
   opacity: 0.85;
 }
 
-.hud-cursor[data-surface='ink'][data-state='lock'] .hud-cursor__box {
-  box-shadow: 0 0 16px rgba(7, 7, 7, 0.35);
+.hud-cursor[data-surface='ink'] .hud-cursor__hand {
+  filter: drop-shadow(0 0 4px rgba(7, 7, 7, 0.35));
+}
+
+.hud-cursor[data-surface='ink'] .hud-cursor__hand-fill {
+  stroke: var(--on-accent);
+}
+
+.hud-cursor[data-surface='ink'] .hud-cursor__hand-joint,
+.hud-cursor[data-surface='ink'] .hud-cursor__hand-tip {
+  fill: var(--on-accent);
 }
 
 html.hud-pointer,
