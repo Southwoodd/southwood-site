@@ -18,4 +18,4 @@ dist-ssr
 .vscode/*
 !.vscode/extensions.json
 .idea
-scripts/
+scripts/*.png
