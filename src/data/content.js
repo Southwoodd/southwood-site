@@ -390,6 +390,12 @@ export const content = {
     errorText: 'Не удалось отправить. Напишите в Telegram — так надежнее.',
     missingKeyText:
       'Форма еще не подключена к почте. Напишите в Telegram @imsouthwood.',
+    requiredError: 'Заполните поле',
+    topicRequiredError: 'Выберите вариант',
+    invalidSummary: 'Проверьте поля формы — есть незаполненные обязательные.',
+    sendingAnnounce: 'Отправляем заявку',
+    successAnnounce: 'Заявка успешно отправлена',
+    resetLabel: 'Еще одна заявка',
     note: 'Отвечаю в течение дня. Не готовы к форме — напишите в',
     telegramHref: 'https://t.me/imsouthwood',
     telegramLabel: 'Telegram',
