@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import HudPointer from './components/HudPointer';
 import HomePage from './pages/HomePage';
 import CasePage from './pages/CasePage';
 import PrivacyPage from './pages/PrivacyPage';
@@ -30,6 +31,7 @@ export default function App() {
   return (
     <>
       <ScrollAndHash />
+      <HudPointer />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/cases/:slug" element={<CasePage />} />

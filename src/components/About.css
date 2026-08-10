@@ -35,7 +35,9 @@
   gap: 16px;
   justify-items: center;
   background-image: var(--hud-grid);
-  background-size: var(--grid-size) var(--grid-size);
+  background-size: calc(var(--grid-size) * var(--hud-gs, 1))
+    calc(var(--grid-size) * var(--hud-gs, 1));
+  background-position: var(--hud-gx, 0px) var(--hud-gy, 0px);
   color: var(--ink-soft);
 }
 

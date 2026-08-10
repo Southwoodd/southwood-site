@@ -18,7 +18,9 @@ body {
   min-height: 100vh;
   background-color: var(--bg);
   background-image: var(--hud-grid);
-  background-size: var(--grid-size) var(--grid-size);
+  background-size: calc(var(--grid-size) * var(--hud-gs, 1))
+    calc(var(--grid-size) * var(--hud-gs, 1));
+  background-position: var(--hud-gx, 0px) var(--hud-gy, 0px);
   background-attachment: fixed;
   color: var(--ink);
   font-family: var(--font-sans);

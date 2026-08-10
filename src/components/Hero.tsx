@@ -134,7 +134,7 @@ export default function Hero() {
       >
         <div className="hero__ticker-track">
           {[0, 1].map((copy) => (
-            <div className="hero__ticker-group" key={copy}>
+            <div className="hero__ticker-group" key={copy} aria-hidden={copy > 0}>
               {tickerWords.map((word) => (
                 <span key={`${copy}-${word}`}>{word}</span>
               ))}
