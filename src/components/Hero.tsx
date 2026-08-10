@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom';
 import { motion, useReducedMotion } from 'motion/react';
 import { content } from '../data/content.js';
 import ScrambleButton from './ScrambleButton';
-import SignalGraph from './SignalGraph';
 import {
   easeHud,
   fadeUp,
@@ -56,7 +55,6 @@ export default function Hero() {
   return (
     <section className="hero" id="top" aria-labelledby="hero-title">
       <div className="hero__glow" aria-hidden="true" />
-      <SignalGraph />
 
       <div className="container hero__grid">
         <motion.div
