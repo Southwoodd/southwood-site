@@ -33,6 +33,7 @@ export function buildLeadEmailTemplate() {
                 ${templateRow('Telegram или телефон')}
                 ${templateRow('О чем речь')}
                 ${templateRow('Кратко о задаче')}
+                ${templateRow('Согласие на обработку персональных данных')}
               </table>
             </td>
           </tr>
@@ -76,6 +77,7 @@ export function buildLeadEmailHtml(data: {
     ['Telegram или телефон', data.contact],
     ['О чем речь', data.topic],
     ['Кратко о задаче', data.message || '—'],
+    ['Согласие на обработку персональных данных', 'Да'],
   ];
 
   const rowHtml = rows

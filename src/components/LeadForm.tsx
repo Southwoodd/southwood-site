@@ -5,6 +5,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { Link } from 'react-router-dom';
 import { content } from '../data/content.js';
 import './LeadForm.css';
 
@@ -41,6 +42,12 @@ export default function LeadForm() {
     telegramHref,
     telegramLabel,
   } = content.finalCta;
+  const {
+    consentLabel,
+    consentLinkLabel,
+    consentHref,
+    consentError,
+  } = content.legal;
 
   const formId = useId();
   const formRef = useRef<HTMLFormElement>(null);
@@ -53,6 +60,7 @@ export default function LeadForm() {
   } | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [topic, setTopic] = useState(topics[0]?.value ?? 'Диагностика');
+  const [consent, setConsent] = useState(false);
   const [values, setValues] = useState<Record<string, string>>(() =>
     Object.fromEntries(fields.map((f: FieldDef) => [f.name, ''])),
   );
@@ -105,6 +113,9 @@ export default function LeadForm() {
     if (!topic.trim()) {
       next[topicName] = topicRequiredError;
     }
+    if (!consent) {
+      next.consent = consentError;
+    }
     return next;
   };
 
@@ -112,6 +123,7 @@ export default function LeadForm() {
     const order = [
       ...(fields as FieldDef[]).map((f) => f.name),
       topicName,
+      'consent',
     ];
     const first = order.find((key) => nextErrors[key]);
     if (!first) return;
@@ -175,6 +187,7 @@ export default function LeadForm() {
       'Telegram или телефон': contact,
       'О чем речь': topic,
       'Кратко о задаче': message || '—',
+      'Согласие на обработку персональных данных': 'Да',
       botcheck: '',
     };
 
@@ -239,6 +252,7 @@ export default function LeadForm() {
               setStatus('idle');
               setBanner('');
               setToast(null);
+              setConsent(false);
             }}
           >
             {resetLabel}
@@ -377,6 +391,53 @@ export default function LeadForm() {
                 </p>
               ) : null}
             </fieldset>
+          </div>
+
+          <div
+            className={`lead-form__consent${errors.consent ? ' is-invalid' : ''}`}
+          >
+            <label className="lead-form__consent-label" htmlFor={`${formId}-consent`}>
+              <input
+                id={`${formId}-consent`}
+                type="checkbox"
+                name="consent"
+                data-field="consent"
+                checked={consent}
+                disabled={busy}
+                aria-invalid={Boolean(errors.consent)}
+                aria-describedby={
+                  errors.consent ? `${formId}-consent-error` : undefined
+                }
+                onChange={(ev) => {
+                  setConsent(ev.target.checked);
+                  if (errors.consent) {
+                    setErrors((prev) => {
+                      const next = { ...prev };
+                      delete next.consent;
+                      return next;
+                    });
+                  }
+                }}
+              />
+              <span>
+                {consentLabel}{' '}
+                <Link to={consentHref} target="_blank" rel="noopener noreferrer">
+                  {consentLinkLabel}
+                </Link>
+                <span className="lead-form__req" aria-hidden="true">
+                  *
+                </span>
+              </span>
+            </label>
+            {errors.consent ? (
+              <p
+                className="lead-form__field-error"
+                id={`${formId}-consent-error`}
+                role="alert"
+              >
+                {errors.consent}
+              </p>
+            ) : null}
           </div>
 
           <input

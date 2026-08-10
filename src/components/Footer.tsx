@@ -1,9 +1,20 @@
+import { Link } from 'react-router-dom';
 import { content } from '../data/content.js';
 import './Footer.css';
 
 export default function Footer() {
-  const { name, site, tenchat, telegram, telegramHandle, email, reqs, year } =
-    content.footer;
+  const {
+    name,
+    site,
+    tenchat,
+    telegram,
+    telegramHandle,
+    email,
+    reqs,
+    year,
+    privacyLabel,
+    privacyHref,
+  } = content.footer;
 
   return (
     <footer className="site-footer" aria-label="Подвал">
@@ -21,6 +32,7 @@ export default function Footer() {
             TenChat
           </a>
           <a href={`mailto:${email}`}>{email}</a>
+          <Link to={privacyHref}>{privacyLabel}</Link>
         </nav>
 
         <div className="site-footer__meta">
