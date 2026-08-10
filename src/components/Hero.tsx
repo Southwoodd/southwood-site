@@ -47,6 +47,12 @@ const tickerWords = [
   'Автоматизация',
 ];
 
+/** Одна «лента» должна быть шире экрана, иначе после последнего слова дырка */
+const TICKER_REPEAT = 3;
+const tickerSegment = Array.from({ length: TICKER_REPEAT }, (_, lap) =>
+  tickerWords.map((word) => ({ word, key: `${lap}-${word}` })),
+).flat();
+
 export default function Hero() {
   const h = content.hero;
   const card = h.card;
@@ -134,9 +140,9 @@ export default function Hero() {
       >
         <div className="hero__ticker-track">
           {[0, 1].map((copy) => (
-            <div className="hero__ticker-group" key={copy} aria-hidden={copy > 0}>
-              {tickerWords.map((word) => (
-                <span key={`${copy}-${word}`}>{word}</span>
+            <div className="hero__ticker-group" key={copy}>
+              {tickerSegment.map((item) => (
+                <span key={`${copy}-${item.key}`}>{item.word}</span>
               ))}
             </div>
           ))}

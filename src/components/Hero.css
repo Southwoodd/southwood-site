@@ -239,7 +239,7 @@
   display: flex;
   width: max-content;
   will-change: transform;
-  animation: hero-ticker 38s linear infinite;
+  animation: hero-ticker 72s linear infinite;
 }
 
 .hero__ticker-group {
@@ -247,6 +247,9 @@
   align-items: center;
   flex-shrink: 0;
   padding-block: 12px;
+  /* без зазора между двумя копиями ленты */
+  margin: 0;
+  padding-inline: 0;
 }
 
 .hero__ticker-group span {
