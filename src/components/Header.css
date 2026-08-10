@@ -83,18 +83,20 @@
   margin-left: auto;
 }
 
-.header__tg {
+.header .btn.header__tg {
   min-height: 34px;
   padding: 6px 14px;
   font-size: 0.68rem;
   background: var(--on-accent);
   color: var(--signal);
   border-color: var(--on-accent);
+  box-shadow: none;
 }
 
-.header__tg:hover {
-  background: transparent;
-  color: var(--on-accent);
+.header .btn.header__tg:hover,
+.header .btn.header__tg:focus-visible {
+  background: #121212;
+  color: var(--signal);
   border-color: var(--on-accent);
   box-shadow: none;
 }
