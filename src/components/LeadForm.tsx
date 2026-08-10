@@ -116,10 +116,10 @@ export default function LeadForm() {
     if (status === 'sending') return;
 
     const form = e.currentTarget;
-    const honeypot = (
-      form.elements.namedItem('botcheck') as HTMLInputElement | null
-    )?.value;
-    if (honeypot) return;
+    const honeypot = form.elements.namedItem(
+      'botcheck',
+    ) as HTMLInputElement | null;
+    if (honeypot?.value?.trim()) return;
 
     const nextErrors = validate();
     if (Object.keys(nextErrors).length > 0) {
@@ -377,12 +377,13 @@ export default function LeadForm() {
           </div>
 
           <input
-            type="checkbox"
+            type="text"
             name="botcheck"
             className="lead-form__hp"
             tabIndex={-1}
             autoComplete="off"
             aria-hidden="true"
+            defaultValue=""
           />
 
           {banner ? (
