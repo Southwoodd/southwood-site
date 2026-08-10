@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { content } from '../data/content.js';
+import ScrambleButton from './ScrambleButton';
 import ScrambleLink from './ScrambleLink';
 import './Header.css';
 
@@ -48,14 +49,14 @@ export default function Header() {
         </nav>
 
         <div className="header__actions">
-          <a
+          <ScrambleButton
             className="btn btn--ghost header__tg"
             href={telegramHref}
             target="_blank"
             rel="noopener noreferrer"
           >
             {telegramLabel}
-          </a>
+          </ScrambleButton>
 
           <button
             className="header__burger"
