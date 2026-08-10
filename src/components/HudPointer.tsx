@@ -20,6 +20,7 @@ export default function HudPointer() {
   const visible = useRef(false);
   const interactive = useRef(false);
   const overText = useRef(false);
+  const onInk = useRef(false);
   const raf = useRef(0);
 
   useEffect(() => {
@@ -59,6 +60,7 @@ export default function HudPointer() {
       root.style.opacity = show ? '1' : '0';
       root.style.transform = `translate3d(${c.x}px, ${c.y}px, 0)`;
       root.dataset.state = interactive.current ? 'lock' : 'aim';
+      root.dataset.surface = onInk.current ? 'ink' : 'signal';
 
       if (coordsRef.current) {
         coordsRef.current.textContent = `X:${Math.round(t.x).toString().padStart(4, '0')} Y:${Math.round(t.y).toString().padStart(4, '0')}`;
@@ -88,12 +90,17 @@ export default function HudPointer() {
       if (!el || !(el instanceof Element)) {
         interactive.current = false;
         overText.current = false;
+        onInk.current = false;
         return;
       }
       overText.current = Boolean(
         el.closest('input, textarea, select, [contenteditable="true"]'),
       );
       interactive.current = Boolean(el.closest(INTERACTIVE)) && !overText.current;
+      /* Желтый фон: шапка и primary-кнопки — курсор в черный, иначе сливается */
+      onInk.current = Boolean(
+        el.closest('.header, .btn--primary, [data-cursor-ink]'),
+      );
     };
 
     const onLeave = () => {

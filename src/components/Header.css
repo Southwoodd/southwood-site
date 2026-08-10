@@ -13,7 +13,7 @@
 .header__inner {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 12px;
   height: var(--header-h);
   min-width: 0;
@@ -46,11 +46,14 @@
   display: none;
   align-items: center;
   gap: 24px;
+  margin-left: 100px;
+  margin-right: auto;
 }
 
 .header__link {
   font-family: var(--font-mono);
   font-size: 0.72rem;
+  font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--on-accent);
@@ -68,11 +71,16 @@
   outline-offset: 4px;
 }
 
+.header__link .scramble-btn {
+  display: inline-grid;
+}
+
 .header__actions {
   display: flex;
   align-items: center;
   gap: 10px;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .header__tg {

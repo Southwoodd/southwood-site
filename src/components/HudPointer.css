@@ -90,6 +90,29 @@
   opacity: 1;
 }
 
+/* На желтом фоне (#eaff00) — черный прицел */
+.hud-cursor[data-surface='ink'] .hud-cursor__box {
+  border-color: var(--on-accent);
+  box-shadow: 0 0 12px rgba(7, 7, 7, 0.25);
+}
+
+.hud-cursor[data-surface='ink'] .hud-cursor__h,
+.hud-cursor[data-surface='ink'] .hud-cursor__v,
+.hud-cursor[data-surface='ink'] .hud-cursor__dot {
+  background: var(--on-accent);
+  box-shadow: none;
+}
+
+.hud-cursor[data-surface='ink'] .hud-cursor__coords {
+  color: var(--on-accent);
+  text-shadow: none;
+  opacity: 0.85;
+}
+
+.hud-cursor[data-surface='ink'][data-state='lock'] .hud-cursor__box {
+  box-shadow: 0 0 16px rgba(7, 7, 7, 0.35);
+}
+
 html.hud-pointer,
 html.hud-pointer * {
   cursor: none !important;

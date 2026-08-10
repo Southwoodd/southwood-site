@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { content } from '../data/content.js';
+import ScrambleLink from './ScrambleLink';
 import './Header.css';
 
 function resolveNavHref(href: string, pathname: string) {
@@ -36,13 +37,13 @@ export default function Header() {
 
         <nav className="header__nav" aria-label="Основная навигация">
           {nav.map((item) => (
-            <Link
+            <ScrambleLink
               key={item.href}
               className="header__link"
               to={resolveNavHref(item.href, pathname)}
             >
               {item.label}
-            </Link>
+            </ScrambleLink>
           ))}
         </nav>
 
@@ -73,14 +74,14 @@ export default function Header() {
       <div className="header__mobile" id="mobile-menu" hidden={!open}>
         <nav className="header__mobile-nav" aria-label="Мобильная навигация">
           {nav.map((item) => (
-            <Link
+            <ScrambleLink
               key={item.href}
               className="header__mobile-link"
               to={resolveNavHref(item.href, pathname)}
               onClick={() => setOpen(false)}
             >
               {item.label}
-            </Link>
+            </ScrambleLink>
           ))}
         </nav>
       </div>
