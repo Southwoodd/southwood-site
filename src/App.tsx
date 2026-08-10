@@ -7,8 +7,9 @@ import Pricing from './components/Pricing';
 import Compare from './components/Compare';
 import About from './components/About';
 import Boundaries from './components/Boundaries';
+import Faq from './components/Faq';
 import FinalCta from './components/FinalCta';
-import StubSection from './components/StubSection';
+import Footer from './components/Footer';
 
 export default function App() {
   return (
@@ -23,12 +24,10 @@ export default function App() {
         <Compare />
         <About />
         <Boundaries />
-        <StubSection id="faq" label="FAQ — следующий экран" />
+        <Faq />
         <FinalCta />
       </main>
-      <footer className="section" aria-label="Подвал">
-        <div className="container stub">Footer — следующий экран</div>
-      </footer>
+      <Footer />
     </>
   );
 }
