@@ -1,0 +1,129 @@
+/* About — лицо после сравнения: фото-панель + био */
+.section.about {
+  border-top: 1px solid var(--line);
+}
+
+.about__layout {
+  display: grid;
+  gap: clamp(28px, 4vw, 48px);
+  align-items: stretch;
+}
+
+.about__media {
+  position: relative;
+  min-width: 0;
+  border: 1px solid var(--line-strong);
+  background: var(--panel-solid);
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  max-height: 560px;
+}
+
+.about__photo {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+}
+
+.about__photo--placeholder {
+  display: grid;
+  place-content: center;
+  gap: 16px;
+  justify-items: center;
+  background-image: var(--hud-grid);
+  background-size: var(--grid-size) var(--grid-size);
+  color: var(--ink-soft);
+}
+
+.about__photo-mark {
+  font-size: clamp(3rem, 12vw, 5rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--signal);
+  text-shadow: 0 0 40px rgba(234, 255, 0, 0.2);
+}
+
+.about__copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.about__num {
+  color: var(--ink-soft);
+}
+
+.about__num::before {
+  content: '/ ';
+}
+
+.about__title {
+  margin-top: 16px;
+  margin-bottom: 20px;
+}
+
+.about__text {
+  margin: 0 0 28px;
+  max-width: 38rem;
+  font-family: var(--font-mono);
+  font-size: clamp(0.95rem, 1.35vw, 1.08rem);
+  line-height: 1.6;
+  color: var(--ink-soft);
+  text-wrap: pretty;
+}
+
+.about__link {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  width: fit-content;
+  min-height: 48px;
+  padding: 12px 18px;
+  border: 1px solid var(--line-strong);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--signal);
+  background: transparent;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.about__link:hover {
+  background: var(--signal);
+  color: var(--on-accent);
+  border-color: var(--signal);
+}
+
+.about__link:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+}
+
+.about__link-arrow {
+  font-size: 1.1em;
+  line-height: 1;
+}
+
+@media (min-width: 900px) {
+  .about__layout {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    column-gap: clamp(36px, 5vw, 72px);
+    align-items: center;
+  }
+
+  .about__media {
+    max-height: none;
+    min-height: 420px;
+    aspect-ratio: 4 / 5;
+  }
+}

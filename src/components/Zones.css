@@ -1,0 +1,127 @@
+.zones {
+  padding-bottom: 0;
+}
+
+.zones__head {
+  display: grid;
+  gap: 12px;
+  padding-bottom: clamp(28px, 4vw, 48px);
+}
+
+.zones__num {
+  color: var(--ink-soft);
+}
+
+.zones__num::before {
+  content: '/ ';
+}
+
+.zones__head-copy {
+  display: grid;
+  gap: 16px;
+  max-width: 40rem;
+}
+
+.zones__lead {
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: clamp(0.9rem, 1.3vw, 1rem);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.zones__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+  border-top: 0;
+}
+
+.zone-row {
+  border-bottom: 0;
+  background: transparent;
+}
+
+.zone-row:hover .zone-row__inner {
+  border-color: var(--line-strong);
+}
+
+.zone-row__inner {
+  display: grid;
+  gap: 20px;
+  padding: clamp(24px, 3.5vw, 32px);
+  border: 1px solid var(--line);
+  background: var(--panel-solid);
+}
+
+.zone-row__title {
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  margin: 0;
+}
+
+.zone-row__chain {
+  display: grid;
+  gap: 16px;
+}
+
+.zone-row__step {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.zone-row__step .label {
+  color: var(--ink-dim);
+}
+
+.zone-row__step p {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: clamp(0.88rem, 1.2vw, 0.98rem);
+  line-height: 1.5;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+.zone-row__step--result p {
+  color: var(--signal);
+  font-weight: 500;
+}
+
+@media (min-width: 900px) {
+  .zones__head {
+    grid-template-columns: 4rem minmax(0, 1fr);
+    column-gap: clamp(24px, 4vw, 48px);
+    align-items: start;
+  }
+
+  .zone-row__inner {
+    grid-template-columns: minmax(12rem, 0.85fr) minmax(0, 1.6fr);
+    column-gap: clamp(32px, 5vw, 64px);
+    align-items: start;
+  }
+
+  .zone-row__title {
+    position: static;
+  }
+
+  .zone-row__chain {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px 24px;
+    align-items: start;
+  }
+}
+
+@media (max-width: 899px) {
+  .zone-row__step + .zone-row__step {
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+  }
+}

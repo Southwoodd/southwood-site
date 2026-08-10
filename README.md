@@ -1,43 +1,34 @@
-# Astro Starter Kit: Minimal
+# Southwood site
 
-```sh
-npm create astro@latest -- --template minimal
+Персональный лендинг на **React 19 + Vite 7**. Тексты — в `src/data/content.js`.
+
+## Локально
+
+```bash
+npm install
+cp .env.example .env
+# впиши VITE_WEB3FORMS_ACCESS_KEY
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Открыть: http://127.0.0.1:5173/
 
-## 🚀 Project Structure
+## Деплой (GitHub Pages)
 
-Inside of your Astro project, you'll see the following folders and files:
+Пуш в `master` → Actions собирает сайт и выкладывает на Pages.
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+Секрет репозитория: `VITE_WEB3FORMS_ACCESS_KEY` (ключ Web3Forms).
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+Кастомный домен: `southwood.pw` (файл `public/CNAME`).
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+DNS у регистратора (apex):
 
-Any static assets, like images, can be placed in the `public/` directory.
+| Тип | Имя | Значение |
+|-----|-----|----------|
+| A | `@` | `185.199.108.153` |
+| A | `@` | `185.199.109.153` |
+| A | `@` | `185.199.110.153` |
+| A | `@` | `185.199.111.153` |
+| CNAME | `www` | `Southwoodd.github.io` |
 
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+В Settings → Pages включи Custom domain `southwood.pw` и Enforce HTTPS после проверки DNS.

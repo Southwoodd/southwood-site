@@ -1,0 +1,47 @@
+.section.final-cta {
+  border-top: 1px solid var(--line);
+}
+
+.final-cta__layout {
+  display: grid;
+  gap: clamp(28px, 4vw, 48px);
+  max-width: 920px;
+}
+
+.final-cta__intro h2 {
+  margin-bottom: 14px;
+}
+
+.final-cta__sub {
+  margin: 0;
+  max-width: 40rem;
+  font-family: var(--font-mono);
+  font-size: clamp(0.95rem, 1.4vw, 1.08rem);
+  line-height: 1.6;
+  color: var(--ink-soft);
+  text-wrap: pretty;
+}
+
+.final-cta__form-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.final-cta__note {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--ink-dim);
+}
+
+.final-cta__note a {
+  color: var(--signal);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.final-cta__note a:hover {
+  color: #f5ff66;
+}
