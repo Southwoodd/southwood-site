@@ -5,8 +5,10 @@ import {
   useRef,
   useState,
 } from 'react';
+import emailjs from '@emailjs/browser';
 import { Link } from 'react-router-dom';
 import { content } from '../data/content.js';
+import { buildLeadEmailHtml } from '../lib/leadEmail';
 import './LeadForm.css';
 
 type Status = 'idle' | 'sending' | 'success' | 'error';
@@ -21,6 +23,27 @@ type FieldDef = {
 const ACCESS_KEY = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY as
   | string
   | undefined;
+const EMAILJS_SERVICE = import.meta.env.VITE_EMAILJS_SERVICE_ID as
+  | string
+  | undefined;
+const EMAILJS_TEMPLATE = import.meta.env.VITE_EMAILJS_TEMPLATE_ID as
+  | string
+  | undefined;
+const EMAILJS_PUBLIC = import.meta.env.VITE_EMAILJS_PUBLIC_KEY as
+  | string
+  | undefined;
+
+const emailJsReady = Boolean(
+  EMAILJS_SERVICE && EMAILJS_TEMPLATE && EMAILJS_PUBLIC,
+);
+
+function formatRuDate(d = new Date()) {
+  return new Intl.DateTimeFormat('ru-RU', {
+    dateStyle: 'long',
+    timeStyle: 'short',
+    timeZone: 'Europe/Moscow',
+  }).format(d);
+}
 
 export default function LeadForm() {
   const {
@@ -32,6 +55,7 @@ export default function LeadForm() {
     sendingLabel,
     successTitle,
     successText,
+    errorText,
     missingKeyText,
     requiredError,
     topicRequiredError,
@@ -133,12 +157,26 @@ export default function LeadForm() {
     el?.focus();
   };
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const markSuccess = () => {
+    setStatus('success');
+    setToast({ type: 'success', text: successAnnounce });
+    setValues(Object.fromEntries(fields.map((f: FieldDef) => [f.name, ''])));
+    setTopic(topics[0]?.value ?? 'Диагностика');
+    setConsent(false);
+  };
+
+  const markFail = () => {
+    setStatus('error');
+    setBanner(errorText);
+    setToast({ type: 'error', text: errorText });
+  };
+
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (status === 'sending') return;
 
-    const form = e.currentTarget;
-    const honeypot = form.elements.namedItem(
+    const formEl = e.currentTarget;
+    const honeypot = formEl.elements.namedItem(
       'botcheck',
     ) as HTMLInputElement | null;
     if (honeypot?.value?.trim()) return;
@@ -153,7 +191,7 @@ export default function LeadForm() {
       return;
     }
 
-    if (!ACCESS_KEY) {
+    if (!emailJsReady && !ACCESS_KEY) {
       setStatus('error');
       setBanner(missingKeyText);
       setToast({ type: 'error', text: missingKeyText });
@@ -169,8 +207,40 @@ export default function LeadForm() {
     const company = values.company?.trim() ?? '';
     const contact = values.contact?.trim() ?? '';
     const message = values.message?.trim() ?? '';
+    const subject = `Заявка с southwood.pw — ${topic} — ${name}`;
+    const html_body = buildLeadEmailHtml({
+      name,
+      company,
+      contact,
+      topic,
+      message,
+      submittedAt: formatRuDate(),
+    });
 
-    // Обычный browser POST (не fetch): Web3Forms/Cloudflare режут XHR с наших IP/origin.
+    if (emailJsReady) {
+      try {
+        await emailjs.send(
+          EMAILJS_SERVICE!,
+          EMAILJS_TEMPLATE!,
+          {
+            subject,
+            html_body,
+            name,
+            company,
+            contact,
+            topic,
+            message: message || '—',
+            consent: 'Да',
+          },
+          { publicKey: EMAILJS_PUBLIC! },
+        );
+        markSuccess();
+      } catch {
+        markFail();
+      }
+      return;
+    }
+
     const post = document.createElement('form');
     post.method = 'POST';
     post.action = 'https://api.web3forms.com/submit';
@@ -178,8 +248,8 @@ export default function LeadForm() {
     post.style.display = 'none';
 
     const payload: Record<string, string> = {
-      access_key: ACCESS_KEY,
-      subject: `Заявка с southwood.pw — ${topic} — ${name}`,
+      access_key: ACCESS_KEY!,
+      subject,
       from_name: `Southwood · ${name}`,
       redirect: `${window.location.origin}/?sent=1#final-cta`,
       Имя: name,

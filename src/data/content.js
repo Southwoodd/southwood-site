@@ -389,7 +389,7 @@ export const content = {
     successText: 'Отвечу в течение дня в Telegram или по телефону.',
     errorText: 'Не удалось отправить. Напишите в Telegram — так надежнее.',
     missingKeyText:
-      'Форма еще не подключена к почте. Напишите в Telegram @imsouthwood.',
+      'Почта формы не настроена. Напишите в Telegram @imsouthwood.',
     requiredError: 'Заполните поле',
     topicRequiredError: 'Выберите вариант',
     invalidSummary: 'Проверьте поля формы — есть незаполненные обязательные.',

@@ -1,0 +1,11 @@
+EmailJS template (Email Templates → Create New)
+
+Subject:
+{{subject}}
+
+Content (switch to HTML mode), paste ONLY this:
+
+{{{html_body}}}
+
+To (optional fixed):
+im@southwood.pw
