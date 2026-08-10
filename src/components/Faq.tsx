@@ -1,7 +1,7 @@
 import { useId, useState } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { content } from '../data/content.js';
-import { fadeUp, viewportOnce } from '../motion/presets';
+import { easeHud, fadeUp, viewportOnce } from '../motion/presets';
 import { ScrambleFace } from './ScramblePress';
 import { useHudScramble } from './useHudScramble';
 import './Faq.css';
@@ -13,6 +13,7 @@ function FaqItem({
   panelId,
   btnId,
   onToggle,
+  reduce,
 }: {
   item: { q: string; a: string };
   index: number;
@@ -20,8 +21,10 @@ function FaqItem({
   panelId: string;
   btnId: string;
   onToggle: () => void;
+  reduce: boolean | null;
 }) {
   const { ref, replay } = useHudScramble(item.q);
+  const n = String(index + 1).padStart(2, '0');
 
   return (
     <div className={`faq-item${isOpen ? ' is-open' : ''}`}>
@@ -36,7 +39,7 @@ function FaqItem({
           onMouseEnter={() => replay()}
         >
           <span className="faq-item__index" aria-hidden="true">
-            {String(index + 1).padStart(2, '0')}
+            {n}
           </span>
           <span className="faq-item__text">
             <ScrambleFace text={item.q} liveRef={ref} />
@@ -46,15 +49,25 @@ function FaqItem({
           </span>
         </button>
       </h3>
-      <div
-        id={panelId}
-        role="region"
-        aria-labelledby={btnId}
-        className="faq-item__a"
-        hidden={!isOpen}
-      >
-        <p>{item.a}</p>
-      </div>
+
+      <AnimatePresence initial={false}>
+        {isOpen ? (
+          <motion.div
+            id={panelId}
+            role="region"
+            aria-labelledby={btnId}
+            className="faq-item__a"
+            initial={reduce ? false : { height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={reduce ? undefined : { height: 0, opacity: 0 }}
+            transition={easeHud}
+          >
+            <div className="faq-item__a-inner">
+              <p>{item.a}</p>
+            </div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }
@@ -96,6 +109,7 @@ export default function Faq() {
                 isOpen={isOpen}
                 panelId={`${baseId}-panel-${index}`}
                 btnId={`${baseId}-btn-${index}`}
+                reduce={reduce}
                 onToggle={() => setOpen(isOpen ? null : index)}
               />
             );
