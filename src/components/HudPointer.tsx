@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './HudPointer.css';
 
-/** Кликабельное — показываем руку робота вместо прицела */
+/** Кликабельное — точка вместо прицела */
 const CLICKABLE =
   'a[href], button:not(:disabled), [role="button"], [role="tab"], summary, .btn, .header__link, .faq-item__btn, .compare__tab, .case-link, .scramble-btn';
 
@@ -12,56 +12,33 @@ function canUseHudPointer() {
   return fine && !reduce;
 }
 
-function RobotHandIcon() {
-  return (
-    <svg
-      className="hud-cursor__hand"
-      width="28"
-      height="32"
-      viewBox="0 0 28 32"
-      fill="none"
-      aria-hidden="true"
-    >
-      {/* Ладонь / корпус */}
-      <path
-        className="hud-cursor__hand-fill"
-        d="M8 14V8.5a2 2 0 0 1 4 0V13M12 13V6.5a2 2 0 0 1 4 0V13M16 13V7.5a2 2 0 0 1 4 0V15.5c0 4.5-2.2 8-6.5 9.5L9 27.5V18"
-        strokeWidth="1.4"
-        strokeLinejoin="miter"
-      />
-      <path
-        className="hud-cursor__hand-fill"
-        d="M8 14c-2.2 0-4 1.6-4 3.8V22c0 1.5.7 2.8 2 3.5L9 27.5"
-        strokeWidth="1.4"
-        strokeLinejoin="miter"
-      />
-      {/* Большой палец */}
-      <path
-        className="hud-cursor__hand-fill"
-        d="M8 16.5c-2.8.2-4.5 2-4.5 4.2"
-        strokeWidth="1.4"
-      />
-      {/* Суставы */}
-      <circle className="hud-cursor__hand-joint" cx="10" cy="10" r="1.1" />
-      <circle className="hud-cursor__hand-joint" cx="14" cy="8.5" r="1.1" />
-      <circle className="hud-cursor__hand-joint" cx="18" cy="9.5" r="1.1" />
-      <circle className="hud-cursor__hand-joint" cx="12" cy="18" r="1.2" />
-      {/* Указатель — кончик = хотспот */}
-      <path
-        className="hud-cursor__hand-fill"
-        d="M12 13V3.2a1.6 1.6 0 0 1 3.2 0V13"
-        strokeWidth="1.5"
-        strokeLinejoin="miter"
-      />
-      <rect
-        className="hud-cursor__hand-tip"
-        x="12.4"
-        y="1.2"
-        width="2.4"
-        height="2.4"
-      />
-    </svg>
+function parseRgba(color: string) {
+  const m = color.match(
+    /rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)(?:\s*,\s*([\d.]+))?\s*\)/i,
   );
+  if (!m) return null;
+  return {
+    r: Number(m[1]),
+    g: Number(m[2]),
+    b: Number(m[3]),
+    a: m[4] === undefined ? 1 : Number(m[4]),
+  };
+}
+
+/** Светлая кнопка/фон → курсор чёрный; тёмная → жёлтый */
+function isLightUnderCursor(el: Element): boolean {
+  let node: Element | null = el;
+  while (node && node !== document.documentElement) {
+    const bg = getComputedStyle(node).backgroundColor;
+    const rgba = parseRgba(bg);
+    if (rgba && rgba.a >= 0.2) {
+      const L =
+        (0.2126 * rgba.r + 0.7152 * rgba.g + 0.0722 * rgba.b) / 255;
+      return L > 0.52;
+    }
+    node = node.parentElement;
+  }
+  return false;
 }
 
 export default function HudPointer() {
@@ -112,7 +89,7 @@ export default function HudPointer() {
       const show = visible.current && !overText.current;
       root.style.opacity = show ? '1' : '0';
       root.style.transform = `translate3d(${c.x}px, ${c.y}px, 0)`;
-      root.dataset.state = interactive.current ? 'hand' : 'aim';
+      root.dataset.state = interactive.current ? 'dot' : 'aim';
       root.dataset.surface = onInk.current ? 'ink' : 'signal';
 
       if (coordsRef.current) {
@@ -122,8 +99,14 @@ export default function HudPointer() {
       const nx = t.x / window.innerWidth - 0.5;
       const ny = t.y / window.innerHeight - 0.5;
       const max = Math.min(window.innerWidth, window.innerHeight) * 0.018;
-      document.documentElement.style.setProperty('--hud-gx', `${(-nx * max).toFixed(2)}px`);
-      document.documentElement.style.setProperty('--hud-gy', `${(-ny * max).toFixed(2)}px`);
+      document.documentElement.style.setProperty(
+        '--hud-gx',
+        `${(-nx * max).toFixed(2)}px`,
+      );
+      document.documentElement.style.setProperty(
+        '--hud-gy',
+        `${(-ny * max).toFixed(2)}px`,
+      );
       const scale = 1 + Math.hypot(nx, ny) * 0.02;
       document.documentElement.style.setProperty('--hud-gs', scale.toFixed(4));
 
@@ -151,9 +134,7 @@ export default function HudPointer() {
       );
       interactive.current =
         Boolean(el.closest(CLICKABLE)) && !overText.current;
-      onInk.current = Boolean(
-        el.closest('.header, .btn--primary, [data-cursor-ink]'),
-      );
+      onInk.current = isLightUnderCursor(el);
     };
 
     const onLeave = () => {
@@ -178,14 +159,19 @@ export default function HudPointer() {
   if (!active) return null;
 
   return (
-    <div className="hud-cursor" ref={rootRef} aria-hidden="true" data-state="aim">
+    <div
+      className="hud-cursor"
+      ref={rootRef}
+      aria-hidden="true"
+      data-state="aim"
+    >
       <div className="hud-cursor__cross">
         <span className="hud-cursor__box" />
         <span className="hud-cursor__h" />
         <span className="hud-cursor__v" />
-        <span className="hud-cursor__dot" />
+        <span className="hud-cursor__core" />
       </div>
-      <RobotHandIcon />
+      <span className="hud-cursor__pointer" />
       <span className="hud-cursor__coords" ref={coordsRef}>
         X:0000 Y:0000
       </span>

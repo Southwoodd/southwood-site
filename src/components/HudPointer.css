@@ -11,6 +11,11 @@
   will-change: transform, opacity;
   transition: opacity 0.12s ease;
   mix-blend-mode: normal;
+  --hud-cursor: var(--signal);
+}
+
+.hud-cursor[data-surface='ink'] {
+  --hud-cursor: var(--on-accent);
 }
 
 .hud-cursor__cross {
@@ -24,15 +29,15 @@
 .hud-cursor__box {
   position: absolute;
   inset: 0;
-  border: 1px solid var(--signal);
+  border: 1px solid var(--hud-cursor);
   opacity: 0.85;
-  box-shadow: 0 0 8px rgba(234, 255, 0, 0.2);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--hud-cursor) 25%, transparent);
 }
 
 .hud-cursor__h,
 .hud-cursor__v {
   position: absolute;
-  background: var(--signal);
+  background: var(--hud-cursor);
   opacity: 0.9;
 }
 
@@ -52,15 +57,15 @@
   transform: translateX(-50%);
 }
 
-.hud-cursor__dot {
+.hud-cursor__core {
   position: absolute;
   top: 50%;
   left: 50%;
   width: 2px;
   height: 2px;
   transform: translate(-50%, -50%);
-  background: var(--signal);
-  box-shadow: 0 0 6px rgba(234, 255, 0, 0.55);
+  background: var(--hud-cursor);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--hud-cursor) 55%, transparent);
 }
 
 .hud-cursor__coords {
@@ -70,77 +75,33 @@
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--signal);
+  color: var(--hud-cursor);
   white-space: nowrap;
-  text-shadow: 0 0 8px rgba(234, 255, 0, 0.35);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--hud-cursor) 35%, transparent);
   opacity: 0.78;
 }
 
-/* Рука робота: кончик указателя = точка курсора */
-.hud-cursor__hand {
+/* На кнопке — только точка, цвет инверсный к фону */
+.hud-cursor__pointer {
   display: none;
-  width: 28px;
-  height: 32px;
-  margin: -2px 0 0 -2px;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 0;
+  background: var(--hud-cursor);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--hud-cursor) 35%, transparent),
+    0 0 10px color-mix(in srgb, var(--hud-cursor) 45%, transparent);
   flex-shrink: 0;
-  overflow: visible;
-  filter: drop-shadow(0 0 6px rgba(234, 255, 0, 0.35));
 }
 
-.hud-cursor__hand-fill {
-  fill: none;
-  stroke: var(--signal);
-}
-
-.hud-cursor__hand-joint {
-  fill: var(--signal);
-  stroke: none;
-}
-
-.hud-cursor__hand-tip {
-  fill: var(--signal);
-  stroke: none;
-}
-
-.hud-cursor[data-state='hand'] .hud-cursor__cross,
-.hud-cursor[data-state='hand'] .hud-cursor__coords {
+.hud-cursor[data-state='dot'] .hud-cursor__cross,
+.hud-cursor[data-state='dot'] .hud-cursor__coords {
   display: none;
 }
 
-.hud-cursor[data-state='hand'] .hud-cursor__hand {
+.hud-cursor[data-state='dot'] .hud-cursor__pointer {
   display: block;
-}
-
-/* На желтом фоне — черная рука / прицел */
-.hud-cursor[data-surface='ink'] .hud-cursor__box {
-  border-color: var(--on-accent);
-  box-shadow: 0 0 12px rgba(7, 7, 7, 0.25);
-}
-
-.hud-cursor[data-surface='ink'] .hud-cursor__h,
-.hud-cursor[data-surface='ink'] .hud-cursor__v,
-.hud-cursor[data-surface='ink'] .hud-cursor__dot {
-  background: var(--on-accent);
-  box-shadow: none;
-}
-
-.hud-cursor[data-surface='ink'] .hud-cursor__coords {
-  color: var(--on-accent);
-  text-shadow: none;
-  opacity: 0.85;
-}
-
-.hud-cursor[data-surface='ink'] .hud-cursor__hand {
-  filter: drop-shadow(0 0 4px rgba(7, 7, 7, 0.35));
-}
-
-.hud-cursor[data-surface='ink'] .hud-cursor__hand-fill {
-  stroke: var(--on-accent);
-}
-
-.hud-cursor[data-surface='ink'] .hud-cursor__hand-joint,
-.hud-cursor[data-surface='ink'] .hud-cursor__hand-tip {
-  fill: var(--on-accent);
 }
 
 html.hud-pointer,
