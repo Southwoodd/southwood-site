@@ -162,13 +162,15 @@ export default function LeadForm() {
     };
 
     try {
+      // FormData — без JSON-preflight; Web3Forms так и рассчитан на client-side
+      const body = new FormData();
+      for (const [key, value] of Object.entries(payload)) {
+        body.append(key, value);
+      }
+
       const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify(payload),
+        body,
       });
       const data = (await res.json()) as { success?: boolean; message?: string };
       if (!res.ok || !data.success) {
