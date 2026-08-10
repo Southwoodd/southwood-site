@@ -7,6 +7,8 @@ import {
   staggerContainer,
   viewportOnce,
 } from '../motion/presets';
+import { ScrambleFace } from './ScramblePress';
+import { useHudScramble } from './useHudScramble';
 import './Cases.css';
 
 function ArrowIcon() {
@@ -26,6 +28,46 @@ function ArrowIcon() {
         strokeLinejoin="round"
       />
     </svg>
+  );
+}
+
+function CaseRow({
+  item,
+  reduce,
+}: {
+  item: {
+    title: string;
+    tag: string;
+    result: string;
+    href: string;
+  };
+  reduce: boolean | null;
+}) {
+  const { ref, replay } = useHudScramble(item.title);
+
+  return (
+    <Link
+      className="case-link"
+      to={item.href}
+      onMouseEnter={() => replay()}
+    >
+      <motion.div
+        className="container case-link__inner"
+        whileHover={reduce ? undefined : { x: 6 }}
+        transition={{ type: 'spring', stiffness: 380, damping: 28 }}
+      >
+        <div className="case-link__meta">
+          <span className="label case-link__tag">{item.tag}</span>
+          <span className="case-link__go" aria-hidden="true">
+            <ArrowIcon />
+          </span>
+        </div>
+        <h3 className="case-link__title">
+          <ScrambleFace text={item.title} liveRef={ref} />
+        </h3>
+        <p className="case-link__result">{item.result}</p>
+      </motion.div>
+    </Link>
   );
 }
 
@@ -59,22 +101,7 @@ export default function Cases() {
       >
         {items.map((item) => (
           <motion.div key={item.title} variants={slideIn}>
-            <Link className="case-link" to={item.href}>
-              <motion.div
-                className="container case-link__inner"
-                whileHover={reduce ? undefined : { x: 6 }}
-                transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-              >
-                <div className="case-link__meta">
-                  <span className="label case-link__tag">{item.tag}</span>
-                  <span className="case-link__go" aria-hidden="true">
-                    <ArrowIcon />
-                  </span>
-                </div>
-                <h3 className="case-link__title">{item.title}</h3>
-                <p className="case-link__result">{item.result}</p>
-              </motion.div>
-            </Link>
+            <CaseRow item={item} reduce={reduce} />
           </motion.div>
         ))}
       </motion.div>

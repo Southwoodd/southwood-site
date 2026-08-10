@@ -27,6 +27,9 @@ function parseRgba(color: string) {
 
 /** Светлая кнопка/фон → курсор чёрный; тёмная → жёлтый */
 function isLightUnderCursor(el: Element): boolean {
+  /* Жёлтая секция кейсов — всегда тёмный курсор */
+  if (el.closest('.section.cases, .case-link')) return true;
+
   let node: Element | null = el;
   while (node && node !== document.documentElement) {
     const bg = getComputedStyle(node).backgroundColor;
