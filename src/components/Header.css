@@ -22,21 +22,34 @@
 .header__brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
   flex-shrink: 1;
+  height: 100%;
   color: var(--on-accent);
 }
 
+/* Компактный знак: ~⅓ от прежнего scale=2 */
+.header .header__mark .brand-mark__svg {
+  width: 48px !important;
+  height: 12px !important;
+}
+
 .header__logo {
+  display: inline-flex;
+  align-items: center;
   font-weight: 700;
   font-size: 1.05rem;
+  line-height: 1;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--on-accent);
 }
 
 .header__name {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
   color: rgba(7, 7, 7, 0.55);
   white-space: nowrap;
   overflow: hidden;
@@ -46,15 +59,21 @@
 .header__nav {
   display: none;
   align-items: center;
+  align-self: stretch;
   gap: 24px;
   margin-left: 100px;
   margin-right: auto;
+  height: 100%;
 }
 
 .header__link {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
   font-family: var(--font-mono);
   font-size: 0.72rem;
   font-weight: 500;
+  line-height: 1;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--on-accent);
@@ -79,9 +98,11 @@
 .header__actions {
   display: flex;
   align-items: center;
+  align-self: stretch;
   gap: 10px;
   flex-shrink: 0;
   margin-left: auto;
+  height: 100%;
 }
 
 .header .btn.header__tg {
@@ -185,12 +206,5 @@ body.menu-open {
 @media (max-width: 899px) {
   .header__name {
     display: none;
-  }
-
-  /* На узком экране — 1:1 пиксели, чтобы не съедать шапку */
-  .header__mark :global(.brand-mark__svg),
-  .header .brand-mark__svg {
-    width: 72px !important;
-    height: 18px !important;
   }
 }
