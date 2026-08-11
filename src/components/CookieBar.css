@@ -1,0 +1,70 @@
+.cookie-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 80;
+  padding: 12px var(--pad-x) calc(12px + env(safe-area-inset-bottom, 0px));
+  background: var(--signal);
+  color: var(--on-accent);
+  border-top: 1px solid var(--on-accent);
+}
+
+.cookie-bar[hidden] {
+  display: none;
+}
+
+.cookie-bar__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  width: 100%;
+  max-width: 100%;
+}
+
+.cookie-bar__text {
+  margin: 0;
+  flex: 1 1 16rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  color: var(--on-accent);
+  text-wrap: pretty;
+}
+
+.cookie-bar__link {
+  color: var(--on-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.cookie-bar__link:hover {
+  opacity: 0.75;
+}
+
+.cookie-bar__link:focus-visible {
+  outline: 2px solid var(--on-accent);
+  outline-offset: 3px;
+}
+
+.cookie-bar .cookie-bar__btn {
+  flex-shrink: 0;
+  min-height: 40px;
+  padding: 8px 18px;
+  font-size: 0.72rem;
+  background: var(--on-accent);
+  color: var(--signal);
+  border-color: var(--on-accent);
+  box-shadow: none;
+}
+
+.cookie-bar .cookie-bar__btn:hover,
+.cookie-bar .cookie-bar__btn:focus-visible {
+  background: #121212;
+  color: var(--signal);
+  border-color: var(--on-accent);
+  box-shadow: none;
+}

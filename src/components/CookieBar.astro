@@ -1,0 +1,61 @@
+---
+/**
+ * Плашка про технические cookies.
+ * Показ один раз, пока пользователь не нажмёт «Понятно» (localStorage).
+ */
+import { content } from '../data/content.js';
+import './CookieBar.css';
+
+const { text, linkLabel, linkHref, accept } = content.cookies;
+const STORAGE_KEY = 'southwood_cookies_ok';
+---
+
+<div
+  class="cookie-bar"
+  id="cookie-bar"
+  role="dialog"
+  aria-label="Уведомление о cookies"
+  hidden
+  data-cookie-bar
+  data-storage-key={STORAGE_KEY}
+>
+  <div class="cookie-bar__inner">
+    <p class="cookie-bar__text">
+      {text}{' '}
+      <a class="cookie-bar__link" href={linkHref}>{linkLabel}</a>
+    </p>
+    <button class="btn btn--primary cookie-bar__btn" type="button" data-cookie-accept>
+      {accept}
+    </button>
+  </div>
+</div>
+
+<script>
+  function initCookieBar() {
+    const bar = document.querySelector<HTMLElement>('[data-cookie-bar]');
+    if (!bar || bar.dataset.ready) return;
+    bar.dataset.ready = '1';
+
+    const key = bar.dataset.storageKey || 'southwood_cookies_ok';
+    try {
+      if (localStorage.getItem(key) === '1') return;
+    } catch {
+      /* private mode — всё равно покажем */
+    }
+
+    bar.hidden = false;
+
+    const accept = bar.querySelector<HTMLButtonElement>('[data-cookie-accept]');
+    accept?.addEventListener('click', () => {
+      try {
+        localStorage.setItem(key, '1');
+      } catch {
+        /* ignore */
+      }
+      bar.hidden = true;
+    });
+  }
+
+  initCookieBar();
+  document.addEventListener('astro:page-load', initCookieBar);
+</script>

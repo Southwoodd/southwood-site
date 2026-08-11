@@ -575,6 +575,13 @@ export const content = {
     privacyHref: '/privacy',
   },
 
+  cookies: {
+    text: 'Сайт использует технические cookies для корректной работы страниц.',
+    linkLabel: 'Подробнее',
+    linkHref: '/privacy#cookies',
+    accept: 'Понятно',
+  },
+
   legal: {
     privacyTitle: 'Политика конфиденциальности и обработки персональных данных',
     seoTitle:
