@@ -48,12 +48,12 @@
 }
 
 .about__photo-mark {
-  font-size: clamp(3rem, 12vw, 5rem);
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  line-height: 1;
-  color: var(--signal);
-  text-shadow: 0 0 40px rgba(234, 255, 0, 0.2);
+  display: block;
+  width: min(72%, 280px);
+  height: auto;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  filter: drop-shadow(0 0 28px rgba(234, 255, 0, 0.22));
 }
 
 .about__copy {

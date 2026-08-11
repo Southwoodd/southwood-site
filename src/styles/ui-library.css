@@ -32,13 +32,24 @@
 }
 
 .lib-nav__brand {
-  display: inline-block;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
   margin-bottom: 20px;
   font-family: var(--font-mono);
   font-size: var(--mono-label);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink-soft);
+}
+
+.lib-nav__mark {
+  display: block;
+  height: 14px;
+  width: auto;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
 }
 
 .lib-nav__brand:hover {

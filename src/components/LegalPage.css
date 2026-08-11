@@ -5,7 +5,8 @@
 }
 
 .legal-page__inner {
-  max-width: 720px;
+  max-width: none;
+  width: 100%;
   margin-inline: 0;
   text-align: left;
 }

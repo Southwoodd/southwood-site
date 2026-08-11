@@ -1,5 +1,6 @@
 ---
 import { content } from '../data/content.js';
+import BrandMark from './BrandMark.astro';
 import './Footer.css';
 
 const {
@@ -19,6 +20,9 @@ const {
 <footer class="site-footer" aria-label="Подвал">
   <div class="container site-footer__inner">
     <div class="site-footer__brand">
+      <a class="site-footer__logo" href="/" aria-label="Southwood">
+        <BrandMark variant="signal" class="site-footer__mark" />
+      </a>
       <p class="site-footer__name">{name}</p>
       <p class="site-footer__site">{site}</p>
     </div>

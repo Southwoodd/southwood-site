@@ -1,5 +1,6 @@
 ---
 import { content } from '../data/content.js';
+import BrandMark from './BrandMark.astro';
 import Reveal from './Reveal.astro';
 import './About.css';
 
@@ -34,7 +35,7 @@ const { num, h2, text, linkLabel, linkHref, photoAlt, photoSrc } = content.about
               aria-label={photoAlt}
             >
               <span class="label">/ Photo</span>
-              <span class="about__photo-mark" aria-hidden="true">SW</span>
+              <BrandMark variant="signal" class="about__photo-mark" />
             </div>
           )
         }

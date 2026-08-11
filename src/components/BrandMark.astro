@@ -1,0 +1,26 @@
+---
+/**
+ * Пиксельный знак Southwood (× □ ○ △).
+ * variant: on-yellow — чёрные пиксели для жёлтого хедера;
+ *          signal — жёлтые пиксели для тёмного фона.
+ */
+interface Props {
+  variant?: 'on-yellow' | 'signal';
+  class?: string;
+}
+
+const { variant = 'signal', class: className = '' } = Astro.props;
+const src =
+  variant === 'on-yellow'
+    ? '/logo-pixel-on-yellow.svg'
+    : '/logo-pixel.svg';
+---
+
+<img
+  class:list={['brand-mark', className]}
+  src={src}
+  alt=""
+  width="72"
+  height="18"
+  decoding="async"
+/>
