@@ -21,36 +21,27 @@
 
 .header__brand {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 3px;
   min-width: 0;
   flex-shrink: 1;
   height: 100%;
   color: var(--on-accent);
 }
 
-/* Компактный знак: ~⅓ от прежнего scale=2 */
+/* Компактный знак над именем */
 .header .header__mark .brand-mark__svg {
   width: 48px !important;
   height: 12px !important;
 }
 
-.header__logo {
-  display: inline-flex;
-  align-items: center;
-  font-weight: 700;
-  font-size: 1.05rem;
-  line-height: 1;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--on-accent);
-}
-
 .header__name {
-  display: inline-flex;
-  align-items: center;
+  display: block;
+  max-width: 100%;
   line-height: 1;
-  color: rgba(7, 7, 7, 0.55);
+  color: var(--on-accent);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -199,12 +190,6 @@ body.menu-open {
 
   .header__burger,
   .header__mobile {
-    display: none;
-  }
-}
-
-@media (max-width: 899px) {
-  .header__name {
     display: none;
   }
 }
