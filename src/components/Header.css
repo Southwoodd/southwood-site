@@ -28,15 +28,6 @@
   color: var(--on-accent);
 }
 
-.header__mark {
-  display: block;
-  width: auto;
-  height: 16px;
-  flex-shrink: 0;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
-}
-
 .header__logo {
   font-weight: 700;
   font-size: 1.05rem;
@@ -194,5 +185,12 @@ body.menu-open {
 @media (max-width: 899px) {
   .header__name {
     display: none;
+  }
+
+  /* На узком экране — 1:1 пиксели, чтобы не съедать шапку */
+  .header__mark :global(.brand-mark__svg),
+  .header .brand-mark__svg {
+    width: 72px !important;
+    height: 18px !important;
   }
 }

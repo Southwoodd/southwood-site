@@ -1,26 +1,57 @@
 ---
 /**
- * Пиксельный знак Southwood (× □ ○ △).
- * variant: on-yellow — чёрные пиксели для жёлтого хедера;
- *          signal — жёлтые пиксели для тёмного фона.
+ * Пиксельный знак Southwood (× □ ○ △) — inline SVG, без размытия.
+ * variant: on-yellow — чёрные пиксели на жёлтом хедере;
+ *          signal — жёлтые на тёмном.
  */
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
 interface Props {
   variant?: 'on-yellow' | 'signal';
   class?: string;
+  /** Множитель пикселя: 1 = 72×18, 2 = 144×36 */
+  scale?: 1 | 2;
 }
 
-const { variant = 'signal', class: className = '' } = Astro.props;
-const src =
+const { variant = 'signal', class: className = '', scale = 1 } = Astro.props;
+
+const file =
   variant === 'on-yellow'
-    ? '/logo-pixel-on-yellow.svg'
-    : '/logo-pixel.svg';
+    ? 'logo-pixel-on-yellow.svg'
+    : 'logo-pixel.svg';
+
+const raw = readFileSync(resolve('public', file), 'utf-8');
+// Убираем фиксированные width/height — размер задаём CSS
+const svg = raw
+  .replace(/\swidth="[^"]*"/, '')
+  .replace(/\sheight="[^"]*"/, '')
+  .replace(
+    '<svg ',
+    '<svg class="brand-mark__svg" aria-hidden="true" focusable="false" ',
+  );
+
+const w = 72 * scale;
+const h = 18 * scale;
 ---
 
-<img
+<span
   class:list={['brand-mark', className]}
-  src={src}
-  alt=""
-  width="72"
-  height="18"
-  decoding="async"
+  style={`--brand-w:${w}px;--brand-h:${h}px`}
+  set:html={svg}
 />
+
+<style>
+  .brand-mark {
+    display: inline-flex;
+    flex-shrink: 0;
+    line-height: 0;
+  }
+
+  .brand-mark :global(.brand-mark__svg) {
+    display: block;
+    width: var(--brand-w);
+    height: var(--brand-h);
+    shape-rendering: crispEdges;
+  }
+</style>

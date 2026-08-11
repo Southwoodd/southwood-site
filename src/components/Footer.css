@@ -22,14 +22,6 @@
   color: var(--signal);
 }
 
-.site-footer__mark {
-  display: block;
-  width: auto;
-  height: 18px;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
-}
-
 .site-footer__name {
   margin: 0;
   font-size: clamp(1.1rem, 2vw, 1.35rem);

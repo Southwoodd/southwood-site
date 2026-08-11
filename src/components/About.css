@@ -47,12 +47,10 @@
   color: var(--ink-soft);
 }
 
-.about__photo-mark {
-  display: block;
+.about__photo-mark .brand-mark__svg {
   width: min(72%, 280px);
   height: auto;
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
+  max-width: 280px;
   filter: drop-shadow(0 0 28px rgba(234, 255, 0, 0.22));
 }
 
