@@ -5,7 +5,15 @@
 .final-cta__layout {
   display: grid;
   gap: clamp(28px, 4vw, 48px);
-  max-width: 920px;
+  /* Не ограничиваем .container — иначе margin:auto центрирует весь блок */
+  max-width: none;
+  text-align: left;
+}
+
+.final-cta__intro {
+  max-width: 40rem;
+  margin-inline: 0;
+  text-align: left;
 }
 
 .final-cta__intro h2 {

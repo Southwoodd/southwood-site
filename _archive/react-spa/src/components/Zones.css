@@ -1,0 +1,139 @@
+.zones__head {
+  display: grid;
+  gap: 12px;
+  padding-bottom: clamp(28px, 4vw, 48px);
+}
+
+.zones__num {
+  color: var(--ink-soft);
+}
+
+.zones__num::before {
+  content: '/ ';
+}
+
+.zones__head-copy {
+  display: grid;
+  gap: 16px;
+  max-width: 40rem;
+}
+
+.zones__lead {
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: clamp(0.9rem, 1.3vw, 1rem);
+  line-height: 1.55;
+  text-wrap: pretty;
+}
+
+.zones__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.zone-card {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--line);
+  background: var(--panel-solid);
+  transition: border-color 0.2s ease;
+}
+
+.zone-card:hover {
+  border-color: var(--line-strong);
+}
+
+.zone-card__top {
+  display: grid;
+  gap: 12px;
+  padding: clamp(18px, 3vw, 24px);
+  border-bottom: 1px solid var(--line);
+  border-left: 3px solid var(--signal);
+}
+
+.zone-card__n {
+  color: var(--ink-dim);
+}
+
+.zone-card__title {
+  margin: 0;
+  font-size: clamp(1.25rem, 2.4vw, 1.65rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.zone-card__body {
+  display: grid;
+  gap: 0;
+  flex: 1;
+}
+
+.zone-card__step {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: clamp(14px, 2.2vw, 18px) clamp(18px, 3vw, 24px);
+  border-bottom: 1px solid var(--line);
+}
+
+.zone-card__step:last-child {
+  border-bottom: 0;
+}
+
+.zone-card__step .label {
+  color: var(--ink-dim);
+}
+
+.zone-card__step p {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: clamp(0.9rem, 1.15vw, 1rem);
+  line-height: 1.55;
+  color: rgba(234, 255, 0, 0.82);
+  text-wrap: pretty;
+}
+
+.zone-card__step--result {
+  background: rgba(234, 255, 0, 0.04);
+}
+
+.zone-card__step--result p {
+  color: var(--signal);
+  font-weight: 500;
+}
+
+@media (min-width: 900px) {
+  .zones__head {
+    grid-template-columns: 4rem minmax(0, 1fr);
+    column-gap: clamp(24px, 4vw, 48px);
+    align-items: start;
+  }
+
+  .zones__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .zone-card {
+    min-height: 100%;
+  }
+}
+
+@media (min-width: 1280px) and (min-height: 900px) {
+  .zones__grid {
+    gap: 20px;
+  }
+
+  .zone-card__title {
+    font-size: clamp(1.4rem, 1.8vw, 1.75rem);
+  }
+}

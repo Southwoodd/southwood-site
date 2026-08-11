@@ -1,0 +1,61 @@
+---
+import { content } from '../data/content.js';
+import Reveal from './Reveal.astro';
+import './About.css';
+
+const { num, h2, text, linkLabel, linkHref, photoAlt, photoSrc } = content.about;
+---
+
+<section class="section about" id="about" aria-labelledby="about-title">
+  <div class="container">
+    <Reveal>
+      <header class="about__intro">
+        <p class="label about__num">{num}</p>
+        <h2 id="about-title" class="about__title">{h2}</h2>
+      </header>
+    </Reveal>
+
+    <div class="about__layout">
+      <Reveal className="about__media">
+        {
+          photoSrc ? (
+            <img
+              class="about__photo"
+              src={photoSrc}
+              alt={photoAlt}
+              width="1200"
+              height="1200"
+              decoding="async"
+            />
+          ) : (
+            <div
+              class="about__photo about__photo--placeholder"
+              role="img"
+              aria-label={photoAlt}
+            >
+              <span class="label">/ Photo</span>
+              <span class="about__photo-mark" aria-hidden="true">SW</span>
+            </div>
+          )
+        }
+      </Reveal>
+
+      <div class="about__copy">
+        <Reveal>
+          <p class="about__text">{text}</p>
+        </Reveal>
+        <Reveal>
+          <a
+            class="about__link"
+            href={linkHref}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span>{linkLabel}</span>
+            <span class="about__link-arrow" aria-hidden="true">→</span>
+          </a>
+        </Reveal>
+      </div>
+    </div>
+  </div>
+</section>

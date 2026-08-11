@@ -1,0 +1,50 @@
+---
+/**
+ * Политика конфиденциальности — тексты из content.legal
+ */
+import Base from '../layouts/Base.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import LeadRoot from '../components/LeadRoot';
+import { content } from '../data/content.js';
+import '../components/LegalPage.css';
+
+const { privacyTitle, seoTitle, seoDescription, updated, sections } =
+  content.legal;
+const title = seoTitle;
+const description = seoDescription;
+---
+
+<Base title={title} description={description}>
+  <LeadRoot client:load />
+  <Header />
+  <main class="legal-page">
+    <article class="container legal-page__inner">
+      <p class="legal-page__back">
+        <a href="/">На главную</a>
+      </p>
+      <h1 class="legal-page__title">{privacyTitle}</h1>
+      <p class="legal-page__updated">Редакция от {updated}</p>
+
+      {
+        sections.map((section) => (
+          <section
+            id={section.id}
+            class="legal-block"
+            aria-labelledby={`legal-${section.id}`}
+          >
+            <h2 id={`legal-${section.id}`} class="legal-block__title">
+              {section.title}
+            </h2>
+            {
+              section.paragraphs.map((p) => (
+                <p class="legal-block__text">{p}</p>
+              ))
+            }
+          </section>
+        ))
+      }
+    </article>
+  </main>
+  <Footer />
+</Base>

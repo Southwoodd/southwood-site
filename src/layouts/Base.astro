@@ -1,0 +1,49 @@
+---
+/**
+ * Базовый каркас: шрифты, стили, SEO-мета.
+ */
+import Seo from '../components/Seo.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Канонический URL; по умолчанию — текущий путь на southwood.pw */
+  url?: string;
+  image?: string;
+  noindex?: boolean;
+}
+
+const { title, description, image, noindex = false } = Astro.props;
+const url =
+  Astro.props.url ??
+  new URL(Astro.url.pathname, Astro.site ?? 'https://southwood.pw').href;
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#070707" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Oxanium:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <meta name="generator" content={Astro.generator} />
+    <Seo
+      title={title}
+      description={description}
+      url={url}
+      image={image}
+      noindex={noindex}
+    />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

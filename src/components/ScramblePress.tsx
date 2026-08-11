@@ -6,7 +6,7 @@ import {
 import { useHudScramble } from './useHudScramble';
 
 type Props = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'> & {
-  children: string;
+  label: string;
 };
 
 export function ScrambleFace({
@@ -21,22 +21,24 @@ export function ScrambleFace({
       <span className="scramble-btn__ghost" aria-hidden="true">
         {text}
       </span>
-      <span className="scramble-btn__live" ref={liveRef} aria-hidden="true" />
+      {/* Начальный текст для SSR; use-scramble перезапишет через ref */}
+      <span className="scramble-btn__live" ref={liveRef} aria-hidden="true">
+        {text}
+      </span>
     </span>
   );
 }
 
-/** Кнопка (&lt;button&gt;) со scramble на hover. */
+/** Кнопка (<button>) со scramble на hover. */
 export default function ScramblePress({
-  children,
+  label,
   className = '',
   onMouseEnter,
   onMouseLeave,
   type = 'button',
   ...rest
 }: Props) {
-  const text = children;
-  const { ref, replay } = useHudScramble(text);
+  const { ref, replay } = useHudScramble(label);
 
   const handleEnter = (e: MouseEvent<HTMLButtonElement>) => {
     if (!rest.disabled) replay();
@@ -50,9 +52,9 @@ export default function ScramblePress({
       className={className}
       onMouseEnter={handleEnter}
       onMouseLeave={onMouseLeave}
-      aria-label={rest['aria-label'] ?? text}
+      aria-label={rest['aria-label'] ?? label}
     >
-      <ScrambleFace text={text} liveRef={ref} />
+      <ScrambleFace text={label} liveRef={ref} />
     </button>
   );
 }

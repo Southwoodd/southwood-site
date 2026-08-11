@@ -5,7 +5,6 @@ import {
   useRef,
   useState,
 } from 'react';
-import { Link } from 'react-router-dom';
 import { content } from '../data/content.js';
 import ScramblePress from './ScramblePress';
 import './LeadForm.css';
@@ -23,7 +22,14 @@ const ACCESS_KEY = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY as
   | string
   | undefined;
 
-export default function LeadForm() {
+type Props = {
+  /** Предвыбранная тема («О чем речь») */
+  presetTopic?: string;
+  /** Тариф с карточки — уходит отдельным полем в письме */
+  tariff?: string;
+};
+
+export default function LeadForm({ presetTopic, tariff }: Props) {
   const {
     fields,
     topicLabel,
@@ -60,7 +66,11 @@ export default function LeadForm() {
     text: string;
   } | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [topic, setTopic] = useState(topics[0]?.value ?? 'Диагностика');
+  const initialTopic =
+    presetTopic && topics.some((t: { value: string }) => t.value === presetTopic)
+      ? presetTopic
+      : (topics[0]?.value ?? 'Диагностика');
+  const [topic, setTopic] = useState(initialTopic);
   const [consent, setConsent] = useState(false);
   const [values, setValues] = useState<Record<string, string>>(() =>
     Object.fromEntries(fields.map((f: FieldDef) => [f.name, ''])),
@@ -170,7 +180,8 @@ export default function LeadForm() {
     const company = values.company?.trim() ?? '';
     const contact = values.contact?.trim() ?? '';
     const message = values.message?.trim() ?? '';
-    const subject = `Заявка с southwood.pw — ${topic} — ${name}`;
+    const tariffLabel = tariff?.trim() || topic;
+    const subject = `Заявка с southwood.pw — ${tariffLabel} — ${name}`;
 
     const post = document.createElement('form');
     post.method = 'POST';
@@ -186,6 +197,7 @@ export default function LeadForm() {
       Имя: name,
       Компания: company,
       'Telegram или телефон': contact,
+      Тариф: tariffLabel,
       'О чем речь': topic,
       'Кратко о задаче': message || '—',
       'Согласие на обработку персональных данных': 'Да',
@@ -249,15 +261,14 @@ export default function LeadForm() {
           <ScramblePress
             type="button"
             className="btn btn--ghost"
+            label={resetLabel}
             onClick={() => {
               setStatus('idle');
               setBanner('');
               setToast(null);
               setConsent(false);
             }}
-          >
-            {resetLabel}
-          </ScramblePress>
+          />
         </div>
       ) : (
         <form
@@ -267,6 +278,12 @@ export default function LeadForm() {
           ref={formRef}
           aria-busy={busy}
         >
+          {tariff ? (
+            <p className="label lead-form__tariff">
+              / Заявка: {tariff}
+            </p>
+          ) : null}
+
           <div className="lead-form__grid">
             {(fields as FieldDef[]).map((field) => {
               const id = `${formId}-${field.name}`;
@@ -422,9 +439,9 @@ export default function LeadForm() {
               />
               <span>
                 {consentLabel}{' '}
-                <Link to={consentHref} target="_blank" rel="noopener noreferrer">
+                <a href={consentHref} target="_blank" rel="noopener noreferrer">
                   {consentLinkLabel}
-                </Link>
+                </a>
                 <span className="lead-form__req" aria-hidden="true">
                   *
                 </span>
@@ -464,9 +481,8 @@ export default function LeadForm() {
             type="submit"
             className="btn btn--primary lead-form__submit"
             disabled={busy}
-          >
-            {busy ? sendingLabel : cta}
-          </ScramblePress>
+            label={busy ? sendingLabel : cta}
+          />
         </form>
       )}
     </>

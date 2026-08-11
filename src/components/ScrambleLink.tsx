@@ -1,22 +1,21 @@
-import { type MouseEvent } from 'react';
-import { Link, type LinkProps } from 'react-router-dom';
+import { type AnchorHTMLAttributes, type MouseEvent } from 'react';
 import { ScrambleFace } from './ScramblePress';
 import { useHudScramble } from './useHudScramble';
 
-type Props = Omit<LinkProps, 'children'> & {
-  children: string;
+type Props = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'children'> & {
+  /** Текст ссылки — prop (Astro → React) */
+  label: string;
 };
 
-/** Ссылка react-router со scramble на hover. */
+/** Ссылка со scramble на hover (без react-router). */
 export default function ScrambleLink({
-  children,
+  label,
   className = '',
   onMouseEnter,
   onMouseLeave,
   ...rest
 }: Props) {
-  const text = children;
-  const { ref, replay } = useHudScramble(text);
+  const { ref, replay } = useHudScramble(label);
 
   const handleEnter = (e: MouseEvent<HTMLAnchorElement>) => {
     replay();
@@ -24,14 +23,14 @@ export default function ScrambleLink({
   };
 
   return (
-    <Link
+    <a
       {...rest}
       className={className}
       onMouseEnter={handleEnter}
       onMouseLeave={onMouseLeave}
-      aria-label={text}
+      aria-label={label}
     >
-      <ScrambleFace text={text} liveRef={ref} />
-    </Link>
+      <ScrambleFace text={label} liveRef={ref} />
+    </a>
   );
 }

@@ -7,15 +7,23 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { useLocation } from 'react-router-dom';
+
+/** С каким тарифом / темой открыли форму */
+export type LeadIntent = {
+  topic?: string;
+  tariff?: string;
+};
 
 type LeadModalContextValue = {
   isOpen: boolean;
-  openLeadModal: () => void;
+  intent: LeadIntent;
+  openLeadModal: (intent?: LeadIntent) => void;
   closeLeadModal: () => void;
 };
 
 const LeadModalContext = createContext<LeadModalContextValue | null>(null);
+
+const OPEN_EVENT = 'southwood:open-lead';
 
 export function useLeadModal() {
   const ctx = useContext(LeadModalContext);
@@ -25,30 +33,55 @@ export function useLeadModal() {
   return ctx;
 }
 
-export function LeadModalProvider({ children }: { children: ReactNode }) {
+/** Открыть модалку из любой острова / разметки. */
+export function requestOpenLeadModal(intent: LeadIntent = {}) {
+  window.dispatchEvent(
+    new CustomEvent<LeadIntent>(OPEN_EVENT, { detail: intent }),
+  );
+}
+
+export function LeadModalProvider({ children }: { children?: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
-  const { hash, search } = useLocation();
+  const [intent, setIntent] = useState<LeadIntent>({});
 
-  const openLeadModal = useCallback(() => setIsOpen(true), []);
-  const closeLeadModal = useCallback(() => setIsOpen(false), []);
+  const openLeadModal = useCallback((next: LeadIntent = {}) => {
+    setIntent(next);
+    setIsOpen(true);
+  }, []);
+
+  const closeLeadModal = useCallback(() => {
+    setIsOpen(false);
+  }, []);
 
   useEffect(() => {
-    const params = new URLSearchParams(search);
-    if (params.get('sent') === '1') {
-      setIsOpen(true);
-    }
-  }, [search]);
+    const syncFromUrl = () => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('sent') === '1') {
+        setIsOpen(true);
+      }
+      const id = window.location.hash.replace(/^#/, '');
+      if (id === 'final-cta' || id === 'lead') {
+        setIsOpen(true);
+      }
+    };
 
-  useEffect(() => {
-    const id = hash.replace(/^#/, '');
-    if (id === 'final-cta' || id === 'lead') {
-      setIsOpen(true);
-    }
-  }, [hash]);
+    const onOpen = (e: Event) => {
+      const detail = (e as CustomEvent<LeadIntent>).detail ?? {};
+      openLeadModal(detail);
+    };
+
+    syncFromUrl();
+    window.addEventListener('hashchange', syncFromUrl);
+    window.addEventListener(OPEN_EVENT, onOpen);
+    return () => {
+      window.removeEventListener('hashchange', syncFromUrl);
+      window.removeEventListener(OPEN_EVENT, onOpen);
+    };
+  }, [openLeadModal]);
 
   const value = useMemo(
-    () => ({ isOpen, openLeadModal, closeLeadModal }),
-    [isOpen, openLeadModal, closeLeadModal],
+    () => ({ isOpen, intent, openLeadModal, closeLeadModal }),
+    [isOpen, intent, openLeadModal, closeLeadModal],
   );
 
   return (

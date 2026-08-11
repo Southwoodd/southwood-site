@@ -1,0 +1,46 @@
+---
+/**
+ * JSON-LD для главной (Person + ProfessionalService + WebSite).
+ * Говорит поисковикам и ИИ, кто такой Southwood / Сергей Воробьёв.
+ * Подключать только на index — не дублировать на внутренних страницах.
+ */
+import { content } from '../data/content.js';
+
+const { person, org, website, sameAs } = content.jsonLd;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': 'https://southwood.pw/#person',
+      name: person.name,
+      url: 'https://southwood.pw',
+      jobTitle: person.jobTitle,
+      description: person.description,
+      worksFor: { '@id': 'https://southwood.pw/#org' },
+      sameAs,
+    },
+    {
+      '@type': 'ProfessionalService',
+      '@id': 'https://southwood.pw/#org',
+      name: org.name,
+      url: 'https://southwood.pw',
+      description: org.description,
+      founder: { '@id': 'https://southwood.pw/#person' },
+      areaServed: 'RU',
+      knowsAbout: org.knowsAbout,
+    },
+    {
+      '@type': 'WebSite',
+      '@id': 'https://southwood.pw/#website',
+      url: 'https://southwood.pw',
+      name: website.name,
+      publisher: { '@id': 'https://southwood.pw/#person' },
+      inLanguage: 'ru-RU',
+    },
+  ],
+};
+---
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />

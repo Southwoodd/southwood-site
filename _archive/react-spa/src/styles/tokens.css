@@ -1,0 +1,49 @@
+:root {
+  /* HUD / интерфейс будущего — чёрный + signal yellow */
+  --bg: #070707;
+  --bg-elevated: #0e0e0e;
+  --surface: #0a0a0a;
+  --ink: #eaff00;
+  --ink-soft: rgba(234, 255, 0, 0.78);
+  --ink-dim: rgba(234, 255, 0, 0.48);
+  --line: rgba(234, 255, 0, 0.2);
+  --line-strong: rgba(234, 255, 0, 0.4);
+  --accent: #eaff00;
+  --on-accent: #070707;
+  --signal: #eaff00;
+  --panel: rgba(12, 12, 10, 0.92);
+  --panel-solid: #0c0c0a;
+
+  /* Шрифты: technical display + mono readout */
+  --font-sans: 'Oxanium', 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --h1: clamp(2.4rem, 7vw, 5.2rem);
+  --h2: clamp(1.7rem, 4vw, 3rem);
+  --h3: 1.2rem;
+  --body: 1.02rem;
+  --mono-label: 0.68rem;
+
+  --pad-x: 10px;
+  --maxw: 100%;
+  --section-y: clamp(64px, 10vw, 112px);
+  --radius: 0;
+  --header-h: 52px;
+  --grid-size: 48px;
+
+  /* Сетка с крестиками — едва заметный HUD-слой */
+  --hud-grid:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M24 0v48M0 24h48' stroke='%23eaff00' stroke-opacity='0.028' stroke-width='1'/%3E%3Cpath d='M22 24h4M24 22v4' stroke='%23eaff00' stroke-opacity='0.1' stroke-width='1.2' stroke-linecap='square'/%3E%3Cpath d='M0 0l48 48M48 0L0 48' stroke='%23eaff00' stroke-opacity='0.015' stroke-width='1' stroke-dasharray='2 6'/%3E%3C/svg%3E");
+}
+
+@media (min-width: 768px) {
+  :root {
+    --pad-x: 50px;
+  }
+}
+
+@media (min-width: 1080px) {
+  :root {
+    --pad-x: 100px;
+  }
+}

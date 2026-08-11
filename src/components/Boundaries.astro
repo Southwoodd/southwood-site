@@ -1,0 +1,60 @@
+---
+import { content } from '../data/content.js';
+import Reveal from './Reveal.astro';
+import './Boundaries.css';
+
+const {
+  num,
+  h2,
+  notDoingLabel,
+  notWorkingLabel,
+  notDoing,
+  notWorking,
+  note,
+} = content.boundaries;
+---
+
+<section
+  class="section boundaries"
+  id="boundaries"
+  aria-labelledby="boundaries-title"
+>
+  <div class="container">
+    <Reveal>
+      <header class="boundaries__intro">
+        <p class="label boundaries__num">{num}</p>
+        <h2 id="boundaries-title">{h2}</h2>
+      </header>
+    </Reveal>
+
+    <div class="boundaries__grid">
+      <Reveal>
+        <div class="boundaries-panel">
+          <h3 class="boundaries-panel__title">
+            <span class="label">01</span>
+            {notDoingLabel}
+          </h3>
+          <ul class="boundaries-panel__list">
+            {notDoing.map((item) => <li>{item}</li>)}
+          </ul>
+        </div>
+      </Reveal>
+
+      <Reveal>
+        <div class="boundaries-panel boundaries-panel--accent">
+          <h3 class="boundaries-panel__title">
+            <span class="label">02</span>
+            {notWorkingLabel}
+          </h3>
+          <ul class="boundaries-panel__list">
+            {notWorking.map((item) => <li>{item}</li>)}
+          </ul>
+        </div>
+      </Reveal>
+    </div>
+
+    <Reveal>
+      <p class="boundaries__note">{note}</p>
+    </Reveal>
+  </div>
+</section>

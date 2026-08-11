@@ -5,6 +5,11 @@
   width: 100%;
 }
 
+.lead-form__tariff {
+  margin: 0;
+  color: var(--signal);
+}
+
 .lead-form__grid {
   display: grid;
   gap: 16px;

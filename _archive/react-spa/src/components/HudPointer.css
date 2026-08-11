@@ -1,0 +1,117 @@
+.hud-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 14000;
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
+  transition: opacity 0.12s ease;
+  mix-blend-mode: normal;
+  --hud-cursor: var(--signal);
+}
+
+.hud-cursor[data-surface='ink'] {
+  --hud-cursor: var(--on-accent);
+}
+
+.hud-cursor__cross {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  flex-shrink: 0;
+}
+
+.hud-cursor__box {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--hud-cursor);
+  opacity: 0.85;
+  box-shadow: 0 0 8px color-mix(in srgb, var(--hud-cursor) 25%, transparent);
+}
+
+.hud-cursor__h,
+.hud-cursor__v {
+  position: absolute;
+  background: var(--hud-cursor);
+  opacity: 0.9;
+}
+
+.hud-cursor__h {
+  top: 50%;
+  left: -4px;
+  right: -4px;
+  height: 1px;
+  transform: translateY(-50%);
+}
+
+.hud-cursor__v {
+  left: 50%;
+  top: -4px;
+  bottom: -4px;
+  width: 1px;
+  transform: translateX(-50%);
+}
+
+.hud-cursor__core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 2px;
+  transform: translate(-50%, -50%);
+  background: var(--hud-cursor);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--hud-cursor) 55%, transparent);
+}
+
+.hud-cursor__coords {
+  margin-top: -1px;
+  font-family: var(--font-mono);
+  font-size: 7px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hud-cursor);
+  white-space: nowrap;
+  text-shadow: 0 0 8px color-mix(in srgb, var(--hud-cursor) 35%, transparent);
+  opacity: 0.78;
+}
+
+/* На кнопке — только точка, цвет инверсный к фону */
+.hud-cursor__pointer {
+  display: none;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 0;
+  background: var(--hud-cursor);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--hud-cursor) 35%, transparent),
+    0 0 10px color-mix(in srgb, var(--hud-cursor) 45%, transparent);
+  flex-shrink: 0;
+}
+
+.hud-cursor[data-state='dot'] .hud-cursor__cross,
+.hud-cursor[data-state='dot'] .hud-cursor__coords {
+  display: none;
+}
+
+.hud-cursor[data-state='dot'] .hud-cursor__pointer {
+  display: block;
+}
+
+html.hud-pointer,
+html.hud-pointer * {
+  cursor: none !important;
+}
+
+html.hud-pointer input,
+html.hud-pointer textarea,
+html.hud-pointer select,
+html.hud-pointer [contenteditable='true'] {
+  cursor: text !important;
+}

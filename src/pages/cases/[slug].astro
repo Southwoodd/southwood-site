@@ -1,0 +1,29 @@
+---
+/**
+ * Статические страницы кейсов: /cases/alfa-elite | meetflow | mono-coffee
+ */
+import Base from '../../layouts/Base.astro';
+import CasePage from '../../components/CasePage.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import LeadRoot from '../../components/LeadRoot';
+import { content } from '../../data/content.js';
+
+export function getStaticPaths() {
+  return Object.keys(content.casePages).map((slug) => ({
+    params: { slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const page = content.casePages[slug ?? ''];
+const title = page?.seoTitle ?? 'Кейс не найден — Southwood';
+const description = page?.seoDescription ?? content.meta.description;
+---
+
+<Base title={title} description={description}>
+  <LeadRoot client:load />
+  <Header />
+  <CasePage slug={slug ?? ''} />
+  <Footer />
+</Base>

@@ -1,0 +1,349 @@
+.lead-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.lead-form__grid {
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 720px) {
+  .lead-form__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 20px;
+  }
+
+  .lead-form__field--wide {
+    grid-column: 1 / -1;
+  }
+}
+
+.lead-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.lead-form__label {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: var(--mono-label);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.lead-form__req {
+  color: var(--signal);
+}
+
+.lead-form__opt {
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+  color: var(--ink-dim);
+  font-size: 0.62rem;
+}
+
+.lead-form input[type='text'],
+.lead-form input[type='tel'],
+.lead-form textarea {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--panel-solid);
+  color: var(--signal);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  line-height: 1.4;
+  outline: none;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.lead-form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.lead-form input::placeholder,
+.lead-form textarea::placeholder {
+  color: var(--ink-dim);
+}
+
+.lead-form input:focus-visible,
+.lead-form textarea:focus-visible {
+  border-color: var(--signal);
+  box-shadow: 0 0 0 1px var(--signal);
+}
+
+.lead-form input:disabled,
+.lead-form textarea:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.lead-form__field.is-invalid input,
+.lead-form__field.is-invalid textarea {
+  border-color: #ff5a5a;
+  box-shadow: 0 0 0 1px rgba(255, 90, 90, 0.35);
+}
+
+.lead-form__field-error {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: #ff8e8e;
+}
+
+.lead-form__topics {
+  gap: 12px;
+}
+
+.lead-form__topics.is-invalid .lead-form__topic-list {
+  outline: 1px solid rgba(255, 90, 90, 0.55);
+  outline-offset: 4px;
+}
+
+.lead-form__topic-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.lead-form__topic {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.lead-form__topic:hover {
+  border-color: var(--line-strong);
+  color: var(--signal);
+}
+
+.lead-form__topic:has(input:checked) {
+  background: var(--signal);
+  border-color: var(--signal);
+  color: var(--on-accent);
+}
+
+.lead-form__topic input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.lead-form__topic:focus-within {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+
+.lead-form__hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.lead-form__error {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: #ff8e8e;
+}
+
+.lead-form__error a {
+  color: var(--signal);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.lead-form__submit {
+  width: fit-content;
+  min-width: 220px;
+}
+
+.lead-form__submit:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.lead-form__consent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lead-form__consent-label {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 12px;
+  align-items: start;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+}
+
+.lead-form__consent-label input {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--signal);
+  cursor: pointer;
+}
+
+.lead-form__consent-label a {
+  color: var(--signal);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.lead-form__consent-label a:hover {
+  color: #f5ff66;
+}
+
+.lead-form__consent.is-invalid .lead-form__consent-label {
+  color: #ffb4b4;
+}
+
+.lead-form--success {
+  gap: 14px;
+  padding: 28px 24px;
+  border: 1px solid var(--signal);
+  background: var(--panel-solid);
+  box-shadow: 0 0 40px rgba(234, 255, 0, 0.08);
+  outline: none;
+}
+
+.lead-form__success-title {
+  margin: 0;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--signal);
+}
+
+.lead-form__success-text {
+  margin: 0 0 8px;
+  max-width: 32rem;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.form-toast {
+  position: fixed;
+  z-index: 13000;
+  left: 50%;
+  bottom: max(20px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(520px, calc(100vw - 24px));
+  min-height: 52px;
+  padding: 12px 14px;
+  border: 1px solid var(--signal);
+  background: var(--panel-solid);
+  color: var(--signal);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  animation: form-toast-in 0.28s ease;
+}
+
+.form-toast--error {
+  border-color: #ff5a5a;
+  color: #ffb4b4;
+}
+
+.form-toast__mark {
+  flex-shrink: 0;
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid currentColor;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+}
+
+.form-toast__close {
+  margin-left: auto;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  min-width: 32px;
+  min-height: 32px;
+}
+
+.form-toast__close:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+
+@keyframes form-toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form-toast {
+    animation: none;
+  }
+}

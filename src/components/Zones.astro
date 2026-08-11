@@ -1,0 +1,49 @@
+---
+import { content } from '../data/content.js';
+import Reveal from './Reveal.astro';
+import './Zones.css';
+
+const { num, h2, intro, items } = content.zones;
+---
+
+<section class="section zones" id="directions" aria-labelledby="zones-title">
+  <Reveal>
+    <div class="container zones__head">
+      <p class="label zones__num">{num}</p>
+      <div class="zones__head-copy">
+        <h2 id="zones-title">{h2}</h2>
+        <p class="zones__lead">{intro}</p>
+      </div>
+    </div>
+  </Reveal>
+
+  <div class="container">
+    <ul class="zones__grid">
+      {
+        items.map((item) => (
+          <Reveal as="li" className="zone-card">
+            <div class="zone-card__top">
+              <span class="label zone-card__n">/ {item.n}</span>
+              <h3 class="zone-card__title">{item.title}</h3>
+            </div>
+
+            <div class="zone-card__body">
+              <div class="zone-card__step">
+                <span class="label">Боль</span>
+                <p>{item.pain}</p>
+              </div>
+              <div class="zone-card__step">
+                <span class="label">Собираю</span>
+                <p>{item.build}</p>
+              </div>
+              <div class="zone-card__step zone-card__step--result">
+                <span class="label">Результат</span>
+                <p>{item.result}</p>
+              </div>
+            </div>
+          </Reveal>
+        ))
+      }
+    </ul>
+  </div>
+</section>

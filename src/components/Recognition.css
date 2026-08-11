@@ -5,7 +5,9 @@
 
 .recognition__intro {
   max-width: 36rem;
+  margin-inline: 0;
   margin-bottom: clamp(20px, 3vw, 32px);
+  text-align: left;
 }
 
 .recognition__intro h2 {

@@ -6,21 +6,19 @@ import { ScrambleFace } from './ScramblePress';
 import { useHudScramble } from './useHudScramble';
 
 type Props = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'children'> & {
-  children: string;
+  /** Текст кнопки — prop, не children (Astro-острова сериализуют children плохо) */
+  label: string;
 };
 
-/**
- * Ссылка-кнопка со scramble на hover.
- */
+/** Ссылка-кнопка со scramble на hover. */
 export default function ScrambleButton({
-  children,
+  label,
   className = '',
   onMouseEnter,
   onMouseLeave,
   ...rest
 }: Props) {
-  const text = children;
-  const { ref, replay } = useHudScramble(text);
+  const { ref, replay } = useHudScramble(label);
 
   const handleEnter = (e: MouseEvent<HTMLAnchorElement>) => {
     replay();
@@ -33,9 +31,9 @@ export default function ScrambleButton({
       className={className}
       onMouseEnter={handleEnter}
       onMouseLeave={onMouseLeave}
-      aria-label={text}
+      aria-label={label}
     >
-      <ScrambleFace text={text} liveRef={ref} />
+      <ScrambleFace text={label} liveRef={ref} />
     </a>
   );
 }

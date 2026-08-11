@@ -1,24 +1,47 @@
-import { useEffect, useId, useRef } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { content } from '../data/content.js';
 import LeadForm from './LeadForm';
 import { useLeadModal } from './LeadModalContext';
 import './LeadModal.css';
 
+const CLOSE_MS = 320;
+
 export default function LeadModal() {
-  const { isOpen, closeLeadModal } = useLeadModal();
+  const { isOpen, closeLeadModal, intent } = useLeadModal();
   const { h2, sub, note, telegramHref, telegramLabel } = content.finalCta;
   const titleId = useId();
   const closeRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
+  const formKey = `${intent.tariff ?? ''}|${intent.topic ?? ''}`;
+
+  const [mounted, setMounted] = useState(false);
+  const [shown, setShown] = useState(false);
+
+  // Мягкий mount/unmount: сначала класс is-open, потом снятие из DOM
+  useEffect(() => {
+    if (isOpen) {
+      setMounted(true);
+      const id = window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => setShown(true));
+      });
+      return () => window.cancelAnimationFrame(id);
+    }
+
+    setShown(false);
+    const t = window.setTimeout(() => setMounted(false), CLOSE_MS);
+    return () => window.clearTimeout(t);
+  }, [isOpen]);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!mounted) return;
 
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     document.body.classList.add('lead-modal-open');
 
-    const t = window.setTimeout(() => closeRef.current?.focus(), 20);
+    const t = window.setTimeout(() => {
+      if (shown) closeRef.current?.focus();
+    }, 40);
 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -49,12 +72,15 @@ export default function LeadModal() {
       document.body.style.overflow = prevOverflow;
       document.body.classList.remove('lead-modal-open');
     };
-  }, [isOpen, closeLeadModal]);
+  }, [mounted, shown, closeLeadModal]);
 
-  if (!isOpen) return null;
+  if (!mounted) return null;
 
   return (
-    <div className="lead-modal" role="presentation">
+    <div
+      className={`lead-modal${shown ? ' is-open' : ''}`}
+      role="presentation"
+    >
       <button
         type="button"
         className="lead-modal__backdrop"
@@ -88,7 +114,11 @@ export default function LeadModal() {
         </div>
 
         <div className="lead-modal__body">
-          <LeadForm />
+          <LeadForm
+            key={formKey}
+            presetTopic={intent.topic}
+            tariff={intent.tariff}
+          />
           <p className="lead-modal__note">
             {note}{' '}
             <a href={telegramHref} target="_blank" rel="noopener noreferrer">

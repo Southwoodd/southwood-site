@@ -1,0 +1,103 @@
+---
+import { content } from '../data/content.js';
+import ScrambleButton from './ScrambleButton';
+import ScrambleLink from './ScrambleLink';
+import './Header.css';
+
+const { brand, name, nav, telegramLabel, telegramHref } = content.header;
+const pathname = Astro.url.pathname;
+
+/** Якоря с внутренних страниц ведут на главную */
+function resolveNavHref(href: string) {
+  if (!href.startsWith('#')) return href;
+  return pathname === '/' ? href : `/${href}`;
+}
+---
+
+<header class="header">
+  <div class="container header__inner">
+    <a class="header__brand" href="/" aria-label={`${brand}, ${name}`}>
+      <span class="header__logo">{brand}</span>
+      <span class="label header__name">{name}</span>
+    </a>
+
+    <nav class="header__nav" aria-label="Основная навигация">
+      {
+        nav.map((item) => (
+          <ScrambleLink
+            client:visible
+            className="header__link"
+            href={resolveNavHref(item.href)}
+            label={item.label}
+          />
+        ))
+      }
+    </nav>
+
+    <div class="header__actions">
+      <ScrambleButton
+        client:visible
+        className="btn btn--ghost header__tg"
+        href={telegramHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        label={telegramLabel}
+      />
+
+      <button
+        class="header__burger"
+        type="button"
+        aria-label="Открыть меню"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        data-header-burger
+      >
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="header__mobile" id="mobile-menu" hidden data-header-mobile>
+    <nav class="header__mobile-nav" aria-label="Мобильная навигация">
+      {
+        nav.map((item) => (
+          <a
+            class="header__mobile-link"
+            href={resolveNavHref(item.href)}
+            data-header-close
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    const burger = document.querySelector<HTMLButtonElement>('[data-header-burger]');
+    const mobile = document.querySelector<HTMLElement>('[data-header-mobile]');
+    if (!burger || !mobile || burger.dataset.ready) return;
+    burger.dataset.ready = '1';
+
+    const setOpen = (open: boolean) => {
+      mobile.hidden = !open;
+      burger.setAttribute('aria-expanded', String(open));
+      burger.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
+      document.body.classList.toggle('menu-open', open);
+    };
+
+    burger.addEventListener('click', () => {
+      setOpen(mobile.hidden);
+    });
+
+    mobile.querySelectorAll('[data-header-close]').forEach((link) => {
+      link.addEventListener('click', () => setOpen(false));
+    });
+  }
+
+  initHeader();
+  document.addEventListener('astro:page-load', initHeader);
+</script>

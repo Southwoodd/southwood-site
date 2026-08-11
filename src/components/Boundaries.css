@@ -1,6 +1,8 @@
 .boundaries__intro {
   max-width: 40rem;
+  margin-inline: 0;
   margin-bottom: clamp(28px, 4vw, 48px);
+  text-align: left;
 }
 
 .boundaries__num {

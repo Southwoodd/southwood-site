@@ -7,7 +7,9 @@
   display: grid;
   gap: 14px;
   max-width: 28rem;
+  margin-inline: 0;
   align-content: start;
+  text-align: left;
 }
 
 .faq__num {

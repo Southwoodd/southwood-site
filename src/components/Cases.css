@@ -9,7 +9,9 @@
 
 .cases__head {
   max-width: 36rem;
+  margin: 0;
   margin-bottom: clamp(36px, 5vw, 56px);
+  text-align: left;
 }
 
 .cases__num,

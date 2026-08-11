@@ -1,0 +1,121 @@
+---
+import { content } from '../data/content.js';
+import OpenLeadCta from './OpenLeadCta';
+import Reveal from './Reveal.astro';
+import ScrambleButton from './ScrambleButton';
+import './Hero.css';
+
+const h = content.hero;
+const card = h.card;
+
+const tickerWords = [
+  'Сайт',
+  'CRM',
+  'Боты',
+  'AI-агенты',
+  'Воронка',
+  'Документы',
+  'КП',
+  'Презентации',
+  'Регламенты',
+  'База знаний',
+  'Интеграции',
+  'Автоматизация',
+];
+
+const TICKER_REPEAT = 3;
+const tickerSegment = Array.from({ length: TICKER_REPEAT }, (_, lap) =>
+  tickerWords.map((word) => ({ word, key: `${lap}-${word}` })),
+).flat();
+
+const titleWords = h.h1.split(/\s+/);
+---
+
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="hero__glow" aria-hidden="true"></div>
+
+  <div class="container hero__grid">
+    <Reveal className="hero__copy">
+      <p class="label hero__label">/ {h.label}</p>
+      <h1 id="hero-title" class="hero__title">
+        {
+          titleWords.map((word, i) => (
+            <span class="hero__title-word">
+              {word}
+              {i < titleWords.length - 1 ? ' ' : ''}
+            </span>
+          ))
+        }
+      </h1>
+      <p class="lead hero__sub">{h.sub}</p>
+
+      <div class="hero__cta">
+        <OpenLeadCta
+          client:visible
+          className="btn btn--primary"
+          label={h.ctaPrimary}
+        />
+        <ScrambleButton
+          client:visible
+          className="btn btn--ghost"
+          href={h.ctaTelegramHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          label={h.ctaTelegram}
+        />
+      </div>
+
+      <p class="label hero__metrics">{h.metrics}</p>
+    </Reveal>
+
+    <Reveal>
+      <a class="hero-card" href={card.href}>
+        <div class="hero-card__scan" aria-hidden="true"></div>
+        <div class="hero-card__top">
+          <span class="label hero-card__tag">/ {card.tag}</span>
+          <span class="hero-card__arrow" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+              <path
+                d="M3.5 9h11M9.5 4.5 14 9l-4.5 4.5"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="square"
+                stroke-linejoin="miter"></path>
+            </svg>
+          </span>
+        </div>
+
+        <h2 class="hero-card__title">{card.title}</h2>
+        <p class="hero-card__desc">{card.description}</p>
+
+        <span class="hero-card__cta">
+          <span>{card.cta}</span>
+          <span class="hero-card__cta-btn" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+              <path
+                d="M3.5 9h11M9.5 4.5 14 9l-4.5 4.5"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="square"
+                stroke-linejoin="miter"></path>
+            </svg>
+          </span>
+        </span>
+      </a>
+    </Reveal>
+  </div>
+
+  <div class="hero__ticker" aria-hidden="true">
+    <div class="hero__ticker-track">
+      {
+        [0, 1].map((copy) => (
+          <div class="hero__ticker-group">
+            {tickerSegment.map((item) => (
+              <span>{item.word}</span>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

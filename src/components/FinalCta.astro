@@ -1,0 +1,40 @@
+---
+import { content } from '../data/content.js';
+import OpenLeadCta from './OpenLeadCta';
+import Reveal from './Reveal.astro';
+import './FinalCta.css';
+
+const { h2, sub, note, telegramHref, telegramLabel, cta } = content.finalCta;
+---
+
+<section
+  class="section final-cta"
+  id="final-cta"
+  aria-labelledby="final-cta-title"
+>
+  <div class="container final-cta__layout">
+    <Reveal>
+      <header class="final-cta__intro">
+        <h2 id="final-cta-title">{h2}</h2>
+        <p class="final-cta__sub">{sub}</p>
+      </header>
+    </Reveal>
+
+    <Reveal>
+      <div class="final-cta__form-wrap">
+        <OpenLeadCta
+          client:visible
+          className="btn btn--primary final-cta__btn"
+          label={cta}
+        />
+        <p class="final-cta__note">
+          {note}{' '}
+          <a href={telegramHref} target="_blank" rel="noopener noreferrer">
+            {telegramLabel}
+          </a>
+          .
+        </p>
+      </div>
+    </Reveal>
+  </div>
+</section>

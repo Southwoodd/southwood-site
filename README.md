@@ -1,6 +1,7 @@
 # Southwood site
 
-Персональный лендинг на **React 19 + Vite 7**. Тексты — в `src/data/content.js`.
+Персональный лендинг на **Astro** (статика + React-острова для HUD/формы/scramble).
+Тексты — в `src/data/content.js` (перенесём в задаче 2).
 
 ## Локально
 
@@ -11,7 +12,9 @@ cp .env.example .env
 npm run dev
 ```
 
-Открыть: http://127.0.0.1:5173/
+Открыть: http://127.0.0.1:4321/
+
+Фоновый dev (как в AGENTS.md): `astro dev --background`
 
 ## Деплой (GitHub Pages)
 
@@ -20,15 +23,3 @@ npm run dev
 Секрет репозитория: `VITE_WEB3FORMS_ACCESS_KEY` (ключ Web3Forms).
 
 Кастомный домен: `southwood.pw` (файл `public/CNAME`).
-
-DNS у регистратора (apex):
-
-| Тип | Имя | Значение |
-|-----|-----|----------|
-| A | `@` | `185.199.108.153` |
-| A | `@` | `185.199.109.153` |
-| A | `@` | `185.199.110.153` |
-| A | `@` | `185.199.111.153` |
-| CNAME | `www` | `Southwoodd.github.io` |
-
-В Settings → Pages включи Custom domain `southwood.pw` и Enforce HTTPS после проверки DNS.

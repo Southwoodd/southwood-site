@@ -1,0 +1,40 @@
+---
+import { content } from '../data/content.js';
+import './Footer.css';
+
+const {
+  name,
+  site,
+  tenchat,
+  telegram,
+  telegramHandle,
+  email,
+  reqs,
+  year,
+  privacyLabel,
+  privacyHref,
+} = content.footer;
+---
+
+<footer class="site-footer" aria-label="Подвал">
+  <div class="container site-footer__inner">
+    <div class="site-footer__brand">
+      <p class="site-footer__name">{name}</p>
+      <p class="site-footer__site">{site}</p>
+    </div>
+
+    <nav class="site-footer__links" aria-label="Контакты">
+      <a href={telegram} target="_blank" rel="noopener noreferrer">
+        {telegramHandle}
+      </a>
+      <a href={tenchat} target="_blank" rel="noopener noreferrer">TenChat</a>
+      <a href={`mailto:${email}`}>{email}</a>
+      <a href={privacyHref}>{privacyLabel}</a>
+    </nav>
+
+    <div class="site-footer__meta">
+      <p class="site-footer__reqs">{reqs}</p>
+      <p class="site-footer__copy">© {year}</p>
+    </div>
+  </div>
+</footer>

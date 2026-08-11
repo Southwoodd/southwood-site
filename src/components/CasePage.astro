@@ -1,0 +1,195 @@
+---
+/**
+ * Страница кейса — разметка и стили из React CasePage, без motion.
+ */
+import OpenLeadCta from './OpenLeadCta';
+import Reveal from './Reveal.astro';
+import ScrambleButton from './ScrambleButton';
+import { content } from '../data/content.js';
+import './CasePage.css';
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const pages = content.casePages;
+const ui = content.casePageUi;
+const page = pages[slug];
+
+let step = 0;
+const nextStep = () => {
+  step += 1;
+  return String(step).padStart(2, '0');
+};
+---
+
+{
+  !page ? (
+    <main class="case-page">
+      <div class="container case-page__missing">
+        <h1>{ui.notFoundTitle}</h1>
+        <p>{ui.notFoundText}</p>
+        <a class="btn btn--primary" href={ui.backHref}>
+          {ui.backLabel}
+        </a>
+      </div>
+    </main>
+  ) : (
+    <main class="case-page">
+      <div class="container case-page__shell">
+        <div class="case-page__layout">
+          <Reveal>
+            <p class="case-page__back">
+              <a href={ui.backHref}>← {ui.backLabel}</a>
+            </p>
+          </Reveal>
+
+          <Reveal>
+            <header class="case-hero">
+              <p class="label case-hero__tag">/ {page.tag}</p>
+              <h1 class="case-hero__title">{page.title}</h1>
+              <p class="case-hero__result">{page.result}</p>
+              <div class="case-hero__meta">
+                <span class="case-hero__chip">
+                  <span class="case-hero__chip-k">{ui.termLabel}</span>
+                  <span class="case-hero__chip-v">{page.term}</span>
+                </span>
+                {
+                  page.linkHref && page.linkLabel ? (
+                    <a
+                      class="case-hero__link"
+                      href={page.linkHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {page.linkLabel} →
+                    </a>
+                  ) : null
+                }
+              </div>
+            </header>
+          </Reveal>
+
+          <div class="case-page__blocks">
+            <Reveal>
+              <section class="case-panel">
+                <header class="case-panel__head">
+                  <span class="case-panel__num">{nextStep()}</span>
+                  <h2 class="case-panel__title">{ui.contextLabel}</h2>
+                </header>
+                <p class="case-panel__text">{page.context}</p>
+              </section>
+            </Reveal>
+
+            {
+              page.problem ? (
+                <Reveal>
+                  <section class="case-panel">
+                    <header class="case-panel__head">
+                      <span class="case-panel__num">{nextStep()}</span>
+                      <h2 class="case-panel__title">{ui.problemLabel}</h2>
+                    </header>
+                    <p class="case-panel__text">{page.problem}</p>
+                  </section>
+                </Reveal>
+              ) : null
+            }
+
+            <Reveal>
+              <section class="case-panel">
+                <header class="case-panel__head">
+                  <span class="case-panel__num">{nextStep()}</span>
+                  <h2 class="case-panel__title">{ui.doneLabel}</h2>
+                </header>
+                <ol class="case-panel__steps">
+                  {
+                    page.done.map((item, i) => (
+                      <li>
+                        <span class="case-panel__step-i" aria-hidden="true">
+                          {String(i + 1).padStart(2, '0')}
+                        </span>
+                        <span>{item}</span>
+                      </li>
+                    ))
+                  }
+                </ol>
+              </section>
+            </Reveal>
+
+            {
+              page.features?.length ? (
+                <Reveal>
+                  <section class="case-panel">
+                    <header class="case-panel__head">
+                      <span class="case-panel__num">{nextStep()}</span>
+                      <h2 class="case-panel__title">{ui.featuresLabel}</h2>
+                    </header>
+                    <ul class="case-panel__features">
+                      {
+                        page.features.map((f) => (
+                          <li class="case-feature">
+                            <h3 class="case-feature__title">{f.title}</h3>
+                            <p class="case-feature__text">{f.text}</p>
+                          </li>
+                        ))
+                      }
+                    </ul>
+                  </section>
+                </Reveal>
+              ) : null
+            }
+
+            {
+              page.stack?.length ? (
+                <Reveal>
+                  <section class="case-panel">
+                    <header class="case-panel__head">
+                      <span class="case-panel__num">{nextStep()}</span>
+                      <h2 class="case-panel__title">{ui.stackLabel}</h2>
+                    </header>
+                    <ul class="case-panel__stack">
+                      {page.stack.map((item) => <li>{item}</li>)}
+                    </ul>
+                  </section>
+                </Reveal>
+              ) : null
+            }
+
+            <Reveal>
+              <section class="case-panel case-panel--outcome">
+                <header class="case-panel__head">
+                  <span class="case-panel__num">{nextStep()}</span>
+                  <h2 class="case-panel__title">{ui.outcomeLabel}</h2>
+                </header>
+                <p class="case-panel__text case-panel__text--strong">
+                  {page.outcome}
+                </p>
+              </section>
+            </Reveal>
+          </div>
+
+          <Reveal>
+            <div class="case-page__cta">
+              <OpenLeadCta
+                client:visible
+                className="btn btn--primary"
+                label={ui.ctaPrimary}
+                topic="Диагностика"
+                tariff="Диагностика"
+              />
+              <ScrambleButton
+                client:visible
+                className="btn btn--ghost"
+                href={ui.ctaTelegramHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                label={ui.ctaTelegram}
+              />
+            </div>
+          </Reveal>
+        </div>
+      </div>
+    </main>
+  )
+}

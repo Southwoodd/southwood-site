@@ -1,24 +1,37 @@
 import { type MouseEvent } from 'react';
 import ScrambleButton from './ScrambleButton';
-import { useLeadModal } from './LeadModalContext';
+import { requestOpenLeadModal, type LeadIntent } from './LeadModalContext';
 
 type Props = {
-  children: string;
+  label: string;
   className?: string;
+  /** Значение темы в форме (Диагностика / Retainer / Проект …) */
+  topic?: string;
+  /** Подпись тарифа в письме — сразу видно, откуда заявка */
+  tariff?: string;
 };
 
 /** CTA, открывающая модалку с формой заявки. */
-export default function OpenLeadCta({ children, className = '' }: Props) {
-  const { openLeadModal } = useLeadModal();
-
+export default function OpenLeadCta({
+  label,
+  className = '',
+  topic,
+  tariff,
+}: Props) {
   const onClick = (e: MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    openLeadModal();
+    const intent: LeadIntent = {};
+    if (topic) intent.topic = topic;
+    if (tariff) intent.tariff = tariff;
+    requestOpenLeadModal(intent);
   };
 
   return (
-    <ScrambleButton className={className} href="#lead" onClick={onClick}>
-      {children}
-    </ScrambleButton>
+    <ScrambleButton
+      className={className}
+      href="#lead"
+      label={label}
+      onClick={onClick}
+    />
   );
 }
