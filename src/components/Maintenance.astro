@@ -1,141 +1,519 @@
 ---
 /**
- * Заглушка: сайт на редизайне / техработы.
- * Белый экран, сообщение, ссылки на соцсети. Адаптив.
+ * Заглушка на время редизайна.
+ * Бенто-сетка в стиле нового сайта: шалфейный фон, белые и зеленые карточки, Onest.
+ * Адаптив: 3 колонки → 2 → 1.
  */
-interface Props {
-  /** Скрыть бренд-линию (редко нужно) */
-  compact?: boolean;
-}
+const TELEGRAM = 'https://t.me/imsouthwood';
+const EMAIL = 'mailto:im@southwood.pw';
+
+const services = ['Сайты и магазины', 'CRM', 'Боты с AI', 'Автоматизация', 'Приложения'];
+
+const flow = ['Сайт', 'CRM', 'Бот'];
 
 const socials = [
-  { label: 'Telegram', href: 'https://t.me/imsouthwood' },
-  { label: 'VK', href: 'https://vk.com/imsouthwood' },
-  { label: 'TenChat', href: 'https://tenchat.ru/imsouthwood' },
-  { label: 'Behance', href: 'https://www.behance.net/imsouthwood' },
-  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/sergeyvorobyev/' },
-  { label: 'Почта', href: 'mailto:im@southwood.pw' },
+  { label: 'Telegram', hint: '@imsouthwood', href: TELEGRAM },
+  { label: 'Почта', hint: 'Написать письмо', href: EMAIL },
+  { label: 'TenChat', hint: 'Блог о работе', href: 'https://tenchat.ru/imsouthwood' },
+  { label: 'Behance', hint: 'Портфолио', href: 'https://www.behance.net/imsouthwood' },
+  { label: 'VK', hint: 'imsouthwood', href: 'https://vk.com/imsouthwood' },
+  { label: 'LinkedIn', hint: 'Sergey Vorobyev', href: 'https://www.linkedin.com/in/sergeyvorobyev/' },
 ];
 ---
 
-<div class="maint">
-  <div class="maint__inner">
-    <p class="maint__brand">Southwood</p>
-    <p class="maint__name">Сергей Воробьев</p>
-    <h1 class="maint__title">Ведутся технические работы</h1>
-    <p class="maint__text">
-      Сайт на редизайне. Скоро здесь будет новая версия.
-      Пока пишите в соцсети или на почту — отвечу.
-    </p>
-    <ul class="maint__socials" role="list">
+<main class="maint">
+  <div class="maint__grid">
+    <section class="card card--main">
+      <header class="who">
+        <img
+          class="who__photo"
+          src="/images/sergey-vorobyov.jpg"
+          alt="Сергей Воробьев"
+          width="56"
+          height="56"
+          decoding="async"
+        />
+        <div>
+          <p class="who__name">Сергей Воробьев</p>
+          <p class="who__role">Цифровая часть бизнеса под ключ</p>
+        </div>
+      </header>
+
+      <div class="card__body">
+        <p class="badge">
+          <span class="badge__dot" aria-hidden="true"></span>
+          Сайт обновляется
+        </p>
+        <h1 class="title">Собираю новую версию сайта</h1>
+        <p class="lead">
+          Скоро здесь появятся кейсы, цены и калькулятор. Работаю в обычном режиме, напишите,
+          отвечу лично в течение дня.
+        </p>
+      </div>
+
+      <div class="actions">
+        <a class="btn btn--primary" href={TELEGRAM} rel="noopener noreferrer">
+          Написать в Telegram
+          <svg class="btn__arrow" viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M6 14 14 6M7.5 6H14v6.5" />
+          </svg>
+        </a>
+        <a class="btn btn--ghost" href={EMAIL}>im@southwood.pw</a>
+      </div>
+    </section>
+
+    <section class="card card--deep" aria-label="Чем занимаюсь">
+      <p class="eyebrow">Чем занимаюсь</p>
+
+      <div class="flow" aria-hidden="true">
+        {
+          flow.map((step, i) => (
+            <>
+              <span class="flow__node">{step}</span>
+              {i < flow.length - 1 && (
+                <svg class="flow__arrow" viewBox="0 0 20 20">
+                  <path d="M4 10h12M11 5l5 5-5 5" />
+                </svg>
+              )}
+            </>
+          ))
+        }
+      </div>
+
+      <h2 class="deep__title">Сайт, CRM и боты в одной системе</h2>
+      <p class="deep__text">
+        Собираю и связываю между собой, чтобы заявки не терялись, а вы видели, откуда они
+        приходят.
+      </p>
+
+      <ul class="chips" role="list">
+        {services.map((s) => <li class="chip">{s}</li>)}
+      </ul>
+    </section>
+
+    <nav class="socials" aria-label="Контакты">
       {
         socials.map((s) => (
-          <li>
-            <a class="maint__link" href={s.href} rel="noopener noreferrer">
-              {s.label}
-            </a>
-          </li>
+          <a class="social" href={s.href} rel="noopener noreferrer">
+            <span class="social__text">
+              <span class="social__label">{s.label}</span>
+              <span class="social__hint">{s.hint}</span>
+            </span>
+            <svg class="social__arrow" viewBox="0 0 20 20" aria-hidden="true">
+              <path d="M6 14 14 6M7.5 6H14v6.5" />
+            </svg>
+          </a>
         ))
       }
-    </ul>
+    </nav>
   </div>
-</div>
+</main>
 
 <style>
   .maint {
-    min-height: 100dvh;
+    --bg: #f3f6f2;
+    --surface: #ffffff;
+    --ink: #14201a;
+    --muted: #5a6b62;
+    --deep: #3f6b56;
+    --deep-dark: #2f5543;
+    --light: #bee0cc;
+    --line: #d5e0d8;
+    --mint: #e8f0eb;
+    --radius: 32px;
+    --gap: 20px;
+
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: clamp(1.5rem, 5vw, 3rem);
-    background: #fff;
-    color: #121212;
-    box-sizing: border-box;
-  }
-
-  .maint__inner {
-    width: min(100%, 36rem);
-    text-align: center;
-  }
-
-  .maint__brand {
-    margin: 0;
-    font-family: 'Syne', system-ui, sans-serif;
-    font-size: clamp(1.75rem, 6vw, 2.75rem);
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
-  }
-
-  .maint__name {
-    margin: 0.35rem 0 0;
-    font-family: 'Source Serif 4', Georgia, serif;
-    font-size: clamp(0.95rem, 2.5vw, 1.1rem);
-    color: #5a5a5a;
-  }
-
-  .maint__title {
-    margin: clamp(1.75rem, 5vw, 2.5rem) 0 0;
-    font-family: 'Syne', system-ui, sans-serif;
-    font-size: clamp(1.35rem, 4.5vw, 1.85rem);
-    font-weight: 600;
+    padding: clamp(12px, 3vw, 30px);
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
     letter-spacing: -0.02em;
-    line-height: 1.25;
   }
 
-  .maint__text {
-    margin: 0.85rem auto 0;
-    max-width: 28rem;
-    font-family: 'Source Serif 4', Georgia, serif;
-    font-size: clamp(0.95rem, 2.8vw, 1.05rem);
-    line-height: 1.55;
-    color: #3d3d3d;
+  .maint__grid {
+    width: min(100%, 1320px);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--gap);
   }
 
-  .maint__socials {
-    list-style: none;
-    margin: clamp(1.75rem, 5vw, 2.5rem) 0 0;
-    padding: 0;
+  /* ── Карточки ─────────────────────────────── */
+  .card {
+    border-radius: var(--radius);
+    padding: clamp(24px, 3.2vw, 40px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card--main {
+    grid-column: span 2;
+    background: var(--surface);
+    gap: clamp(32px, 6vw, 72px);
+    min-height: clamp(0px, 44vw, 520px);
+  }
+
+  .card--deep {
+    background: var(--deep);
+    color: #fff;
+    gap: 16px;
+  }
+
+  /* ── Шапка с фото ─────────────────────────── */
+  .who {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .who__photo {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex: none;
+  }
+
+  .who__name {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--deep);
+  }
+
+  .who__role {
+    margin: 2px 0 0;
+    font-size: 15px;
+    line-height: 1.3;
+    color: var(--muted);
+  }
+
+  /* ── Основной текст ───────────────────────── */
+  .card__body {
+    margin-top: auto;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 7px 14px 7px 12px;
+    border-radius: 999px;
+    background: var(--deep);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  .badge__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--light);
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    50% {
+      opacity: 0.35;
+      transform: scale(0.8);
+    }
+  }
+
+  .title {
+    margin: 20px 0 0;
+    font-size: clamp(34px, 5.4vw, 68px);
+    font-weight: 400;
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  .lead {
+    margin: 18px 0 0;
+    max-width: 34em;
+    font-size: clamp(16px, 1.5vw, 18px);
+    line-height: 1.45;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+
+  /* ── Кнопки ───────────────────────────────── */
+  .actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.65rem;
-    justify-content: center;
+    gap: 10px;
   }
 
-  .maint__link {
+  .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 2.75rem;
-    padding: 0.55rem 1.1rem;
-    border: 1px solid #121212;
-    border-radius: 0;
-    font-family: 'Syne', system-ui, sans-serif;
-    font-size: 0.9rem;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    color: #121212;
+    gap: 10px;
+    min-height: 56px;
+    padding: 0 28px;
+    border-radius: 999px;
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1;
     text-decoration: none;
-    background: #fff;
-    transition: background 0.15s ease, color 0.15s ease;
+    transition:
+      background-color 0.18s ease,
+      color 0.18s ease,
+      border-color 0.18s ease;
   }
 
-  .maint__link:hover,
-  .maint__link:focus-visible {
-    background: #121212;
+  .btn--primary {
+    background: var(--deep);
     color: #fff;
-    outline: none;
+    padding-right: 24px;
   }
 
-  @media (max-width: 480px) {
-    .maint__socials {
-      flex-direction: column;
-      align-items: stretch;
+  .btn--primary:hover {
+    background: var(--deep-dark);
+  }
+
+  .btn--ghost {
+    background: var(--bg);
+    color: var(--ink);
+  }
+
+  .btn--ghost:hover {
+    background: var(--mint);
+  }
+
+  .btn__arrow,
+  .social__arrow,
+  .flow__arrow {
+    width: 20px;
+    height: 20px;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* ── Зеленая карточка ─────────────────────── */
+  .eyebrow {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.3;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .flow {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 18px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .flow__node {
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--deep);
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .flow__arrow {
+    width: 16px;
+    height: 16px;
+    color: var(--light);
+  }
+
+  .deep__title {
+    margin: auto 0 0;
+    padding-top: 24px;
+    font-size: clamp(26px, 2.6vw, 34px);
+    font-weight: 500;
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+
+  .deep__text {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 4px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .chip {
+    padding: 7px 13px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  /* ── Контакты ─────────────────────────────── */
+  .socials {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--gap);
+  }
+
+  .social {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 88px;
+    padding: 18px 20px 18px 24px;
+    border: 1px solid transparent;
+    border-radius: 24px;
+    background: var(--surface);
+    color: var(--ink);
+    text-decoration: none;
+    transition:
+      border-color 0.18s ease,
+      box-shadow 0.18s ease,
+      transform 0.18s ease;
+  }
+
+  .social:hover {
+    border-color: var(--line);
+    box-shadow: 0 16px 40px rgba(20, 32, 26, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .social__text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .social__label {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.25;
+  }
+
+  .social__hint {
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 1.3;
+    color: var(--muted);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .social__arrow {
+    color: var(--deep);
+  }
+
+  /* ── Фокус с клавиатуры ───────────────────── */
+  .btn:focus-visible,
+  .social:focus-visible {
+    outline: 3px solid #7dab90;
+    outline-offset: 3px;
+  }
+
+  /* ── Планшет ──────────────────────────────── */
+  @media (max-width: 1100px) {
+    .socials {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 900px) {
+    .maint {
+      align-items: flex-start;
     }
 
-    .maint__link {
+    .maint__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .card--main {
+      grid-column: auto;
+      min-height: 0;
+    }
+
+    .deep__title {
+      margin-top: 0;
+      padding-top: 8px;
+    }
+  }
+
+  /* ── Телефон ──────────────────────────────── */
+  @media (max-width: 560px) {
+    .maint {
+      --radius: 24px;
+      --gap: 12px;
+    }
+
+    .socials {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .social {
+      min-height: 76px;
+      padding: 14px 14px 14px 18px;
+      border-radius: 20px;
+    }
+
+    .social__label {
+      font-size: 16px;
+    }
+
+    .social__hint {
+      font-size: 13px;
+    }
+
+    .actions {
+      flex-direction: column;
+    }
+
+    .btn {
       width: 100%;
+    }
+  }
+
+  @media (max-width: 340px) {
+    .socials {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .badge__dot {
+      animation: none;
+    }
+
+    .btn,
+    .social {
+      transition: none;
+    }
+
+    .social:hover {
+      transform: none;
     }
   }
 </style>
