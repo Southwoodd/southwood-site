@@ -1,8 +1,8 @@
 ---
 /**
- * Пиксельный знак Southwood (× □ ○ △) — inline SVG, без размытия.
- * variant: on-yellow — чёрные пиксели на жёлтом хедере;
- *          signal — жёлтые на тёмном.
+ * Знак Замыкание — inline SVG из public/logo-mark*.svg.
+ * variant: on-yellow — зеленый знак для светлого фона (имя осталось от старой шапки);
+ *          signal — белый знак для темного фона.
  */
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -10,29 +10,22 @@ import { resolve } from 'node:path';
 interface Props {
   variant?: 'on-yellow' | 'signal';
   class?: string;
-  /** Множитель пикселя: 1 = 72×18, 2 = 144×36 */
+  /** Множитель размера: 1 = 24×24, 2 = 48×48 */
   scale?: 1 | 2;
 }
 
 const { variant = 'signal', class: className = '', scale = 1 } = Astro.props;
 
-const file =
-  variant === 'on-yellow'
-    ? 'logo-pixel-on-yellow.svg'
-    : 'logo-pixel.svg';
+const file = variant === 'on-yellow' ? 'logo-mark.svg' : 'logo-mark-white.svg';
 
 const raw = readFileSync(resolve('public', file), 'utf-8');
-// Убираем фиксированные width/height — размер задаём CSS
-const svg = raw
-  .replace(/\swidth="[^"]*"/, '')
-  .replace(/\sheight="[^"]*"/, '')
-  .replace(
-    '<svg ',
-    '<svg class="brand-mark__svg" aria-hidden="true" focusable="false" ',
-  );
+const svg = raw.replace(
+  '<svg ',
+  '<svg class="brand-mark__svg" aria-hidden="true" focusable="false" ',
+);
 
-const w = 72 * scale;
-const h = 18 * scale;
+const w = 24 * scale;
+const h = 24 * scale;
 ---
 
 <span
@@ -52,6 +45,5 @@ const h = 18 * scale;
     display: block;
     width: var(--brand-w);
     height: var(--brand-h);
-    shape-rendering: crispEdges;
   }
 </style>
