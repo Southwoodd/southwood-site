@@ -1,36 +1,12 @@
 ---
-/**
- * 404 — в стиле Southwood HUD: крупный код, подпись, кнопка на главную.
- */
-import Base from '../layouts/Base.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import LeadRoot from '../components/LeadRoot';
-import ScrambleButton from '../components/ScrambleButton';
-import { content } from '../data/content.js';
-import '../components/NotFound.css';
-
-const { title, code, lead, cta, ctaHref } = content.notFound;
+/** Любой несуществующий URL — та же заглушка. */
+import MaintenanceLayout from '../layouts/MaintenanceLayout.astro';
+import Maintenance from '../components/Maintenance.astro';
 ---
 
-<Base title={title} description={lead} noindex={true}>
-  <LeadRoot client:load />
-  <Header />
-  <main class="not-found">
-    <div class="not-found__glow" aria-hidden="true"></div>
-    <div class="container not-found__inner">
-      <p class="label not-found__label">Error</p>
-      <p class="not-found__code" aria-hidden="true">{code}</p>
-      <h1 class="not-found__title">{lead}</h1>
-      <div class="not-found__actions">
-        <ScrambleButton
-          client:visible
-          className="btn btn--primary"
-          href={ctaHref}
-          label={cta}
-        />
-      </div>
-    </div>
-  </main>
-  <Footer />
-</Base>
+<MaintenanceLayout
+  title="Southwood — ведутся технические работы"
+  description="Сайт Southwood на редизайне. Связь: Telegram @imsouthwood, im@southwood.pw."
+>
+  <Maintenance />
+</MaintenanceLayout>
