@@ -1,41 +1,14 @@
 ---
 /**
- * Главная: порядок секций как в React HomePage.
- * Интерактив: LeadRoot (HUD + модалка), scramble/CTA — острова.
+ * Главная — заглушка: редизайн / технические работы.
  */
-import Base from '../layouts/Base.astro';
-import Header from '../components/Header.astro';
-import Hero from '../components/Hero.astro';
-import Recognition from '../components/Recognition.astro';
-import Zones from '../components/Zones.astro';
-import Cases from '../components/Cases.astro';
-import Pricing from '../components/Pricing.astro';
-import Compare from '../components/Compare.astro';
-import About from '../components/About.astro';
-import Boundaries from '../components/Boundaries.astro';
-import Faq from '../components/Faq.astro';
-import FinalCta from '../components/FinalCta.astro';
-import Footer from '../components/Footer.astro';
-import LeadRoot from '../components/LeadRoot';
-import JsonLd from '../components/JsonLd.astro';
-import { content } from '../data/content.js';
+import MaintenanceLayout from '../layouts/MaintenanceLayout.astro';
+import Maintenance from '../components/Maintenance.astro';
 ---
 
-<Base title={content.meta.title} description={content.meta.description}>
-  <JsonLd />
-  <LeadRoot client:load />
-  <Header />
-  <main>
-    <Hero />
-    <Recognition />
-    <Zones />
-    <Cases />
-    <Pricing />
-    <Compare />
-    <About />
-    <Boundaries />
-    <Faq />
-    <FinalCta />
-  </main>
-  <Footer />
-</Base>
+<MaintenanceLayout
+  title="Southwood — ведутся технические работы"
+  description="Сайт Southwood на редизайне. Сергей Воробьев: Telegram, VK, TenChat, почта im@southwood.pw."
+>
+  <Maintenance />
+</MaintenanceLayout>

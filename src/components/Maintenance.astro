@@ -1,0 +1,141 @@
+---
+/**
+ * Заглушка: сайт на редизайне / техработы.
+ * Белый экран, сообщение, ссылки на соцсети. Адаптив.
+ */
+interface Props {
+  /** Скрыть бренд-линию (редко нужно) */
+  compact?: boolean;
+}
+
+const socials = [
+  { label: 'Telegram', href: 'https://t.me/imsouthwood' },
+  { label: 'VK', href: 'https://vk.com/imsouthwood' },
+  { label: 'TenChat', href: 'https://tenchat.ru/imsouthwood' },
+  { label: 'Behance', href: 'https://www.behance.net/imsouthwood' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/sergeyvorobyev/' },
+  { label: 'Почта', href: 'mailto:im@southwood.pw' },
+];
+---
+
+<div class="maint">
+  <div class="maint__inner">
+    <p class="maint__brand">Southwood</p>
+    <p class="maint__name">Сергей Воробьев</p>
+    <h1 class="maint__title">Ведутся технические работы</h1>
+    <p class="maint__text">
+      Сайт на редизайне. Скоро здесь будет новая версия.
+      Пока пишите в соцсети или на почту — отвечу.
+    </p>
+    <ul class="maint__socials" role="list">
+      {
+        socials.map((s) => (
+          <li>
+            <a class="maint__link" href={s.href} rel="noopener noreferrer">
+              {s.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</div>
+
+<style>
+  .maint {
+    min-height: 100dvh;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1.5rem, 5vw, 3rem);
+    background: #fff;
+    color: #121212;
+    box-sizing: border-box;
+  }
+
+  .maint__inner {
+    width: min(100%, 36rem);
+    text-align: center;
+  }
+
+  .maint__brand {
+    margin: 0;
+    font-family: 'Syne', system-ui, sans-serif;
+    font-size: clamp(1.75rem, 6vw, 2.75rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+
+  .maint__name {
+    margin: 0.35rem 0 0;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+    color: #5a5a5a;
+  }
+
+  .maint__title {
+    margin: clamp(1.75rem, 5vw, 2.5rem) 0 0;
+    font-family: 'Syne', system-ui, sans-serif;
+    font-size: clamp(1.35rem, 4.5vw, 1.85rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+  }
+
+  .maint__text {
+    margin: 0.85rem auto 0;
+    max-width: 28rem;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(0.95rem, 2.8vw, 1.05rem);
+    line-height: 1.55;
+    color: #3d3d3d;
+  }
+
+  .maint__socials {
+    list-style: none;
+    margin: clamp(1.75rem, 5vw, 2.5rem) 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    justify-content: center;
+  }
+
+  .maint__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: 0.55rem 1.1rem;
+    border: 1px solid #121212;
+    border-radius: 0;
+    font-family: 'Syne', system-ui, sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: #121212;
+    text-decoration: none;
+    background: #fff;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .maint__link:hover,
+  .maint__link:focus-visible {
+    background: #121212;
+    color: #fff;
+    outline: none;
+  }
+
+  @media (max-width: 480px) {
+    .maint__socials {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .maint__link {
+      width: 100%;
+    }
+  }
+</style>
