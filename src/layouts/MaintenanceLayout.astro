@@ -11,7 +11,7 @@ interface Props {
   noindex?: boolean;
 }
 
-const { title, description, noindex = true } = Astro.props;
+const { title, description, noindex = false } = Astro.props;
 const url =
   Astro.props.url ??
   new URL(Astro.url.pathname, Astro.site ?? 'https://southwood.pw').href;
@@ -23,9 +23,10 @@ const url =
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f3f6f2" />
-    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -39,6 +40,7 @@ const url =
       url={url}
       noindex={noindex}
     />
+    <slot name="head" />
   </head>
   <body>
     <slot />
