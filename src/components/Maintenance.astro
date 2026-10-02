@@ -4,6 +4,8 @@
  * Бенто-сетка в стиле нового сайта: шалфейный фон, белые и зеленые карточки, Onest.
  * Адаптив: 3 колонки → 2 → 1.
  */
+import Logo from './Logo.astro';
+
 const TELEGRAM = 'https://t.me/imsouthwood';
 const EMAIL = 'mailto:im@southwood.pw';
 
@@ -25,18 +27,21 @@ const socials = [
   <div class="maint__grid">
     <section class="card card--main">
       <header class="who">
+        <a class="brand" href="/" aria-label="Сергей Воробьев, на главную">
+          <Logo size={44} />
+          <span class="brand__text">
+            <span class="who__name">Сергей Воробьев</span>
+            <span class="who__role">Цифровая часть бизнеса под ключ</span>
+          </span>
+        </a>
         <img
           class="who__photo"
           src="/images/sergey-vorobyov.jpg"
-          alt="Сергей Воробьев"
+          alt="Сергей Воробьев, портрет"
           width="56"
           height="56"
           decoding="async"
         />
-        <div>
-          <p class="who__name">Сергей Воробьев</p>
-          <p class="who__role">Цифровая часть бизнеса под ключ</p>
-        </div>
       </header>
 
       <div class="card__body">
@@ -167,7 +172,24 @@ const socials = [
   .who {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 14px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    color: var(--deep);
+    text-decoration: none;
+    border-radius: 12px;
+  }
+
+  .brand__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
   }
 
   .who__photo {
@@ -179,7 +201,6 @@ const socials = [
   }
 
   .who__name {
-    margin: 0;
     font-size: 20px;
     font-weight: 500;
     line-height: 1.2;
@@ -187,7 +208,7 @@ const socials = [
   }
 
   .who__role {
-    margin: 2px 0 0;
+    margin-top: 2px;
     font-size: 15px;
     line-height: 1.3;
     color: var(--muted);
@@ -430,6 +451,7 @@ const socials = [
 
   /* ── Фокус с клавиатуры ───────────────────── */
   .btn:focus-visible,
+  .brand:focus-visible,
   .social:focus-visible {
     outline: 3px solid #7dab90;
     outline-offset: 3px;
@@ -485,6 +507,19 @@ const socials = [
 
     .social__hint {
       font-size: 13px;
+    }
+
+    .who__photo {
+      width: 44px;
+      height: 44px;
+    }
+
+    .who__name {
+      font-size: 18px;
+    }
+
+    .who__role {
+      font-size: 14px;
     }
 
     .actions {

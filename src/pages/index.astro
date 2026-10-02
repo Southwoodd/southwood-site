@@ -1,14 +1,55 @@
 ---
 /**
- * Главная — заглушка: редизайн / технические работы.
+ * Главная — заглушка на время редизайна. Индексируется, чтобы домен не выпадал из поиска.
  */
 import MaintenanceLayout from '../layouts/MaintenanceLayout.astro';
 import Maintenance from '../components/Maintenance.astro';
+
+const SITE = 'https://southwood.pw';
+const description =
+  'Собираю цифровую часть бизнеса под ключ: сайты и магазины, CRM, боты с AI, автоматизация. Сайт обновляется, пишите в Telegram @imsouthwood.';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': `${SITE}/#person`,
+      name: 'Сергей Воробьев',
+      url: SITE,
+      image: `${SITE}/images/sergey-vorobyov.jpg`,
+      email: 'mailto:im@southwood.pw',
+      description: 'Собираю цифровую часть бизнеса под ключ: сайты, CRM, боты и автоматизация.',
+      knowsAbout: ['Разработка сайтов', 'Интернет-магазины', 'CRM', 'Битрикс24', 'Чат-боты', 'Автоматизация бизнес-процессов', 'UX/UI-дизайн'],
+      sameAs: [
+        'https://t.me/imsouthwood',
+        'https://tenchat.ru/imsouthwood',
+        'https://www.behance.net/imsouthwood',
+        'https://vk.com/imsouthwood',
+        'https://www.linkedin.com/in/sergeyvorobyev/',
+      ],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE}/#website`,
+      url: SITE,
+      name: 'Сергей Воробьев',
+      inLanguage: 'ru-RU',
+      publisher: { '@id': `${SITE}/#person` },
+    },
+  ],
+};
 ---
 
 <MaintenanceLayout
-  title="Сергей Воробьев — сайт обновляется"
-  description="Сайт обновляется. Сергей Воробьев: сайты, CRM, боты и автоматизация под ключ. Telegram @imsouthwood, почта im@southwood.pw."
+  title="Сергей Воробьев: сайты, CRM, боты и автоматизация под ключ"
+  description={description}
 >
+  <script
+    slot="head"
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify(jsonLd)}
+  />
   <Maintenance />
 </MaintenanceLayout>
