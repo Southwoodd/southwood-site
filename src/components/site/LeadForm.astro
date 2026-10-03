@@ -1,0 +1,167 @@
+---
+// Форма заявки. Используется в финальном блоке и в модалках. id нужен, чтобы подписи не пересекались.
+import { form as f } from '../../i18n/ru';
+interface Props { id?: string }
+const { id = 'lead' } = Astro.props;
+---
+<form class="lf" data-lead-form data-endpoint={f.endpoint} novalidate>
+  <div class="lf__main">
+    <header><h3>{f.title}</h3><p>{f.sub}</p></header>
+    <fieldset class="lf__need" data-field="chips">
+      <legend><span>{f.needLabel} <i>*</i></span><small>{f.needHint}</small></legend>
+      <div class="lf__chips">{f.chips.map((c) => <label><input type="checkbox" name="need" value={c.v} /><span>{c.l}</span></label>)}</div>
+      <p class="lf__err" hidden>{f.errors.chips}</p>
+    </fieldset>
+    <div class="lf__row">
+      <label class="lf__field" data-field="name"><span>{f.name} <i>*</i></span><input type="text" name="name" autocomplete="name" placeholder={f.namePh} maxlength="80" /><p class="lf__err" hidden>{f.errors.name}</p></label>
+      <label class="lf__field" data-field="company"><span>{f.company} <i>*</i></span><input type="text" name="company" autocomplete="organization" placeholder={f.companyPh} maxlength="120" /><p class="lf__err" hidden>{f.errors.company}</p></label>
+    </div>
+    <div class="lf__row">
+      <label class="lf__field" data-field="phone"><span>{f.phone} <i>*</i></span><input type="tel" name="phone" autocomplete="tel" inputmode="tel" placeholder={f.phonePh} maxlength="24" /><p class="lf__err" hidden>{f.errors.phone}</p></label>
+      <fieldset class="lf__field lf__via"><legend>{f.via} <i>*</i></legend>
+        <div>{f.viaOptions.map((o, i) => <label><input type="radio" name="via" value={o.v} checked={i === 0} /><span>{o.l}</span></label>)}</div>
+      </fieldset>
+    </div>
+    <label class="lf__field"><span>{f.task} <em>{f.taskOpt}</em></span><textarea name="task" placeholder={f.taskPh} maxlength="1500" rows="3"></textarea></label>
+    <input class="lf__hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+    <footer>
+      <label class="lf__consent" data-field="consent"><input type="checkbox" name="consent" /><i></i><span>{f.consentA}<a href="/consent" target="_blank">{f.consentLink}</a>{f.consentB}<a href="/privacy" target="_blank">{f.policyLink}</a></span></label>
+      <p class="lf__err" data-err="consent" hidden>{f.errors.consent}</p>
+      <button class="btn btn--deep lf__submit" type="submit" data-label={f.submit} data-sending={f.sending}>{f.submit}</button>
+    </footer>
+  </div>
+  <div class="lf__state lf__ok" hidden role="status">
+    <span class="lf__mark"><svg viewBox="0 0 24 24" fill="none"><path d="m5 12.5 4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <h3>{f.okTitle}</h3><p>{f.okText}</p>
+    <button class="btn btn--grey" type="button" data-again>{f.okBtn}</button>
+  </div>
+  <div class="lf__state lf__fail" hidden role="alert">
+    <span class="lf__mark lf__mark--bad"><svg viewBox="0 0 24 24" fill="none"><path d="M12 7v6m0 3.5v.1" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span>
+    <h3>{f.failTitle}</h3><p>{f.failText}</p>
+    <div><button class="btn btn--deep" type="button" data-retry>{f.failRetry}</button><a class="btn btn--grey" href="https://t.me/imsouthwood" target="_blank" rel="noopener">{f.failTg}</a></div>
+  </div>
+</form>
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-lead-form]').forEach((form) => {
+    const main = form.querySelector<HTMLElement>('.lf__main')!;
+    const ok = form.querySelector<HTMLElement>('.lf__ok')!;
+    const fail = form.querySelector<HTMLElement>('.lf__fail')!;
+    const btn = form.querySelector<HTMLButtonElement>('.lf__submit')!;
+    const show = (el: HTMLElement) => { [main, ok, fail].forEach((x) => { x.hidden = x !== el; }); };
+    const setErr = (name: string, bad: boolean) => {
+      const box = form.querySelector<HTMLElement>(`[data-field="${name}"]`)!;
+      box.classList.toggle('is-bad', bad);
+      const e = (box.querySelector('.lf__err') || form.querySelector(`[data-err="${name}"]`)) as HTMLElement | null;
+      if (e) e.hidden = !bad;
+      return bad;
+    };
+    const phone = form.elements.namedItem('phone') as HTMLInputElement;
+    phone.addEventListener('input', () => {
+      let d = phone.value.replace(/\D/g, '');
+      if (!d) { phone.value = ''; return; }
+      if (d[0] === '8') d = '7' + d.slice(1);
+      if (d[0] !== '7') { phone.value = '+' + d.slice(0, 15); return; }
+      d = d.slice(0, 11);
+      const p = ['+7', d.slice(1, 4), d.slice(4, 7), d.slice(7, 9), d.slice(9, 11)];
+      phone.value = p[0] + (p[1] ? ' ' + p[1] : '') + (p[2] ? ' ' + p[2] : '') + (p[3] ? '-' + p[3] : '') + (p[4] ? '-' + p[4] : '');
+    });
+    const validate = () => {
+      const fd = new FormData(form);
+      const bad = [
+        setErr('chips', fd.getAll('need').length === 0),
+        setErr('name', String(fd.get('name') || '').trim().length < 2),
+        setErr('company', String(fd.get('company') || '').trim().length < 2),
+        setErr('phone', String(fd.get('phone') || '').replace(/\D/g, '').length < 10),
+        setErr('consent', !fd.get('consent')),
+      ];
+      return !bad.includes(true);
+    };
+    form.addEventListener('change', () => { if (form.classList.contains('was-sent')) validate(); });
+    form.addEventListener('input', () => { if (form.classList.contains('was-sent')) validate(); });
+    const send = async () => {
+      const fd = new FormData(form);
+      if (fd.get('website')) { show(ok); return; }
+      const body = { need: fd.getAll('need'), name: fd.get('name'), company: fd.get('company'), phone: fd.get('phone'), via: fd.get('via'), task: fd.get('task'), page: location.pathname, context: form.dataset.context || '', consent: true };
+      btn.disabled = true; btn.textContent = btn.dataset.sending!; btn.classList.add('is-busy');
+      try {
+        const r = await fetch(form.dataset.endpoint!, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        if (!r.ok) throw new Error(String(r.status));
+        show(ok);
+      } catch { show(fail); }
+      btn.disabled = false; btn.textContent = btn.dataset.label!; btn.classList.remove('is-busy');
+    };
+    form.addEventListener('submit', (e) => {
+      e.preventDefault(); form.classList.add('was-sent');
+      if (!validate()) { form.querySelector<HTMLElement>('.is-bad input, .is-bad textarea')?.focus(); return; }
+      send();
+    });
+    form.querySelector('[data-retry]')!.addEventListener('click', () => { show(main); send(); });
+    form.querySelector('[data-again]')!.addEventListener('click', () => { form.reset(); form.classList.remove('was-sent'); show(main); });
+  });
+</script>
+<style>
+  .lf{background:#fff;color:#14201a;border-radius:2.8rem;padding:4rem;display:flex;flex-direction:column}
+  .lf__main{display:flex;flex-direction:column;gap:2.8rem;flex:1}
+  .lf__main[hidden],.lf__state[hidden]{display:none}
+  .lf header h3{font-size:3rem;line-height:1.15;font-weight:700;letter-spacing:-.02em}
+  .lf header p{margin-top:.8rem;font-size:max(1.6rem,14px);line-height:1.5;color:var(--muted)}
+  .lf fieldset{border:0;padding:0;margin:0;min-width:0}
+  .lf i{font-style:normal;color:#d23b3b}
+  .lf legend{padding:0;width:100%;display:flex;justify-content:space-between;align-items:baseline;font-size:max(1.5rem,14px);font-weight:500}
+  .lf legend small{font-size:max(1.3rem,12px);font-weight:400;color:var(--muted)}
+  .lf__chips{margin-top:1.2rem;display:flex;flex-wrap:wrap;gap:.8rem}
+  .lf__chips label,.lf__via label{cursor:pointer}
+  .lf__chips input,.lf__via input,.lf__consent input{position:absolute;opacity:0;pointer-events:none}
+  .lf__chips span{display:flex;align-items:center;height:4.4rem;padding:0 1.6rem;border-radius:2.2rem;border:1px solid var(--line);font-size:max(1.5rem,14px);font-weight:500;transition:background-color .2s var(--ease),color .2s var(--ease),border-color .2s var(--ease)}
+  .lf__chips label:hover span{background:var(--mint)}
+  .lf__chips input:checked+span{background:var(--deep);border-color:var(--deep);color:#fff}
+  .lf__chips input:focus-visible+span,.lf__via input:focus-visible+span,.lf__consent input:focus-visible+i{outline:2px solid var(--deep);outline-offset:2px}
+  .lf__row{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem}
+  .lf__field{display:flex;flex-direction:column;gap:.6rem;min-width:0}
+  .lf__via legend{display:block}
+  .lf__field>span,.lf__via legend{font-size:max(1.4rem,13px);font-weight:500}
+  .lf__field em{font-style:normal;font-weight:400}
+  .lf input[type=text],.lf input[type=tel],.lf textarea{width:100%;height:4.8rem;padding:0 1.4rem;border-radius:1.2rem;border:1px solid var(--line);background:#fff;font:inherit;font-size:max(1.5rem,13px);color:inherit;letter-spacing:inherit;transition:border-color .2s var(--ease),box-shadow .2s var(--ease)}
+  .lf textarea{height:9.6rem;padding:1.2rem 1.4rem;resize:vertical;min-height:9.6rem;line-height:1.4}
+  .lf ::placeholder{color:var(--muted);opacity:1}
+  .lf input:focus,.lf textarea:focus{outline:0;border-color:var(--deep);box-shadow:0 0 0 3px rgba(63,107,86,.15)}
+  .lf .is-bad input,.lf .is-bad textarea{border-color:#d23b3b}
+  .lf__err{font-size:max(1.3rem,12px);color:#d23b3b}
+  .lf__need .lf__err{margin-top:.8rem}
+  .lf__via>div{margin-top:.6rem;height:4.8rem;padding:.4rem;border-radius:1.2rem;background:var(--bg);display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem}
+  .lf__via span{height:100%;border-radius:.9rem;display:grid;place-items:center;font-size:max(1.4rem,13px);font-weight:500;transition:background-color .2s var(--ease),color .2s var(--ease)}
+  .lf__via input:checked+span{background:var(--deep);color:#fff}
+  .lf__hp{position:absolute!important;left:-9999px;width:1px;height:1px;opacity:0}
+  .lf footer{margin-top:auto;display:grid;gap:1.4rem}
+  .lf__consent{display:flex;gap:1rem;align-items:flex-start;cursor:pointer;font-size:max(1.3rem,12px);line-height:1.45;color:var(--muted)}
+  .lf__consent>i{flex:none;width:2rem;height:2rem;border-radius:.6rem;border:1px solid #becdc4;background:#fff;transition:background-color .2s,border-color .2s}
+  .lf__consent input:checked+i{border-color:var(--deep);background:var(--deep) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='m5 10.3 3.2 3.2L15 6.7' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/100% no-repeat}
+  .lf__consent.is-bad>i{border-color:#d23b3b}
+  .lf__consent a{text-decoration:underline;text-underline-offset:.3rem}
+  .lf__consent a:hover{color:var(--deep)}
+  .lf__submit{height:5.6rem;border-radius:2.8rem;font-size:max(1.7rem,16px);width:100%}
+  .lf__submit.is-busy{opacity:.7;pointer-events:none}
+  .lf__state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1.6rem;min-height:40rem}
+  .lf__state h3{font-size:3rem;font-weight:700;letter-spacing:-.02em}
+  .lf__state p{max-width:42rem;font-size:max(1.7rem,15px);line-height:1.45;color:var(--muted)}
+  .lf__state .btn{height:5.2rem;padding:0 2.4rem;font-size:max(1.6rem,15px)}
+  .lf__state div{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
+  .lf__mark{width:7.2rem;height:7.2rem;border-radius:50%;background:var(--mint);color:var(--deep);display:grid;place-items:center}
+  .lf__mark--bad{background:#fbeaea;color:#d23b3b}
+  .lf__mark svg{width:3.6rem;height:3.6rem}
+  @media (max-width:1023px){
+    .lf{border-radius:20px;padding:20px}
+    .lf__main{gap:20px}
+    .lf header h3{font-size:24px}
+    .lf__chips{gap:6px}.lf__chips span{height:40px;padding:0 14px;border-radius:20px}
+    .lf__row{grid-template-columns:1fr;gap:16px}
+    .lf input[type=text],.lf input[type=tel]{height:48px;border-radius:12px;padding:0 14px;font-size:16px}
+    .lf textarea{font-size:16px;border-radius:12px;padding:12px 14px;height:96px;min-height:96px}
+    .lf__via>div{height:48px;padding:4px;border-radius:12px;gap:4px}.lf__via span{border-radius:9px}
+    .lf__consent>i{width:20px;height:20px;border-radius:6px}
+    .lf__submit{height:56px;border-radius:28px}
+    .lf__state{min-height:320px}.lf__state h3{font-size:24px}
+    .lf__mark{width:64px;height:64px}.lf__mark svg{width:32px;height:32px}
+    .lf__state .btn{height:52px;padding:0 22px}
+  }
+</style>

@@ -1,0 +1,80 @@
+---
+import { qatar as q, nb } from '../../i18n/ru';
+import Badge from '../ui/Badge.astro';
+import Arrow from './Arrow.astro';
+---
+<section class="section qt" id="qatar">
+  <div class="head qt__head">
+    <Badge icon="task" reveal>{q.badge}</Badge>
+    <div class="head__text">
+      <p class="head__intro" data-reveal>{nb(q.intro)}</p>
+      <h2 class="head__title" data-reveal style="--d:80ms">{q.title.map((l) => <span>{l} </span>)}</h2>
+    </div>
+  </div>
+  <ul class="qt__facts">{q.facts.map((f, i) => <li data-reveal style={`--d:${i * 70}ms`}><b>{f.title}</b><p>{nb(f.text)}</p></li>)}</ul>
+  <ul class="qt__srv">
+    {q.services.map((s, i) => (
+      <li data-reveal style={`--d:${(i % 3) * 70}ms`}>
+        <details class="fold" data-group="qatar" open>
+          <summary><h3>{nb(s.title)}</h3><i class="fold__ic"></i></summary>
+          <p>{nb(s.text)}</p>
+        </details>
+        <span class="qt__price">{s.price}</span>
+      </li>
+    ))}
+  </ul>
+  <div class="qt__bottom" data-reveal>
+    <p>{nb(q.note)}</p>
+    <button class="btn qt__talk" type="button" data-open="write" data-msg="Вопрос про Катар">{q.talk}<Arrow /></button>
+    <a class="btn btn--white qt__site" href={q.siteHref} target="_blank" rel="noopener">{q.site}<Arrow /></a>
+  </div>
+</section>
+<style>
+  .qt{background:var(--qatar);color:#fff;padding:10rem 4rem}
+  .qt__head :global(.badge){--badge-bg:#fff;color:var(--qatar);font-weight:500}
+  .qt__head :global(.badge svg){color:var(--qatar)}
+  .qt__head .head__text{max-width:88.9rem}
+  .qt__head .head__intro{color:rgba(255,255,255,.75);line-height:1.45;max-width:57.2rem}
+  .qt__head .head__title{color:#fff;margin-top:2.4rem;line-height:4.8rem;font-weight:500}
+  .qt__facts{margin-top:12.6rem;display:grid;grid-template-columns:repeat(4,1fr);gap:2rem}
+  .qt__facts li{background:rgba(255,255,255,.07);border-radius:2.4rem;padding:2.8rem;display:grid;gap:.8rem}
+  .qt__facts b{font-size:4.4rem;line-height:4.8rem;font-weight:500;letter-spacing:-.03em}
+  .qt__facts p{font-size:max(1.6rem,13px);color:rgba(255,255,255,.7)}
+  .qt__srv{margin-top:2rem;display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
+  .qt__srv li{background:#fff;color:var(--ink);border-radius:2.4rem;padding:2.8rem;min-height:18.6rem;display:flex;flex-direction:column;align-items:flex-start;gap:1.2rem;transition:translate .35s var(--ease)}
+  .qt__srv li:hover{translate:0 -.5rem}
+  .qt__srv details{width:100%}
+  .qt__srv h3{font-size:2.4rem;line-height:3rem;font-weight:500;letter-spacing:-.02em}
+  .qt__srv details p{margin-top:1.2rem;font-size:max(1.6rem,13px);line-height:1.38;color:rgba(10,10,10,.7)}
+  .qt__price{height:3.2rem;padding:0 1.4rem;border-radius:999px;background:rgba(138,21,56,.1);color:var(--qatar);font-size:max(1.4rem,12px);font-weight:500;display:inline-flex;align-items:center}
+  .qt__bottom{margin-top:2rem;background:rgba(255,255,255,.07);border-radius:2.4rem;padding:2.4rem 2.8rem;display:flex;align-items:center;gap:1.6rem}
+  .qt__bottom p{flex:1;font-size:max(1.6rem,13px);line-height:1.38;color:rgba(255,255,255,.75)}
+  .qt__talk,.qt__site{height:5.8rem;padding:0 2.4rem;font-size:max(1.7rem,15px)}
+  .qt__talk{border:1px solid rgba(255,255,255,.4);color:#fff}
+  .qt__talk :global(.arrow){display:none}
+  .qt__talk:hover{background:rgba(255,255,255,.1)}
+  .qt__site{color:var(--qatar);padding-right:2.8rem}
+  .qt__site:hover{background:#f6dfe6}
+  @media (max-width:1023px){
+    .qt{padding:56px 12px 12px}
+    .qt__head{padding:0 8px 8px}
+    .qt__head .head__title{margin-top:0;line-height:32px;font-weight:400}
+    .qt__head .head__intro{color:rgba(255,255,255,.85);line-height:21px;max-width:none}
+    .qt__facts{margin-top:20px;grid-template-columns:1fr 1fr;gap:8px}
+    .qt__facts li{border-radius:16px;padding:14px;align-content:start;gap:4px}
+    .qt__facts b{font-size:22px;line-height:28px}.qt__facts p{font-size:15px;line-height:21px}
+    .qt__srv{margin-top:12px;grid-template-columns:1fr;gap:12px}
+    .qt__srv li{border-radius:20px;padding:18px;min-height:0;gap:10px}
+    .qt__srv li:hover{translate:none}
+    .qt__srv h3{font-size:18px;line-height:24px}
+    .qt__srv details p{margin-top:8px;font-size:15px;line-height:21px}
+    .qt__price{height:32px;font-size:13px}
+    .qt__bottom{margin-top:12px;border-radius:20px;padding:18px;flex-direction:column;align-items:stretch;gap:10px}
+    .qt__bottom p{font-size:15px;line-height:21px;margin-bottom:4px}
+    .qt__talk,.qt__site{height:56px;font-size:16px;width:100%}
+    .qt__talk{background:#fff;color:var(--ink);border:0}
+    .qt__talk :global(.arrow){display:block}
+    .qt__site{background:none;border:1px solid rgba(255,255,255,.4);color:#fff}
+  }
+  @media (min-width:768px) and (max-width:1023px){.qt{padding:56px 20px 20px}.qt__facts{grid-template-columns:repeat(4,1fr)}.qt__srv{grid-template-columns:1fr 1fr}}
+</style>

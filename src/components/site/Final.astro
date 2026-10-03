@@ -1,0 +1,68 @@
+---
+import { final as c, nb } from '../../i18n/ru';
+import LeadForm from './LeadForm.astro';
+import Arrow from './Arrow.astro';
+---
+<section class="section fn" id="contact">
+  <div class="fn__left">
+    <span class="fn__badge" data-reveal><i></i>{c.badge}</span>
+    <h2 data-reveal style="--d:60ms">{c.title.map((l) => <span>{l} </span>)}</h2>
+    <p class="fn__text" data-reveal style="--d:120ms">{nb(c.text)}</p>
+    <ol class="fn__steps">{c.steps.map((s, i) => <li data-reveal style={`--d:${i * 80}ms`}><b>{i + 1}</b><div><h3>{s.title}</h3><p>{nb(s.text)}</p></div></li>)}</ol>
+    <button class="btn btn--white fn__open" type="button" data-open="lead">{c.openForm}<Arrow /></button>
+    <p class="fn__note">{c.openNote}</p>
+    <div class="fn__alt">
+      <a class="fn__tg" href={c.tg.href} target="_blank" rel="noopener" data-reveal><span><b>{c.tg.title}</b><em>{c.tg.sub}</em></span><Arrow /></a>
+      <a class="fn__calc" href={c.calc.href} data-reveal style="--d:80ms"><span><b>{c.calc.title}</b><em>{c.calc.sub}</em></span><Arrow /></a>
+    </div>
+  </div>
+  <div class="fn__form" data-reveal style="--d:120ms"><LeadForm /></div>
+</section>
+<style>
+  .fn{background:var(--ink);color:#fff;padding:4rem;display:grid;grid-template-columns:100fr 76fr;gap:2rem}
+  .fn__left{padding:2rem 4rem 0 2rem;display:flex;flex-direction:column;align-items:flex-start}
+  .fn__badge{display:inline-flex;align-items:center;gap:.8rem;height:3.6rem;padding:0 1.4rem;border-radius:999px;background:rgba(255,255,255,.1);font-size:max(1.5rem,13px);font-weight:500}
+  .fn__badge i{width:.8rem;height:.8rem;border-radius:50%;background:var(--accent);animation:fn-pulse 2s ease-in-out infinite}
+  @keyframes fn-pulse{0%,100%{box-shadow:0 0 0 0 rgba(125,171,144,.6)}50%{box-shadow:0 0 0 .6rem rgba(125,171,144,0)}}
+  .fn h2{margin-top:2.4rem;font-size:7.6rem;line-height:8rem;font-weight:500;letter-spacing:-.035em}
+  .fn h2 span{display:block}
+  .fn__text{margin-top:2.4rem;max-width:61rem;font-size:max(2.2rem,16px);line-height:1.36;color:rgba(255,255,255,.7)}
+  .fn__steps{margin-top:auto;padding-top:6rem;width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
+  .fn__steps li{background:rgba(255,255,255,.07);border-radius:2.4rem;padding:2.4rem;min-height:18.2rem;display:flex;flex-direction:column;gap:1.4rem}
+  .fn__steps b{width:3.6rem;height:3.6rem;border-radius:50%;background:var(--accent);color:var(--ink);display:grid;place-items:center;font-size:max(1.6rem,13px);font-weight:500}
+  .fn__steps h3{font-size:max(2.2rem,16px);line-height:1.27;font-weight:500;letter-spacing:-.02em}
+  .fn__steps p{margin-top:1.4rem;font-size:max(1.5rem,13px);line-height:1.4;color:rgba(255,255,255,.6)}
+  .fn__open,.fn__note{display:none}
+  .fn__alt{margin-top:1.6rem;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+  .fn__alt a{border-radius:2.4rem;padding:2.2rem 2.4rem 2.2rem 2.2rem;display:flex;justify-content:space-between;align-items:center;gap:1.2rem;transition:background-color .25s var(--ease),border-color .25s var(--ease)}
+  .fn__alt span{display:grid;gap:.2rem}
+  .fn__alt b{font-size:max(2rem,16px);line-height:1.3;font-weight:500}
+  .fn__alt em{font-style:normal;font-size:max(1.5rem,13px);color:rgba(255,255,255,.65)}
+  .fn__alt :global(.arrow){width:2rem;height:2rem;transition:transform .25s var(--ease)}
+  .fn__alt a:hover :global(.arrow){transform:translate(.3rem,-.3rem)}
+  .fn__tg{background:var(--deep)}.fn__tg:hover{background:#4a7d65}
+  .fn__calc{border:1px solid rgba(255,255,255,.2)}.fn__calc:hover{background:rgba(255,255,255,.07)}
+  .fn__form{display:flex}
+  .fn__form :global(.lf){flex:1}
+  @media (max-width:1023px){
+    .fn{padding:20px 12px 12px;display:block}
+    .fn__left{padding:28px 8px 0;align-items:stretch}
+    .fn__badge{align-self:flex-start;height:30px;font-size:13px}
+    .fn h2{margin-top:14px;font-size:30px;line-height:34px}
+    .fn h2 span{display:inline}
+    .fn__text{margin-top:14px;font-size:15px;line-height:21px}
+    .fn__steps{margin:24px -8px 0;padding:14px 16px;width:auto;display:grid;grid-template-columns:1fr;gap:14px;background:rgba(255,255,255,.07);border-radius:20px}
+    .fn__steps li{background:none;padding:0;min-height:0;flex-direction:row;gap:14px;border-radius:0}
+    .fn__steps b{flex:none;width:24px;height:24px;font-size:12px;margin-top:2px}
+    .fn__steps h3{font-size:15px;line-height:20px}
+    .fn__steps p{margin-top:2px;font-size:12px;line-height:17px}
+    .fn__open{display:flex;margin:12px -8px 0;height:56px;font-size:16px}
+    .fn__note{display:block;margin:14px 0 0;text-align:center;font-size:12px;line-height:17px;color:rgba(255,255,255,.55)}
+    .fn__alt{margin:14px -8px 0;width:auto;grid-template-columns:1fr;gap:10px}
+    .fn__alt a{height:56px;border-radius:999px;padding:0 24px;justify-content:center;gap:10px}
+    .fn__alt b{font-size:16px}.fn__alt em{display:none}
+    .fn__alt :global(.arrow){width:18px;height:18px}
+    .fn__form{display:none}
+  }
+  @media (min-width:768px) and (max-width:1023px){.fn{padding:28px 20px 20px}.fn__steps{grid-template-columns:repeat(3,1fr)}.fn__alt{grid-template-columns:1fr 1fr}}
+</style>

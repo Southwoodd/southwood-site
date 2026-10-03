@@ -1,0 +1,77 @@
+---
+import { about as a, nb } from '../../i18n/ru';
+import Head from '../ui/Head.astro';
+import Ui from '../ui/Ui.astro';
+import Arrow from './Arrow.astro';
+---
+<section class="section ab" id="about">
+  <Head badge={a.badge} icon="task" intro={a.intro} title={a.title} />
+  <div class="ab__grid">
+    <figure class="ab__photo" data-reveal>
+      <img src="/img/about/sergey.webp" srcset="/img/about/sergey-640.webp 640w, /img/about/sergey.webp 1040w" sizes="(max-width:1023px) 95vw, 28vw" width="1040" height="1360" alt="Сергей Воробьев" loading="lazy" decoding="async" />
+      <figcaption><b>{a.name}</b><span>{a.place}</span></figcaption>
+    </figure>
+    <article class="ab__card" data-reveal style="--d:80ms">
+      <span class="ab__label">{a.pathLabel}</span>
+      <ol class="ab__path">{a.path.map((x, i) => (<>{i > 0 && <li class="arr" aria-hidden="true"><Ui n="send" /></li>}<li class:list={{ on: i === a.path.length - 1 }}>{x}</li></>))}</ol>
+      <h3>{a.h3.map((l) => <span>{l} </span>)}</h3>
+      {a.text.map((t) => <p>{nb(t)}</p>)}
+      <ul class="ab__links">{a.links.map((l) => <li><a href={l.href} target="_blank" rel="noopener">{l.label}<Arrow /></a></li>)}</ul>
+    </article>
+    <ul class="ab__facts">
+      {a.facts.map((f, i) => (<li class={`ab__fact ab__fact--${f.theme}`} data-reveal style={`--d:${160 + i * 80}ms`}><b>{f.title}</b><p>{nb(f.text)}</p></li>))}
+    </ul>
+  </div>
+</section>
+<style>
+  .ab{padding:10rem 4rem}
+  .ab__grid{margin-top:11.6rem;display:grid;grid-template-columns:52fr 74fr 48fr;gap:2rem}
+  .ab__photo{position:relative;min-height:68rem;border-radius:3.2rem;overflow:hidden;background:var(--card)}
+  .ab__photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 20%;transition:transform 1.2s var(--ease)}
+  .ab__photo:hover img{transform:scale(1.04)}
+  .ab__photo figcaption{position:absolute;left:2rem;bottom:2rem;background:#fff;border-radius:2rem;padding:1.4rem 2rem;display:grid;gap:.2rem}
+  .ab__photo b{font-size:max(2.2rem,16px);line-height:1.27;font-weight:500}
+  .ab__photo span{font-size:max(1.5rem,11px);color:var(--muted)}
+  .ab__card{background:var(--card);border-radius:3.2rem;padding:4rem;display:flex;flex-direction:column;align-items:flex-start}
+  .ab__label{font-size:max(1.4rem,12px);color:var(--muted)}
+  .ab__path{margin-top:2rem;display:flex;flex-wrap:wrap;align-items:center;gap:.8rem}
+  .ab__path li{height:3.6rem;padding:0 1.4rem;border-radius:999px;background:#fff;font-size:max(1.6rem,13px);font-weight:500;display:flex;align-items:center}
+  .ab__path li.on{background:var(--deep);color:#fff}
+  .ab__path li.arr{background:none;padding:0;color:var(--muted)}
+  .ab__path li.arr :global(svg){width:2rem;height:2rem}
+  .ab__card h3{margin-top:auto;padding-top:4rem;font-size:4rem;line-height:4.4rem;font-weight:500;letter-spacing:-.03em}
+  .ab__card h3 span{display:block}
+  .ab__card p{margin-top:2rem;font-size:max(2rem,15px);line-height:1.4}
+  .ab__links{margin-top:2rem;display:flex;gap:.8rem}
+  .ab__links a{height:4.4rem;padding:0 1.4rem 0 1.8rem;border-radius:999px;background:#fff;font-size:max(1.6rem,14px);font-weight:500;display:flex;align-items:center;gap:.8rem;transition:background-color .2s var(--ease)}
+  .ab__links a:hover{background:var(--light)}
+  .ab__links :global(.arrow){width:1.6rem;height:1.6rem}
+  .ab__facts{display:grid;gap:2rem}
+  .ab__fact{border-radius:3.2rem;padding:2.8rem 3.2rem;display:flex;flex-direction:column;justify-content:flex-end;gap:.8rem}
+  .ab__fact b{font-size:4.4rem;line-height:4.8rem;font-weight:500;letter-spacing:-.03em}
+  .ab__fact p{font-size:max(1.7rem,13px);line-height:1.41}
+  .ab__fact--green{background:var(--deep);color:#fff}.ab__fact--black{background:var(--ink);color:#fff}
+  .ab__fact--green p,.ab__fact--black p{color:rgba(255,255,255,.8)}
+  .ab__fact--light{background:var(--card)}.ab__fact--light b{color:var(--deep)}.ab__fact--light p{color:rgba(10,10,10,.7)}
+  @media (max-width:1023px){
+    .ab{padding:56px 12px 12px}
+    .ab :global(.head){padding:0 8px 8px}
+    .ab__grid{margin-top:20px;grid-template-columns:1fr;gap:12px}
+    .ab__photo{min-height:0;aspect-ratio:350/458;border-radius:20px}
+    .ab__photo figcaption{left:14px;right:auto;bottom:14px;border-radius:14px;padding:10px 14px}
+    .ab__photo b{font-size:14px}.ab__photo span{font-size:10px}
+    .ab__card{border-radius:20px;padding:18px}
+    .ab__path{margin-top:12px;gap:8px}.ab__path li{height:32px;font-size:13px}
+    .ab__path li.arr :global(svg){width:16px;height:16px}
+    .ab__card h3{padding-top:14px;font-size:22px;line-height:28px}
+    .ab__card h3 span{display:inline}
+    .ab__card p{margin-top:10px;font-size:15px;line-height:22px}
+    .ab__links{margin-top:14px;flex-direction:column;width:100%;gap:8px}
+    .ab__links a{height:54px;padding:0 20px;justify-content:space-between;font-size:16px}
+    .ab__links :global(.arrow){width:18px;height:18px}
+    .ab__facts{gap:12px}
+    .ab__fact{border-radius:20px;padding:18px;gap:6px}
+    .ab__fact b{font-size:28px;line-height:32px}.ab__fact p{font-size:15px;line-height:21px}
+  }
+  @media (min-width:768px) and (max-width:1023px){.ab{padding:56px 20px 20px}.ab__grid{grid-template-columns:1fr 1fr}.ab__facts{grid-column:1/-1;grid-template-columns:repeat(3,1fr)}}
+</style>
