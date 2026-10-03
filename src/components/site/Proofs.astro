@@ -1,0 +1,47 @@
+---
+import { proofs, nb } from '../../i18n/ru';
+---
+<section class="section pr" id="proofs">
+  <div class="pr__top">
+    <span class="badge" data-reveal><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2.5l7.5 2.8v6c0 4.6-3.1 8.6-7.5 10.2C7.6 19.9 4.5 15.9 4.5 11.3v-6L12 2.5z" fill="#c5d9c8"/><path d="M8.7 12l2.3 2.3 4.4-4.6" stroke="#3f6b56" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>{proofs.badge}</span>
+    <div class="pr__text" data-reveal style="--d:80ms">
+      <p class="pr__lead">{nb(proofs.lead)}</p>
+      <p class="pr__big">{proofs.text.map((l) => <span>{nb(l)} </span>)}</p>
+    </div>
+  </div>
+  <ul class="pr__stats">
+    {proofs.stats.map((s, i) => (
+      <li data-reveal style={`--d:${i * 70}ms`}>
+        <b><span data-count={s.value}>{new Intl.NumberFormat('ru-RU').format(s.value)}</span>{s.suffix}</b>
+        <span>{nb(s.text)}</span>
+      </li>
+    ))}
+  </ul>
+</section>
+<style>
+  .pr{padding:10rem 4rem 10rem}
+  .pr__top{display:grid;grid-template-columns:89.1rem 1fr;align-items:start;min-height:33.2rem}
+  .pr__lead{color:var(--grey-text);font-size:max(1.8rem,15px)}
+  .pr__top .badge{justify-self:start}
+  .pr__big{margin-top:5rem;font-size:4.2rem;line-height:4.5rem;font-weight:500;letter-spacing:-.03em;color:var(--ink-2)}
+  .pr__big span{display:block}
+  .pr__stats{margin-top:10rem;display:grid;grid-template-columns:89rem 1fr;position:relative}
+  .pr__stats::before{content:'';position:absolute;left:89rem;top:0;bottom:0;width:1px;background:var(--line)}
+  .pr__stats li{padding:0 0 10rem;display:flex;flex-direction:column;gap:2rem}
+  .pr__stats li:nth-child(even){padding-left:5.9rem}
+  .pr__stats li:nth-child(n+3){padding-top:10rem;padding-bottom:0;border-top:1px solid var(--line)}
+  .pr__stats b{font-size:9.4rem;line-height:.8;font-weight:500;letter-spacing:-.04em;color:var(--ink-2)}
+  .pr__stats li>span{color:var(--grey-text);font-size:max(2rem,15px)}
+  @media (max-width:1023px){
+    .pr{padding:56px 20px 32px}
+    .pr__top{display:flex;flex-direction:column;align-items:flex-start;gap:20px;min-height:0}
+    .pr__lead{font-size:15px;line-height:21px}
+    .pr__big{margin-top:20px;font-size:22px;line-height:28px}.pr__big span{display:inline}
+    .pr__stats{margin-top:20px;display:flex;flex-direction:column}
+    .pr__stats::before{display:none}
+    .pr__stats li,.pr__stats li:nth-child(even),.pr__stats li:nth-child(n+3){padding:20px 0;border-top:1px solid var(--line);gap:8px}
+    .pr__stats b{font-size:52px;line-height:54px}
+    .pr__stats li>span{font-size:15px;line-height:21px}
+  }
+  @media (min-width:768px) and (max-width:1023px){.pr__stats{display:grid;grid-template-columns:1fr 1fr;column-gap:24px}}
+</style>

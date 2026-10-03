@@ -1,0 +1,32 @@
+---
+import { clients, nb } from '../../i18n/ru';
+---
+<section class="section cl" id="clients">
+  <div class="cl__head" data-reveal>
+    <h2>{nb(clients.title)}</h2>
+    <p>{nb(clients.sub)}</p>
+  </div>
+  <ul class="cl__grid">
+    {clients.logos.map((l, i) => (
+      <li data-reveal style={`--d:${i * 40}ms`}><img src={`/img/clients/${l.file}.svg`} alt={l.name} width={l.w} height={l.h} loading="lazy" style={`--w:${l.w / 10}rem;--mw:${Math.round(l.w * 0.72)}px`} class:list={{ full: l.file === 'rivgauche' }} /></li>
+    ))}
+  </ul>
+</section>
+<style>
+  .cl{padding:4rem;display:grid;grid-template-columns:34rem 1fr;gap:4rem;align-items:start}
+  .cl h2{font-size:3rem;line-height:3.6rem;font-weight:500;letter-spacing:-.03em}
+  .cl p{margin-top:1.4rem;color:var(--muted);font-size:max(1.6rem,14px);line-height:1.45}
+  .cl__grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1.2rem}
+  .cl__grid li{height:11rem;border-radius:2rem;background:var(--card);display:grid;place-items:center;transition:background-color .25s var(--ease)}
+  .cl__grid li:hover{background:var(--mint)}
+  .cl__grid img{width:var(--w);height:auto}
+  .cl__grid img.full{width:27rem}
+  @media (max-width:1023px){
+    .cl{padding:24px 20px;display:flex;flex-direction:column;gap:16px}
+    .cl h2{font-size:24px;line-height:28px}.cl p{margin-top:12px;font-size:15px;line-height:21px}
+    .cl__grid{grid-template-columns:repeat(2,1fr);gap:8px;width:100%}
+    .cl__grid li{height:72px;border-radius:16px}
+    .cl__grid img{width:var(--mw)}.cl__grid img.full{width:194px}
+  }
+  @media (min-width:600px) and (max-width:1023px){.cl__grid{grid-template-columns:repeat(4,1fr)}}
+</style>

@@ -1,0 +1,70 @@
+---
+import '../styles/site.css';
+interface Props { title: string; description: string; lang?: string; noindex?: boolean; path?: string }
+const { title, description, lang = 'ru', noindex = false, path = '/' } = Astro.props;
+const url = new URL(path, Astro.site).toString();
+---
+<!doctype html>
+<html lang={lang} class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={url} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#f3f6f2" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preload" href="/fonts/onest-cyrillic-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Сергей Воробьев" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url} />
+    <meta property="og:image" content={new URL('/og-cover.png', Astro.site).toString()} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script is:inline>document.documentElement.classList.remove('no-js')</script>
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="sr-only" href="#main">К содержимому</a>
+    <slot />
+    <script>
+      // Появление блоков при скролле
+      const io = new IntersectionObserver((entries) => {
+        for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+      }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+      document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+
+      // Счетчики
+      const nf = new Intl.NumberFormat('ru-RU');
+      const co = new IntersectionObserver((entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          const el = e.target as HTMLElement; co.unobserve(el);
+          const to = Number(el.dataset.count); const t0 = performance.now(); const dur = 1400;
+          if (matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = nf.format(to); continue; }
+          const tick = (t: number) => { const p = Math.min(1, (t - t0) / dur); const v = Math.round(to * (1 - Math.pow(1 - p, 3))); el.textContent = nf.format(v); if (p < 1) requestAnimationFrame(tick); };
+          requestAnimationFrame(tick);
+        }
+      }, { threshold: 0.6 });
+      document.querySelectorAll('[data-count]').forEach((el) => co.observe(el));
+
+      // Плавный скролл только на десктопе с мышью
+      const desktop = matchMedia('(min-width: 1024px) and (hover: hover) and (pointer: fine)').matches;
+      const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (desktop && !calm) {
+        import('lenis').then(({ default: Lenis }) => {
+          const lenis = new Lenis({ duration: 0.9, smoothWheel: true, anchors: { offset: -140 } });
+          (window as any).__lenis = lenis;
+          const raf = (t: number) => { lenis.raf(t); requestAnimationFrame(raf); };
+          requestAnimationFrame(raf);
+        });
+      }
+    </script>
+  </body>
+</html>

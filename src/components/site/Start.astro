@@ -1,0 +1,59 @@
+---
+import { start, nb } from '../../i18n/ru';
+import Arrow from './Arrow.astro';
+---
+<section class="section st" id="start">
+  <div class="st__wave" aria-hidden="true"></div>
+  <div class="head head--center st__head">
+    <span class="badge badge--light" data-reveal><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5.2v13.6c0 1 1.1 1.6 2 1.1l10.6-6.8c.8-.5.8-1.7 0-2.2L9 4.1c-.9-.5-2 .1-2 1.1z" fill="currentColor"/></svg>{start.badge}</span>
+    <h2 class="head__title" data-reveal style="--d:60ms">{start.title}</h2>
+    <p class="head__intro" data-reveal style="--d:120ms">{nb(start.intro)}</p>
+  </div>
+  <ul class="st__grid">
+    {start.cards.map((c, i) => (
+      <li data-reveal style={`--d:${(i % 2) * 90}ms`}>
+        <a class="st__card" href={c.href} data-go={c.go || undefined} aria-label={`${c.title}. ${c.label}`}>
+          <img src={`/img/start/${c.key}.webp`} width="880" height="515" alt="" loading="lazy" decoding="async" />
+          <div class="st__body">
+            <h3>{c.title}</h3>
+            <span class="st__go"><Arrow /></span>
+            <p>{nb(c.text)}</p>
+          </div>
+        </a>
+      </li>
+    ))}
+  </ul>
+</section>
+<style>
+  .st{background:var(--deep);padding:10rem 4rem;overflow:hidden}
+  .st__wave{position:absolute;inset:0;background:url('/img/wave-green.svg') center/cover no-repeat;pointer-events:none}
+  .st__head{position:relative;color:#fff}
+  .st__head .head__title{color:#fff}
+  .st__head .head__intro{color:#fff}
+  .st :global(.badge--light){background:#c5d9c8;color:var(--ink-2);font-weight:500}
+  .st__grid{position:relative;margin-top:9.6rem;display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+  .st__card{display:block;position:relative;height:100%;background:#fff;border-radius:3.2rem;overflow:hidden;transition:transform .35s var(--ease),box-shadow .35s var(--ease)}
+  .st__card:hover{transform:translateY(-.6rem);box-shadow:0 2.4rem 5rem rgba(10,30,20,.22)}
+  .st__card img{width:100%;height:auto;transition:transform .6s var(--ease)}
+  .st__card:hover img{transform:scale(1.02)}
+  .st__body{padding:0 4rem 5rem;text-align:center}
+  .st__body h3{font-size:4.8rem;line-height:4.4rem;font-weight:500;letter-spacing:-.03em;color:var(--ink-2)}
+  .st__body p{margin-top:2rem;font-size:max(2.8rem,16px);line-height:1.57;color:var(--ink-2)}
+  .st__go{position:absolute;right:4rem;top:5rem;width:4.8rem;height:4.8rem;border-radius:50%;background:var(--deep);color:#fff;display:grid;place-items:center;transition:background-color .25s var(--ease)}
+  .st__go :global(.arrow){width:2rem;height:2rem;transition:transform .25s var(--ease)}
+  .st__card:hover .st__go{background:var(--ink)}
+  .st__card:hover .st__go :global(.arrow){transform:translate(.2rem,-.2rem)}
+  @media (max-width:1023px){
+    .st{padding:56px 12px 12px}
+    .st__head{padding:0 8px 8px;align-items:center}
+    .st__grid{margin-top:24px;grid-template-columns:1fr;gap:12px}
+    .st__card{border-radius:20px}
+    .st__card:hover{transform:none;box-shadow:none}
+    .st__body{padding:4px 18px 24px;text-align:left;display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:12px}
+    .st__body h3{font-size:26px;line-height:30px}
+    .st__body p{grid-column:1/-1;margin-top:14px;font-size:16px;line-height:23px}
+    .st__go{position:static;width:40px;height:40px}
+    .st__go :global(.arrow){width:18px;height:18px}
+  }
+  @media (min-width:768px) and (max-width:1023px){.st{padding:56px 20px 20px}.st__grid{grid-template-columns:1fr 1fr}}
+</style>

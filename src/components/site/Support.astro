@@ -1,0 +1,27 @@
+---
+import { support, nb } from '../../i18n/ru';
+import Arrow from './Arrow.astro';
+---
+<section class="section sp" id="support">
+  <div class="sp__wave" aria-hidden="true"></div>
+  <span class="badge" data-reveal><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1h3a2.500 2.500 0 0 1 2.500 2.500V11c-2.600 1.300-5.500 2-8.500 2s-5.900-.7-8.500-2V8.500A2.500 2.500 0 0 1 6 6h3zm1.600 0h2.800V5a.4.4 0 0 0-.4-.4h-2a.4.4 0 0 0-.4.4v1zM3.500 12.800V17A2.500 2.500 0 0 0 6 19.500h12a2.500 2.500 0 0 0 2.500-2.500v-4.200c-2.300 1-4.800 1.600-7.400 1.700v.7a1.100 1.100 0 0 1-2.200 0v-.7c-2.600-.1-5.100-.7-7.400-1.700z" fill="#c5d9c8"/></svg>{support.badge}</span>
+  <div class="sp__text">
+    <p data-reveal>{nb(support.text)}</p>
+    <button class="btn btn--deep sp__btn" type="button" data-open="lead" data-chip="support" data-reveal style="--d:100ms">{support.cta}<Arrow /></button>
+  </div>
+</section>
+<style>
+  .sp{background:#000;color:#fff;padding:10rem 4rem 7.8rem;display:grid;grid-template-columns:89rem 1fr;align-items:start;overflow:hidden}
+  .sp__wave{position:absolute;inset:0;background:url('/img/wave-black.svg') center/cover no-repeat;pointer-events:none}
+  .sp .badge,.sp__text{position:relative}
+  .sp .badge{justify-self:start}
+  .sp__text p{max-width:89.2rem;font-size:4.2rem;line-height:4.4rem;letter-spacing:-.03em}
+  .sp__btn{margin-top:10rem;height:9rem;padding:0 2.8rem;font-size:max(2.2rem,16px);gap:3rem}
+  .sp__btn :global(.arrow){width:2.4rem;height:2.4rem}
+  @media (max-width:1023px){
+    .sp{padding:56px 20px 32px;display:flex;flex-direction:column;align-items:flex-start;gap:20px}
+    .sp__text{width:100%}
+    .sp__text p{font-size:24px;line-height:29px;max-width:620px}
+    .sp__btn{margin-top:24px;width:100%;max-width:560px;height:60px;font-size:16px;gap:12px;background:#fff;color:var(--ink-2)}
+  }
+</style>

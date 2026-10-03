@@ -1,0 +1,48 @@
+---
+import { services, nb } from '../../i18n/ru';
+---
+<section class="section sv" id="services">
+  <div class="head">
+    <span class="badge" data-reveal><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.6 2.6 5.4 12.9c-.5.6 0 1.5.8 1.5h4.3l-1 6.3c-.2 1 1.1 1.6 1.7.8l7.6-10.2c.5-.7 0-1.6-.8-1.6h-4.1l1.4-6.3c.2-1-1.1-1.6-1.700-.8z" fill="#c5d9c8"/></svg>{services.badge}</span>
+    <div class="head__text">
+      <p class="head__intro" data-reveal>{nb(services.intro)}</p>
+      <h2 class="head__title" data-reveal style="--d:80ms">{services.title.map((l) => <span>{nb(l)} </span>)}</h2>
+    </div>
+  </div>
+  <ul class="sv__grid">
+    {services.cards.map((c, i) => (
+      <li class:list={['sv__card', { 'sv__card--wide': c.wide }]} data-reveal style={`--d:${(i % 2) * 90}ms`}>
+        <img src={`/img/services/${c.key}.webp`} width={c.w} height="638" alt={c.alt} loading="lazy" decoding="async" />
+        <div class="sv__body">
+          <h3><sup>{String(i + 1).padStart(2, '0')}</sup>{c.title}</h3>
+          <p>{nb(c.text)}</p>
+        </div>
+      </li>
+    ))}
+  </ul>
+</section>
+<style>
+  .sv{padding:10rem 4rem}
+  .sv .head__title span{display:block}
+  .sv .head__title{line-height:4.4rem}
+  .sv__grid{margin-top:10.6rem;display:flex;flex-wrap:wrap;gap:2rem}
+  .sv__card{background:var(--card);border-radius:3.2rem;overflow:hidden;width:76.2rem;flex:1 1 76.2rem;display:flex;flex-direction:column}
+  .sv__card--wide{flex:1 1 99.8rem;width:99.8rem}
+  .sv__card img{width:100%;height:auto}
+  .sv__body{padding:0 4rem 5rem;margin-top:auto}
+  .sv__body h3{display:flex;align-items:flex-start;gap:1rem;font-size:4.8rem;line-height:4.4rem;font-weight:500;letter-spacing:-.03em;color:var(--ink-2)}
+  .sv__body sup{font-size:max(1.2rem,10px);line-height:1;font-weight:400;letter-spacing:0;color:var(--ink-2);margin-top:-.2rem}
+  .sv__body p{margin-top:2rem;max-width:92rem;font-size:max(2.8rem,16px);line-height:1.57;color:var(--ink-2)}
+  @media (max-width:1023px){
+    .sv{padding:56px 12px 12px}
+    .sv :global(.head){padding:0 8px 8px}
+    .sv .head__title{line-height:32px}.sv .head__title span{display:inline}
+    .sv__grid{margin-top:20px;display:flex;flex-direction:column;gap:12px}
+    .sv__card,.sv__card--wide{width:auto;flex:none;border-radius:20px}
+    .sv__body{padding:8px 18px 24px}
+    .sv__body h3{flex-direction:column;gap:10px;font-size:26px;line-height:30px}
+    .sv__body sup{font-size:13px;color:var(--grey-text);margin:0}
+    .sv__body p{margin-top:10px;font-size:16px;line-height:23px}
+  }
+  @media (min-width:768px) and (max-width:1023px){.sv{padding:56px 20px 20px}.sv__grid{display:grid;grid-template-columns:1fr 1fr}}
+</style>

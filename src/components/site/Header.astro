@@ -1,0 +1,121 @@
+---
+import Logo from '../Logo.astro';
+import Arrow from './Arrow.astro';
+import { nav, header, site, nb } from '../../i18n/ru';
+---
+<header class="hdr" data-header>
+  <a class="hdr__brand" href="/" aria-label={site.name}>
+    <Logo size={32} /><span>{site.name}</span>
+  </a>
+  <nav class="hdr__nav" aria-label="Разделы">
+    {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+    <a class="hdr__qatar" href="#qatar">{header.qatar}</a>
+  </nav>
+  <div class="hdr__right">
+    <div class="lang" role="group" aria-label="Язык">
+      <span class="lang__on" aria-current="true">RU</span>
+      <a href="/en/" hreflang="en">EN</a>
+    </div>
+    <button class="btn btn--deep hdr__cta" type="button" data-open="write"><span class="hdr__cta-full">{header.cta}</span><span class="hdr__cta-short">{header.ctaShort}</span><Arrow /></button>
+    <button class="hdr__burger" type="button" aria-label="Меню" aria-expanded="false" aria-controls="menu" data-menu-open><i></i><i></i></button>
+  </div>
+</header>
+
+<div class="menu" id="menu" hidden>
+  <div class="menu__bar">
+    <a class="hdr__brand" href="/"><Logo size={26} /><span>{site.name}</span></a>
+    <div class="menu__bar-right">
+      <div class="lang"><span class="lang__on">RU</span><a href="/en/" hreflang="en">EN</a></div>
+      <button class="menu__close" type="button" aria-label="Закрыть" data-menu-close><svg viewBox="0 0 14 14" width="14" height="14" aria-hidden="true"><path d="M1 1l12 12M13 1 1 13" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+    </div>
+  </div>
+  <nav class="menu__grid" aria-label="Разделы">
+    {nav.map((n) => (
+      <a class:list={['tile', { 'tile--accent': n.href === '#pricing' }]} href={n.href} data-menu-link>
+        <span class="tile__top"><i class="tile__dot"></i><Arrow /></span>
+        <span class="tile__text"><b>{n.label === 'Вопросы-Ответы' ? 'Вопросы-Ответы' : n.label}</b><small>{nb(n.hint)}</small></span>
+      </a>
+    ))}
+  </nav>
+  <a class="menu__qatar" href="#qatar" data-menu-link><span><b>{header.qatarShort}</b><small>{header.qatarHint}</small></span><Arrow /></a>
+  <div class="menu__contact">
+    <div><b>{header.menuTitle}</b><small>{nb(header.menuSub)}</small></div>
+    <button class="btn btn--white menu__write" type="button" data-open="write" data-menu-link>{header.cta}<Arrow /></button>
+    <div class="menu__links"><a href={site.telegram} target="_blank" rel="noopener">Telegram</a><a href={`mailto:${site.email}`}>Почта</a></div>
+  </div>
+</div>
+
+<script>
+  const menu = document.getElementById('menu')!;
+  const openBtn = document.querySelector<HTMLButtonElement>('[data-menu-open]')!;
+  const set = (open: boolean) => {
+    menu.hidden = !open; openBtn.setAttribute('aria-expanded', String(open));
+    document.documentElement.style.overflow = open ? 'hidden' : '';
+    if (open) menu.querySelector<HTMLElement>('[data-menu-close]')?.focus(); else openBtn.focus();
+  };
+  openBtn.addEventListener('click', () => set(true));
+  menu.querySelector('[data-menu-close]')!.addEventListener('click', () => set(false));
+  menu.querySelectorAll('[data-menu-link]').forEach((a) => a.addEventListener('click', () => set(false)));
+  addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) set(false); });
+  const hdr = document.querySelector<HTMLElement>('[data-header]')!;
+  const onScroll = () => hdr.classList.toggle('is-stuck', scrollY > 24);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+</script>
+
+<style>
+  .hdr{position:sticky;top:3rem;z-index:50;height:10rem;background:#fff;border-radius:2.8rem;display:flex;align-items:center;padding:0 4rem;gap:3rem;transition:box-shadow .3s var(--ease),height .3s var(--ease)}
+  .hdr.is-stuck{box-shadow:0 1rem 4rem rgba(20,32,26,.1);height:8rem}
+  .hdr__brand{display:flex;align-items:center;gap:1.2rem;color:var(--deep);font-size:2.4rem;font-weight:500;white-space:nowrap;--logo-dot:var(--accent)}
+  .hdr__brand :global(svg){width:3.2rem;height:3.2rem}
+  .hdr__nav{display:flex;align-items:center;gap:2.2rem;margin:0 auto;font-size:max(1.8rem,14px);color:var(--grey-text);white-space:nowrap}
+  .hdr__nav a{transition:color .2s}
+  .hdr__nav a:hover{color:var(--ink)}
+  .hdr__qatar{height:3.9rem;display:inline-flex;align-items:center;padding:0 1.7rem;border-radius:999px;background:var(--qatar);color:#fff!important;transition:filter .2s}
+  .hdr__qatar:hover{filter:brightness(1.15)}
+  .hdr__right{display:flex;align-items:center;gap:1.6rem}
+  .lang{display:flex;gap:.2rem;padding:.4rem;border-radius:999px;background:var(--card);font-size:max(1.4rem,12px);font-weight:500;color:var(--muted)}
+  .lang>*{padding:.8rem 1.2rem;border-radius:999px;line-height:1.3}
+  .lang__on{background:var(--ink);color:#fff}
+  .lang a:hover{color:var(--ink)}
+  .hdr__cta{height:5.6rem;padding:0 2.4rem;font-size:max(1.6rem,14px)}
+  .hdr__cta-short,.hdr__burger{display:none}
+  .menu{display:none}
+  @media (max-width:1279px) and (min-width:1024px){.hdr__nav{gap:1.6rem}.hdr__brand span{display:none}}
+  @media (max-width:1023px){
+    .hdr{top:8px;height:60px;border-radius:22px;padding:0 8px 0 16px;gap:8px}
+    .hdr.is-stuck{height:60px;box-shadow:0 8px 24px rgba(20,32,26,.1)}
+    .hdr__brand{font-size:16px;gap:10px}.hdr__brand :global(svg){width:26px;height:26px}
+    .hdr__nav,.hdr__right .lang,.hdr__cta-full,.hdr__cta :global(.arrow){display:none}
+    .hdr__right{margin-left:auto;gap:6px}
+    .hdr__cta{height:44px;padding:0 16px;font-size:14px}.hdr__cta-short{display:inline}
+    .hdr__burger{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:44px;height:44px;border-radius:999px;background:var(--ink)}
+    .hdr__burger i{width:18px;height:2px;border-radius:1px;background:#fff}
+    .menu{position:fixed;inset:0;z-index:100;background:var(--bg);padding:12px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;animation:menuIn .28s var(--ease)}
+    .menu[hidden]{display:none}
+    .menu__bar{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:22px;padding:8px 8px 8px 16px}
+    .menu__bar-right{display:flex;align-items:center;gap:8px}
+    .menu .lang{font-size:14px;padding:4px}.menu .lang>*{padding:8px 12px}
+    .menu__close{width:44px;height:44px;border-radius:999px;background:var(--ink);display:grid;place-items:center}
+    .menu__grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .tile{background:#fff;border-radius:22px;padding:14px;min-height:124px;display:flex;flex-direction:column;justify-content:space-between;color:var(--ink)}
+    .tile__top{display:flex;justify-content:space-between;align-items:flex-start}
+    .tile__top :global(.arrow){width:16px;height:16px}
+    .tile__dot{width:38px;height:38px;border-radius:999px;background:var(--mint)}
+    .tile__text{display:flex;flex-direction:column;gap:2px}
+    .tile b{font-size:22px;line-height:26px;font-weight:500}
+    .tile small{font-size:13px;line-height:17px;color:var(--muted)}
+    .tile--accent{background:var(--deep);color:#fff}.tile--accent small{color:rgba(255,255,255,.75)}.tile--accent .tile__dot{background:rgba(255,255,255,.16)}
+    .menu__qatar{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--qatar);color:#fff;border-radius:22px;padding:14px 14px 14px 16px}
+    .menu__qatar span{display:flex;flex-direction:column;gap:2px}
+    .menu__qatar b{font-size:17px;line-height:22px;font-weight:500}.menu__qatar small{font-size:13px;line-height:17px;opacity:.7}
+    .menu__qatar :global(.arrow){width:16px;height:16px}
+    .menu__contact{margin-top:auto;background:var(--ink);color:#fff;border-radius:26px;padding:18px 14px 14px;display:flex;flex-direction:column;gap:12px}
+    .menu__contact>div:first-child{display:flex;flex-direction:column;gap:2px;padding-left:4px}
+    .menu__contact b{font-size:20px;line-height:24px;font-weight:500}.menu__contact small{font-size:13px;opacity:.6}
+    .menu__write{height:54px;font-size:16px;width:100%}
+    .menu__links{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .menu__links a{height:46px;border-radius:999px;background:rgba(255,255,255,.1);display:grid;place-items:center;font-size:15px;font-weight:500}
+  }
+  @media (max-height:700px) and (max-width:1023px){.tile{min-height:100px}}
+  @keyframes menuIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+</style>
