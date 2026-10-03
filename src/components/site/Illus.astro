@@ -1,0 +1,124 @@
+---
+// Иллюстрации карточек, собранные кодом. Размеры в пикселях макета, масштаб по ширине карточки.
+import Ic from '../ui/Ic.astro';
+interface Props { name: string; label: string }
+const { name, label } = Astro.props;
+const size: Record<string, [number, number]> = {
+  zero: [880, 515], task: [880, 515], team: [880, 515], support: [880, 515],
+  crm: [998, 638], docs: [762, 638], kb: [762, 638], data: [998, 638],
+};
+const [w, h] = size[name];
+const bars = [165, 186, 178, 197, 193, 210, 268, 300, 285, 335];
+---
+<div class={`il il--${name}`} style={`--w:${w};--h:${h}`} role="img" aria-label={label}>
+  <div class="il__s" aria-hidden="true">
+    {name === 'zero' && (
+      <>
+        <div class="z-c z-c1" data-a style="--i:2"><span class="z-b" style="--bg:#00b2ff"><Ic n="statusup" s={19} />Воронка</span><span class="z-g"><Ic n="setting" s={14} /></span></div>
+        <div class="z-c z-c2" data-a style="--i:1"><span class="z-b" style="--bg:#16e52e"><Ic n="global" s={24} />Сайт</span><span class="z-g"><Ic n="setting" s={20} /></span></div>
+        <div class="z-c z-c3" data-a style="--i:0">
+          <div class="z-top"><span class="z-b" style="--bg:#ffbb00"><Ic n="apple" s={28} />Бренд</span><span class="z-g"><Ic n="setting" s={24} /></span></div>
+          <p class="z-l">Запуск</p>
+          <p class="z-h">За 1–8 недель</p>
+        </div>
+        <div class="il-fade z-f"></div>
+      </>
+    )}
+    {name === 'task' && (
+      <div class="il-panel t-p">
+        <div class="t-h"><span><img src="/img/start/avatar-s.webp" width="50" height="50" alt="" loading="lazy" />Сергей Воробьев</span><Ic n="close" s={17} /></div>
+        <div class="t-r">
+          <span class="t-av" data-a="pop" style="--i:1">КС</span>
+          <span class="il-dots" style="--i:2"><i></i><i></i><i></i></span>
+          <p class="t-m" data-a="pop" style="--i:11">Нужен редизайн сайта и верстка, текущий не приносит заявок. Действующий сайт на Битрикс. Сколько по срокам?</p>
+        </div>
+      </div>
+    )}
+    {name === 'team' && (
+      <div class="il-panel m-p">
+        <p class="m-t">Сравнение затрат</p>
+        <p class="m-l m-l1">Штатный дизайнер + разработчик</p>
+        <div class="m-pill"><span class="m-n">400 000</span><span class="m-sel"><b>₽</b>в месяц<Ic n="arrowdown" s={14} /></span></div>
+        <p class="m-l m-l2">Я у вас на аутсорсе</p>
+        <div class="m-pill"><span class="m-n">от&nbsp;<i></i>&nbsp;000<span class="m-off" data-a="pop" style="--i:15">- 77%</span></span><span class="m-sel"><b>₽</b>в месяц<Ic n="arrowdown" s={14} /></span></div>
+        <span class="m-sw"><Ic n="arrow3" s={48} /></span>
+      </div>
+    )}
+    {name === 'support' && (
+      <>
+        <svg class="il-svg" viewBox="0 0 880 515">
+          <circle class="s-ring" cx="440" cy="381" r="165" style="--t:70s" />
+          <circle class="s-ring s-rev" cx="440" cy="381" r="255" style="--t:95s" />
+          <circle class="s-ring" cx="440" cy="381" r="345" style="--t:120s" />
+        </svg>
+        <div class="s-o" style="--t:70s"><div class="s-sat s-a5"><span><Ic n="doctext" s={64} /></span></div><div class="s-sat s-a6"><span><Ic n="chart" s={64} /></span></div></div>
+        <div class="s-o s-rev" style="--t:95s"><div class="s-sat s-a4"><span><Ic n="figma" s={34} /></span></div></div>
+        <div class="s-o" style="--t:120s"><div class="s-sat s-a1"><span><Ic n="wallet" s={80} /></span></div><div class="s-sat s-a2"><span><Ic n="claude" s={52} /></span></div><div class="s-sat s-a3"><span><Ic n="openai" s={53} /></span></div></div>
+        <img class="s-me" src="/img/start/avatar.webp" width="150" height="150" alt="" loading="lazy" />
+        <div class="il-fade s-f"></div>
+      </>
+    )}
+    {name === 'crm' && (
+      <>
+        <svg class="il-svg" viewBox="0 0 998 638"><circle class="c-ring" cx="330" cy="348" r="165" /><circle class="c-ring c-ring2" cx="330" cy="348" r="259" /></svg>
+        <i class="c-dot c-d1" style="--d:0s"></i><i class="c-dot c-d2" style="--d:1s"></i><i class="c-dot c-d3" style="--d:2s"></i><i class="c-dot c-d4" style="--d:3s"></i>
+        <div class="c-core">CRM</div>
+        <div class="c-b c-b1"><span style="--d:0s"><Ic n="global" s={28} />Сайт</span></div>
+        <div class="c-b c-b2"><span style="--d:-1.2s"><Ic n="messages" s={28} />Мессенджеры</span></div>
+        <div class="c-b c-b3"><span style="--d:-2.4s"><Ic n="android" s={28} />Боты</span></div>
+        <div class="c-b c-b4"><span style="--d:-3.6s"><Ic n="data" s={28} />AI агенты</span></div>
+        <div class="c-p">
+          <p class="c-r1" data-a="right" style="--i:1"><i></i>Новая задача</p>
+          <p class="c-r2" data-a="right" style="--i:3">Канал<b>Telegram, AI-бот</b></p>
+          <p class="c-r3" data-a="right" style="--i:5">Воронка<b>Битрикс24</b><b class="g">• Новые</b></p>
+          <p class="c-r4" data-a="right" style="--i:7"><b class="g">Ответственный назначен</b></p>
+          <p class="c-ok" data-a="pop" style="--i:10"><Ic n="tick" s={24} />Заявка передана в CRM</p>
+        </div>
+        <div class="il-fade c-f"></div>
+      </>
+    )}
+    {name === 'docs' && (
+      <>
+        <div class="d-p">
+          <p class="d-t">Коммерческое предложение<Ic n="doc" s={24} /></p>
+          <p class="d-row">Канал<b data-a="right" style="--i:1">Из CRM</b></p>
+          <p class="d-row">Позиции и цены<b data-a="right" style="--i:3">Из каталога</b></p>
+          <p class="d-row">Текст<b data-a="right" style="--i:5">Черновик AI</b></p>
+          <p class="d-sk"><i data-a="grow" style="--i:6"></i><i data-a="grow" style="--i:7"></i><i data-a="grow" style="--i:8"></i></p>
+          <p class="d-b"><s>1–7 дней</s><Ic n="arrowright" s={24} /><b data-a="pop" style="--i:13">1 час</b></p>
+        </div>
+        <div class="il-fade d-f"></div>
+      </>
+    )}
+    {name === 'kb' && (
+      <>
+        <div class="il-panel k-p">
+          <p class="k-q" data-a style="--i:0">Как оформить возврат клиенту?</p>
+          <span class="il-dots" style="--i:4"><i></i><i></i><i></i></span>
+          <div class="k-a" data-a="pop" style="--i:13">Заявление от клиента, согласование с руководителем, возврат в течение 10 дней.<br /><span class="k-chip"><Ic n="doc" s={24} />Регламент «Возвраты»</span></div>
+          <p class="k-c" data-a="fade" style="--i:17">AI-помощник · база знаний компании</p>
+        </div>
+        <div class="il-fade k-f"></div>
+      </>
+    )}
+    {name === 'data' && (
+      <>
+        <div class="n-bars">{bars.map((b, i) => <i class={i > 5 ? 'f' : ''} data-a="bar" style={`--i:${i};height:calc(${b} * var(--u))`}></i>)}</div>
+        <div class="n-w"><div>Отчет за период<Ic n="doc" s={18} /></div><p><i></i><i></i></p><span>Собран сам</span></div>
+        <div class="il-fade n-f"></div>
+        <p class="n-t">Дашборд собственника</p>
+        <p class="n-s">выручка по месяцам</p>
+        <p class="n-l" style="left:calc(57 * var(--u))">Факт</p>
+        <p class="n-l" style="left:calc(546 * var(--u))">Прогноз</p>
+        <div class="n-k">
+          <b>Юнит-экономика</b>
+          <ul>
+            <li><span>Цена</span><i data-a="grow" style="--i:4;width:calc(114 * var(--u))"></i></li>
+            <li><span>Себест.</span><i data-a="grow" style="--i:6;width:calc(76 * var(--u))"></i></li>
+            <li><span>Маржа</span><i data-a="grow" style="--i:8;width:calc(132 * var(--u));background:#5a6b62"></i></li>
+          </ul>
+        </div>
+      </>
+    )}
+  </div>
+</div>

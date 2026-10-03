@@ -1,0 +1,9 @@
+---
+import icons from '../../icons/illus.json';
+interface Props { n: keyof typeof icons; s?: number; class?: string }
+const { n, s, class: c } = Astro.props;
+const i = icons[n];
+const [, , w, h] = i.vb.split(' ').map(Number);
+const size = s ?? w;
+---
+<svg class:list={['ic', c]} viewBox={i.vb} fill="none" aria-hidden="true" style={`width:calc(${size} * var(--u, 1px));height:calc(${(size * h) / w} * var(--u, 1px))`} set:html={i.body} />

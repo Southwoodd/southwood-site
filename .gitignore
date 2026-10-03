@@ -19,3 +19,4 @@ dist-ssr
 !.vscode/extensions.json
 .idea
 scripts/*.png
+src/styles/illus.css

@@ -1,0 +1,95 @@
+---
+// Служебная страница: стили и компоненты сайта в одном месте. В поиск и карту сайта не попадает.
+import Site from '../layouts/Site.astro';
+import Badge from '../components/ui/Badge.astro';
+import Ic from '../components/ui/Ic.astro';
+import Arrow from '../components/site/Arrow.astro';
+import Illus from '../components/site/Illus.astro';
+import icons from '../icons/illus.json';
+const colors = [
+  ['--bg', '#f3f6f2', 'Фон страницы'], ['--surface', '#ffffff', 'Блоки'], ['--card', '#f3f3f3', 'Карточки'], ['--mint', '#e8f0eb', 'Наведение'],
+  ['--line', '#d5e0d8', 'Линии'], ['--light', '#bee0cc', 'Светлый акцент'], ['--accent', '#7dab90', 'Акцент'], ['--deep', '#3f6b56', 'Основной зеленый'],
+  ['--muted', '#5a6b62', 'Вторичный текст'], ['--grey-text', '#6b7280', 'Серый текст'], ['--ink-2', '#111111', 'Текст'], ['--ink', '#0a0a0a', 'Черный'], ['--qatar', '#8a1538', 'Катар'],
+];
+const type = [
+  ['Заголовок первого экрана', '6.9rem / 7.2rem, 500', 'font-size:6.9rem;line-height:7.2rem;font-weight:500;letter-spacing:-.03em'],
+  ['Название карточки', '4.8rem / 4.4rem, 500', 'font-size:4.8rem;line-height:4.4rem;font-weight:500;letter-spacing:-.03em'],
+  ['Заголовок блока', '4.2rem / 4.4rem, 500', 'font-size:4.2rem;line-height:4.4rem;font-weight:500;letter-spacing:-.03em'],
+  ['Текст карточки', '2.8rem / 4.4rem', 'font-size:2.8rem;line-height:1.57'],
+  ['Кнопка', '2.2rem, 500', 'font-size:2.2rem;font-weight:500'],
+  ['Основной текст', '1.8rem / 1.35', 'font-size:1.8rem'],
+];
+const illus = [['zero', 880], ['task', 880], ['team', 880], ['support', 880], ['crm', 998], ['docs', 762], ['kb', 762], ['data', 998]];
+---
+<Site title="Библиотека стилей и компонентов" description="Служебная страница" noindex path="/ui">
+  <div class="page ui">
+    <header class="section ui__top"><h1>Библиотека стилей и компонентов</h1><p>Все размеры десктопа заданы в rem. На ширине 1920 один rem равен 10 px, от 1024 до 1919 масштаб идет за шириной окна. Ниже 1024 действуют отдельные размеры в px.</p></header>
+
+    <section class="section ui__sec"><h2>Цвета</h2>
+      <ul class="ui__colors">{colors.map(([v, hex, note]) => <li><i style={`background:var(${v})`}></i><b>{note}</b><code>{v}</code><code>{hex}</code></li>)}</ul>
+    </section>
+
+    <section class="section ui__sec"><h2>Типографика. Onest</h2>
+      <ul class="ui__type">{type.map(([name, spec, st]) => <li><span style={st}>{name}</span><code>{spec}</code></li>)}</ul>
+    </section>
+
+    <section class="section ui__sec"><h2>Кнопки</h2>
+      <div class="ui__row">
+        <a class="btn btn--deep ui__btn" href="#">btn--deep<Arrow /></a>
+        <a class="btn btn--grey ui__btn" href="#">btn--grey<Arrow /></a>
+        <a class="btn btn--ink ui__btn" href="#">btn--ink<Arrow /></a>
+        <span class="ui__dark"><a class="btn btn--white ui__btn" href="#">btn--white<Arrow /></a></span>
+      </div>
+    </section>
+
+    <section class="section ui__sec"><h2>Плашки разделов</h2>
+      <div class="ui__row">
+        <Badge icon="shield">shield</Badge><Badge icon="flash">flash</Badge><Badge icon="briefcase">briefcase</Badge>
+        <span class="ui__dark"><Badge icon="play" light>play, light</Badge></span>
+      </div>
+    </section>
+
+    <section class="section ui__sec"><h2>Шапка блока</h2>
+      <div class="head"><Badge icon="flash">Badge</Badge><div class="head__text"><p class="head__intro">head__intro. Вводный текст блока в две строки, серый.</p><h2 class="head__title">head__title. Заголовок блока</h2></div></div>
+    </section>
+
+    <section class="section ui__sec"><h2>Иконки иллюстраций</h2>
+      <ul class="ui__icons">{Object.keys(icons).filter((k) => k !== 'crm').map((k) => <li><span><Ic n={k as keyof typeof icons} s={28} /></span><code>{k}</code></li>)}</ul>
+    </section>
+
+    <section class="section ui__sec"><h2>Иллюстрации карточек</h2>
+      <p class="ui__note">Собраны кодом, масштабируются по ширине карточки, запускаются при появлении на экране и встают на паузу за его пределами.</p>
+      <ul class="ui__illus">{illus.map(([n, w]) => <li style={`--fw:${w}`}><div><Illus name={n as string} label={n as string} /></div><code>{n}</code></li>)}</ul>
+    </section>
+  </div>
+</Site>
+<style>
+  .ui__top,.ui__sec{padding:4rem}
+  .ui h1{font-size:4.2rem;line-height:1.05;font-weight:500;letter-spacing:-.03em}
+  .ui__top p,.ui__note{margin-top:1.6rem;max-width:90rem;color:var(--muted)}
+  .ui__sec>h2{font-size:2.8rem;font-weight:500;margin-bottom:3rem}
+  .ui code{font:400 max(1.4rem,12px)/1.4 ui-monospace,Menlo,monospace;color:var(--muted)}
+  .ui__colors{display:grid;grid-template-columns:repeat(auto-fill,minmax(20rem,1fr));gap:2rem}
+  .ui__colors li{display:grid;gap:.4rem}
+  .ui__colors i{height:9rem;border-radius:1.6rem;border:1px solid var(--line)}
+  .ui__colors b{font-weight:500;margin-top:.6rem}
+  .ui__type{display:grid;gap:2.4rem}
+  .ui__type li{display:flex;align-items:baseline;justify-content:space-between;gap:3rem;border-bottom:1px solid var(--line);padding-bottom:2.4rem}
+  .ui__row{display:flex;flex-wrap:wrap;gap:1.6rem;align-items:center}
+  .ui__btn{height:9rem;padding:0 3rem;font-size:max(2.2rem,16px);gap:3rem}
+  .ui__dark{background:var(--deep);padding:2rem;border-radius:2rem;display:inline-flex}
+  .ui__icons{display:flex;flex-wrap:wrap;gap:1.6rem}
+  .ui__icons li{display:grid;justify-items:center;gap:.8rem;width:11rem}
+  .ui__icons span{width:6.4rem;height:6.4rem;border-radius:1.6rem;background:var(--deep);color:#fff;display:grid;place-items:center;--u:.1rem}
+  .ui__illus{margin-top:3rem;display:flex;flex-wrap:wrap;gap:2rem}
+  .ui__illus li{width:calc(var(--fw) * .0495rem);display:grid;gap:1rem}
+  .ui__illus li>div{border-radius:3.2rem;overflow:hidden;background:var(--card)}
+  .ui__illus li:nth-child(-n+4)>div{background:#fff;border:1px solid var(--line)}
+  @media (max-width:1023px){
+    .ui__top,.ui__sec{padding:24px 20px}
+    .ui h1{font-size:28px}.ui__sec>h2{font-size:22px;margin-bottom:20px}
+    .ui__type li{flex-direction:column;gap:8px}.ui__type span{font-size:22px!important;line-height:1.2!important}
+    .ui__btn{height:56px;font-size:16px;gap:12px}
+    .ui__illus li{width:100%}.ui__icons span{--u:1px}
+  }
+</style>

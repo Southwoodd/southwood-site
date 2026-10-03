@@ -1,0 +1,10 @@
+---
+// Плашка раздела. icon: shield, flash, play, briefcase. light для темного фона.
+import icons from '../../icons/badge.json';
+interface Props { icon?: keyof typeof icons; light?: boolean; reveal?: boolean }
+const { icon, light = false, reveal = false } = Astro.props;
+---
+<span class:list={['badge', { 'badge--light': light }]} data-reveal={reveal ? '' : undefined}>
+  {icon && <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" set:html={icons[icon]} />}
+  <slot />
+</span>

@@ -48,8 +48,10 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 @media (max-width:1023px){.btn .arrow{width:18px;height:18px}}
 
 /* Бейдж секции */
-.badge{display:inline-flex;align-items:center;gap:.6rem;height:3.6rem;padding:0 1.2rem;border-radius:999px;background:var(--deep);color:#fff;font-size:max(1.8rem,13px);font-weight:400;white-space:nowrap}
-.badge svg{width:2.4rem;height:2.4rem}
+.badge{--badge-bg:var(--deep);display:inline-flex;align-items:center;gap:.6rem;height:3.6rem;padding:0 1.2rem;border-radius:999px;background:var(--badge-bg);color:#fff;font-size:max(1.8rem,13px);font-weight:400;white-space:nowrap}
+.badge svg{width:2.4rem;height:2.4rem;color:#c5d9c8}
+.badge--light{--badge-bg:#c5d9c8;color:var(--ink-2);font-weight:500}
+.badge--light svg{color:var(--ink-2)}
 @media (max-width:1023px){.badge{height:30px;padding:0 12px 0 10px;font-size:13px;gap:6px}.badge svg{width:18px;height:18px}}
 
 /* Шапка секции: бейдж слева, текст справа */

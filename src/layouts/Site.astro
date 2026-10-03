@@ -1,5 +1,6 @@
 ---
 import '../styles/site.css';
+import '../styles/illus.css';
 interface Props { title: string; description: string; lang?: string; noindex?: boolean; path?: string }
 const { title, description, lang = 'ru', noindex = false, path = '/' } = Astro.props;
 const url = new URL(path, Astro.site).toString();
@@ -39,6 +40,12 @@ const url = new URL(path, Astro.site).toString();
         for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
       }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
       document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+
+      // Иллюстрации: запуск при появлении, пауза вне экрана
+      const il = new IntersectionObserver((entries) => {
+        for (const e of entries) { e.target.classList.toggle('is-on', e.isIntersecting); if (e.isIntersecting) e.target.classList.add('is-in'); }
+      }, { threshold: 0.3 });
+      document.querySelectorAll('.il').forEach((el) => il.observe(el));
 
       // Счетчики
       const nf = new Intl.NumberFormat('ru-RU');

@@ -1,11 +1,13 @@
 ---
+import Badge from '../ui/Badge.astro';
 import { start, nb } from '../../i18n/ru';
 import Arrow from './Arrow.astro';
+import Illus from './Illus.astro';
 ---
 <section class="section st" id="start">
   <div class="st__wave" aria-hidden="true"></div>
   <div class="head head--center st__head">
-    <span class="badge badge--light" data-reveal><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5.2v13.6c0 1 1.1 1.6 2 1.1l10.6-6.8c.8-.5.8-1.7 0-2.2L9 4.1c-.9-.5-2 .1-2 1.1z" fill="currentColor"/></svg>{start.badge}</span>
+    <Badge icon="play" light reveal>{start.badge}</Badge>
     <h2 class="head__title" data-reveal style="--d:60ms">{start.title}</h2>
     <p class="head__intro" data-reveal style="--d:120ms">{nb(start.intro)}</p>
   </div>
@@ -13,7 +15,7 @@ import Arrow from './Arrow.astro';
     {start.cards.map((c, i) => (
       <li data-reveal style={`--d:${(i % 2) * 90}ms`}>
         <a class="st__card" href={c.href} data-go={c.go || undefined} aria-label={`${c.title}. ${c.label}`}>
-          <img src={`/img/start/${c.key}.webp`} width="880" height="515" alt="" loading="lazy" decoding="async" />
+          <Illus name={c.key} label={c.alt} />
           <div class="st__body">
             <h3>{c.title}</h3>
             <span class="st__go"><Arrow /></span>
@@ -30,12 +32,9 @@ import Arrow from './Arrow.astro';
   .st__head{position:relative;color:#fff}
   .st__head .head__title{color:#fff}
   .st__head .head__intro{color:#fff}
-  .st :global(.badge--light){background:#c5d9c8;color:var(--ink-2);font-weight:500}
   .st__grid{position:relative;margin-top:9.6rem;display:grid;grid-template-columns:1fr 1fr;gap:2rem}
   .st__card{display:block;position:relative;height:100%;background:#fff;border-radius:3.2rem;overflow:hidden;transition:transform .35s var(--ease),box-shadow .35s var(--ease)}
   .st__card:hover{transform:translateY(-.6rem);box-shadow:0 2.4rem 5rem rgba(10,30,20,.22)}
-  .st__card img{width:100%;height:auto;transition:transform .6s var(--ease)}
-  .st__card:hover img{transform:scale(1.02)}
   .st__body{padding:0 4rem 5rem;text-align:center}
   .st__body h3{font-size:4.8rem;line-height:4.4rem;font-weight:500;letter-spacing:-.03em;color:var(--ink-2)}
   .st__body p{margin-top:2rem;font-size:max(2.8rem,16px);line-height:1.57;color:var(--ink-2)}

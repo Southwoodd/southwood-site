@@ -1,9 +1,10 @@
 ---
+import Badge from '../ui/Badge.astro';
 import { proofs, nb } from '../../i18n/ru';
 ---
 <section class="section pr" id="proofs">
   <div class="pr__top">
-    <span class="badge" data-reveal><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2.5l7.5 2.8v6c0 4.6-3.1 8.6-7.5 10.2C7.6 19.9 4.5 15.9 4.5 11.3v-6L12 2.5z" fill="#c5d9c8"/><path d="M8.7 12l2.3 2.3 4.4-4.6" stroke="#3f6b56" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>{proofs.badge}</span>
+    <Badge icon="shield" reveal>{proofs.badge}</Badge>
     <div class="pr__text" data-reveal style="--d:80ms">
       <p class="pr__lead">{nb(proofs.lead)}</p>
       <p class="pr__big">{proofs.text.map((l) => <span>{nb(l)} </span>)}</p>
