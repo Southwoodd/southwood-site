@@ -14,7 +14,7 @@ const h = (x: string) => (x.startsWith('#') ? base + x : x);
     <a class="hdr__qatar" href={h('#qatar')}>{header.qatar}</a>
   </nav>
   <div class="hdr__right">
-    <div class="lang" role="group" aria-label="Язык">
+    <div class="lang" role="group" aria-label="Язык" style="display:none" data-en-pending>
       <span class="lang__on" aria-current="true">RU</span>
       <a href="/en/" hreflang="en">EN</a>
     </div>
@@ -27,7 +27,7 @@ const h = (x: string) => (x.startsWith('#') ? base + x : x);
   <div class="menu__bar">
     <a class="hdr__brand" href="/"><Logo size={26} /><span>{site.name}</span></a>
     <div class="menu__bar-right">
-      <div class="lang"><span class="lang__on">RU</span><a href="/en/" hreflang="en">EN</a></div>
+      <div class="lang" style="display:none" data-en-pending><span class="lang__on">RU</span><a href="/en/" hreflang="en">EN</a></div>
       <button class="menu__close" type="button" aria-label="Закрыть" data-menu-close><svg viewBox="0 0 14 14" width="14" height="14" aria-hidden="true"><path d="M1 1l12 12M13 1 1 13" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg></button>
     </div>
   </div>
