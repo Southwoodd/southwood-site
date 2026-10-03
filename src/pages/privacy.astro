@@ -1,0 +1,7 @@
+---
+import TextPage from '../components/site/TextPage.astro';
+import { content } from '../data/content.js';
+import { pages } from '../i18n/ru';
+const l = content.legal;
+---
+<TextPage seoTitle={l.seoTitle} seoDescription={l.seoDescription} path="/privacy" crumb={pages.privacy.crumb} title={l.privacyTitle} lead={pages.privacy.lead} updated={l.updated} other={pages.privacy.other} otherHref={pages.privacy.otherHref} sections={l.sections} cookieSettings={pages.privacy.cookieSettings} />

@@ -1,0 +1,24 @@
+# Сборка и выкладка на свой сервер. Запускается на ветке нового сайта и вручную.
+name: Deploy to own server
+on:
+  push:
+    branches: [claude/site-v2]
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run build
+      - name: Upload
+        env:
+          KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          HOST: ${{ secrets.DEPLOY_HOST }}
+        run: |
+          if [ -z "$KEY" ] || [ -z "$HOST" ]; then echo "Секреты не заданы, выкладка пропущена"; exit 0; fi
+          mkdir -p ~/.ssh && echo "$KEY" > ~/.ssh/id && chmod 600 ~/.ssh/id
+          ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          rsync -az --delete -e "ssh -i ~/.ssh/id" dist/ deploy@"$HOST":/var/www/southwood/

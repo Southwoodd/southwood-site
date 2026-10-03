@@ -2,6 +2,8 @@
 import Logo from '../Logo.astro';
 import Arrow from './Arrow.astro';
 import { footer, site, nb } from '../../i18n/ru';
+const base = Astro.url.pathname === '/' ? '' : '/';
+const h = (x: string) => (x.startsWith('#') ? base + x : x);
 ---
 <footer class="section ft">
   <div class="ft__cols">
@@ -10,20 +12,20 @@ import { footer, site, nb } from '../../i18n/ru';
       <p>{nb(footer.desc)}</p>
       <div class="ft__actions">
         <button class="btn btn--white" type="button" data-open="write">{footer.write}<Arrow /></button>
-        <a class="btn ft__ghost" href="#pricing">{footer.quote}<Arrow /></a>
+        <a class="btn ft__ghost" href={h('#pricing')}>{footer.quote}<Arrow /></a>
       </div>
     </div>
     <nav class="ft__col" aria-label={footer.sections}>
       <h3>{footer.sections}</h3>
-      <ul>{footer.sectionLinks.map((l) => <li><a href={l.href}>{l.label}</a></li>)}</ul>
+      <ul>{footer.sectionLinks.map((l) => <li><a href={h(l.href)}>{l.label}</a></li>)}</ul>
     </nav>
     <div class="ft__col">
       <h3>{footer.contacts}</h3>
-      <ul class="ft__hints">{footer.contactLinks.map((l) => <li><a href={l.href} target={l.href.startsWith('http') ? '_blank' : undefined} rel="noopener"><b>{l.label}</b><small>{l.hint}</small></a></li>)}</ul>
+      <ul class="ft__hints">{footer.contactLinks.map((l) => <li><a href={h(l.href)} target={l.href.startsWith('http') ? '_blank' : undefined} rel="noopener"><b>{l.label}</b><small>{l.hint}</small></a></li>)}</ul>
     </div>
     <div class="ft__col ft__col--wide">
       <h3>{footer.also}</h3>
-      <ul class="ft__hints">{footer.alsoLinks.map((l) => <li><a href={l.href} target={l.href.startsWith('http') ? '_blank' : undefined} rel="noopener"><b>{l.label}</b><small>{l.hint}</small></a></li>)}</ul>
+      <ul class="ft__hints">{footer.alsoLinks.map((l) => <li><a href={h(l.href)} target={l.href.startsWith('http') ? '_blank' : undefined} rel="noopener"><b>{l.label}</b><small>{l.hint}</small></a></li>)}</ul>
     </div>
   </div>
   <div class="ft__legal">

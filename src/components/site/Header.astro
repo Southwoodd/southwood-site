@@ -2,14 +2,16 @@
 import Logo from '../Logo.astro';
 import Arrow from './Arrow.astro';
 import { nav, header, site, nb } from '../../i18n/ru';
+const base = Astro.url.pathname === '/' ? '' : '/';
+const h = (x: string) => (x.startsWith('#') ? base + x : x);
 ---
 <header class="hdr" data-header>
   <a class="hdr__brand" href="/" aria-label={site.name}>
     <Logo size={32} /><span>{site.name}</span>
   </a>
   <nav class="hdr__nav" aria-label="Разделы">
-    {nav.map((n) => <a href={n.href}>{n.label}</a>)}
-    <a class="hdr__qatar" href="#qatar">{header.qatar}</a>
+    {nav.map((n) => <a href={h(n.href)}>{n.label}</a>)}
+    <a class="hdr__qatar" href={h('#qatar')}>{header.qatar}</a>
   </nav>
   <div class="hdr__right">
     <div class="lang" role="group" aria-label="Язык">
@@ -31,13 +33,13 @@ import { nav, header, site, nb } from '../../i18n/ru';
   </div>
   <nav class="menu__grid" aria-label="Разделы">
     {nav.map((n) => (
-      <a class:list={['tile', { 'tile--accent': n.href === '#pricing' }]} href={n.href} data-menu-link>
+      <a class:list={['tile', { 'tile--accent': n.href === '#pricing' }]} href={h(n.href)} data-menu-link>
         <span class="tile__top"><i class="tile__dot"></i><Arrow /></span>
         <span class="tile__text"><b>{n.label === 'Вопросы-Ответы' ? 'Вопросы-Ответы' : n.label}</b><small>{nb(n.hint)}</small></span>
       </a>
     ))}
   </nav>
-  <a class="menu__qatar" href="#qatar" data-menu-link><span><b>{header.qatarShort}</b><small>{header.qatarHint}</small></span><Arrow /></a>
+  <a class="menu__qatar" href={h('#qatar')} data-menu-link><span><b>{header.qatarShort}</b><small>{header.qatarHint}</small></span><Arrow /></a>
   <div class="menu__contact">
     <div><b>{header.menuTitle}</b><small>{nb(header.menuSub)}</small></div>
     <button class="btn btn--white menu__write" type="button" data-open="write" data-menu-link>{header.cta}<Arrow /></button>

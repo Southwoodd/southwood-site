@@ -1,0 +1,99 @@
+---
+// Шаблон текстовой страницы: политика и согласие.
+import Site from '../../layouts/Site.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import Arrow from './Arrow.astro';
+import { pages, nb } from '../../i18n/ru';
+interface Props { seoTitle: string; seoDescription: string; path: string; crumb: string; title: string; lead: string; updated: string; other: string; otherHref: string; sections: { id?: string; title?: string; paragraphs: string[] }[]; cookieSettings?: string }
+const { seoTitle, seoDescription, path, crumb, title, lead, updated, other, otherHref, sections, cookieSettings } = Astro.props;
+const toc = sections.filter((s) => s.title);
+const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const link = (t: string) => nb(esc(t)).replace(/https:\/\/southwood\.pw(\/[a-z]+)/g, '<a href="$1">https://southwood.pw$1</a>').replace(/([\w.-]+@[\w-]+\.[a-z]{2,})/g, '<a href="mailto:$1">$1</a>');
+---
+<Site title={seoTitle} description={seoDescription} path={path}>
+  <div class="page" id="top">
+    <Header />
+    <main id="main" style="display:contents">
+      <article class="section tp">
+        <nav class="tp__crumbs" aria-label="Хлебные крошки"><a href="/">{pages.home}</a><span>/</span><span>{crumb}</span></nav>
+        <h1>{title}</h1>
+        <p class="tp__lead">{nb(lead)}</p>
+        <p class="tp__meta"><span>{pages.edition} {updated}</span><a href={otherHref}>{other}<Arrow /></a></p>
+        <div class:list={['tp__grid', { 'tp__grid--plain': toc.length === 0 }]}>
+          {toc.length > 0 && <nav class="tp__toc" aria-label={pages.toc}><span>{pages.toc}</span><ol>{toc.map((s) => <li><a href={`#${s.id}`}>{s.title}</a></li>)}</ol></nav>}
+          <div class="tp__body">
+            {sections.map((s) => (
+              <section id={s.id}>
+                {s.title && <h2>{s.title}</h2>}
+                {s.paragraphs.map((p) => <p set:html={link(p)} />)}
+                {s.id === 'cookies' && cookieSettings && <p><button type="button" class="tp__cookie" data-cookie-settings>{cookieSettings}</button></p>}
+              </section>
+            ))}
+          </div>
+        </div>
+      </article>
+      <aside class="section tp__contact">
+        <div><h2>{pages.contact.title}</h2><p>{nb(pages.contact.text)}</p></div>
+        <a class="btn btn--white" href={`mailto:${pages.contact.email}`}>{pages.contact.email}<Arrow /></a>
+        <a class="btn tp__tg" href="https://t.me/imsouthwood" target="_blank" rel="noopener">{pages.contact.tg}<Arrow /></a>
+      </aside>
+    </main>
+    <Footer />
+  </div>
+</Site>
+<script>
+  // Подсветка текущего раздела в содержании
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('.tp__toc a')];
+  if (links.length) {
+    const io = new IntersectionObserver((es) => { for (const e of es) if (e.isIntersecting) links.forEach((l) => l.classList.toggle('on', l.hash === '#' + e.target.id)); }, { rootMargin: '-20% 0px -65% 0px' });
+    document.querySelectorAll('.tp__body section[id]').forEach((s) => io.observe(s));
+  }
+</script>
+<style>
+  .tp{padding:10rem 4rem}
+  .tp__crumbs{display:flex;gap:1rem;font-size:max(1.6rem,13px);color:var(--muted)}
+  .tp__crumbs a:hover{color:var(--deep)}
+  .tp h1{margin-top:3.2rem;font-size:6.4rem;line-height:1.08;font-weight:500;letter-spacing:-.035em;max-width:150rem}
+  .tp__lead{margin-top:2.8rem;max-width:78rem;font-size:max(2.2rem,16px);line-height:1.36;color:var(--muted)}
+  .tp__meta{margin-top:3.2rem;display:flex;flex-wrap:wrap;gap:1rem}
+  .tp__meta span,.tp__meta a{height:3.6rem;padding:0 1.4rem;border-radius:999px;font-size:max(1.5rem,13px);font-weight:500;display:inline-flex;align-items:center;gap:.8rem}
+  .tp__meta span{background:var(--mint);color:var(--deep)}
+  .tp__meta a{background:var(--card)}.tp__meta a:hover{background:var(--light)}
+  .tp__meta :global(.arrow){width:1.6rem;height:1.6rem}
+  .tp__grid{margin-top:7.2rem;display:grid;grid-template-columns:89rem 1fr;align-items:start}
+  .tp__grid--plain{grid-template-columns:1fr;padding-left:89rem}
+  .tp__toc{position:sticky;top:14rem;display:grid;gap:1.6rem}
+  .tp__toc>span{font-size:max(1.4rem,12px);color:var(--muted)}
+  .tp__toc ol{display:grid;gap:1.4rem}
+  .tp__toc a{font-size:max(1.7rem,14px);transition:color .2s}
+  .tp__toc a:hover,.tp__toc a.on{color:var(--deep)}
+  .tp__toc a.on{font-weight:500}
+  .tp__body{max-width:84rem;display:grid;gap:5.6rem}
+  .tp__body section{display:grid;gap:1.8rem;scroll-margin-top:14rem}
+  .tp__body h2{font-size:3rem;line-height:1.2;font-weight:500;letter-spacing:-.02em;margin-bottom:.4rem}
+  .tp__body p{font-size:max(1.8rem,15px);line-height:1.55}
+  .tp__body :global(a){color:var(--deep);text-decoration:underline;text-underline-offset:.3rem}
+  .tp__cookie{height:4.4rem;padding:0 1.8rem;border-radius:999px;background:var(--card);font-size:max(1.5rem,14px);font-weight:500}
+  .tp__cookie:hover{background:var(--light)}
+  .tp__contact{background:var(--deep);color:#fff;padding:4rem;display:flex;align-items:center;gap:1.6rem}
+  .tp__contact div{flex:1}
+  .tp__contact h2{font-size:3rem;font-weight:500;letter-spacing:-.02em}
+  .tp__contact p{margin-top:.8rem;font-size:max(1.6rem,14px);color:rgba(255,255,255,.8)}
+  .tp__contact .btn{height:5.6rem;padding:0 2.4rem 0 2.8rem;font-size:max(1.6rem,15px)}
+  .tp__tg{border:1px solid rgba(255,255,255,.4);color:#fff}.tp__tg:hover{background:rgba(255,255,255,.1)}
+  @media (max-width:1023px){
+    .tp{padding:32px 20px 40px}
+    .tp h1{margin-top:16px;font-size:30px;line-height:34px}
+    .tp__lead{margin-top:14px;font-size:16px;line-height:23px}
+    .tp__meta{margin-top:18px;gap:8px}.tp__meta span,.tp__meta a{height:32px}
+    .tp__grid,.tp__grid--plain{margin-top:28px;display:block;padding:0}
+    .tp__toc{position:static;background:var(--card);border-radius:16px;padding:16px;gap:12px;margin-bottom:32px}
+    .tp__toc ol{gap:10px}.tp__toc a{font-size:15px}
+    .tp__body{gap:32px}.tp__body section{gap:12px;scroll-margin-top:90px}
+    .tp__body h2{font-size:22px}.tp__body p{font-size:16px;line-height:24px}
+    .tp__contact{padding:20px;flex-direction:column;align-items:stretch;gap:10px}
+    .tp__contact h2{font-size:22px}.tp__contact p{margin-bottom:8px}
+    .tp__contact .btn{height:54px}
+  }
+</style>

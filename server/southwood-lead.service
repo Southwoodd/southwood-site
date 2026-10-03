@@ -1,0 +1,22 @@
+[Unit]
+Description=Southwood lead receiver
+After=network-online.target
+
+[Service]
+User=southwood-lead
+Group=southwood-lead
+EnvironmentFile=/etc/southwood/form.env
+ExecStart=/usr/bin/node /opt/southwood/lead-server.mjs
+Restart=always
+RestartSec=3
+StateDirectory=southwood/leads
+StateDirectoryMode=0700
+Environment=LEADS_DIR=/var/lib/southwood/leads
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/southwood
+
+[Install]
+WantedBy=multi-user.target
