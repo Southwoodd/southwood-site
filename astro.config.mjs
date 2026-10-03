@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
+import preact from '@astrojs/preact';
 import sitemap from '@astrojs/sitemap';
 
 // Канонический домен — sitemap и SEO опираются на него.
@@ -8,7 +9,9 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://southwood.pw',
   integrations: [
-    react(),
+    // Новый сайт: острова на Preact. Старые компоненты на React оставлены до удаления старых страниц
+    preact({ include: ['**/pricing/**'] }),
+    react({ include: ['**/components/*.tsx'] }),
     sitemap({
       // Служебная библиотека компонентов — не в sitemap
       filter: (page) => !page.includes('/ui'),

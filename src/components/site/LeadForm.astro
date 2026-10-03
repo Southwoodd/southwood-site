@@ -4,7 +4,7 @@ import { form as f } from '../../i18n/ru';
 interface Props { id?: string }
 const { id = 'lead' } = Astro.props;
 ---
-<form class="lf" data-lead-form data-endpoint={f.endpoint} novalidate>
+<form class="lf ym-disable-keys" data-lead-form data-endpoint={f.endpoint} novalidate>
   <div class="lf__main">
     <header><h3>{f.title}</h3><p>{f.sub}</p></header>
     <fieldset class="lf__need" data-field="chips">
@@ -86,7 +86,7 @@ const { id = 'lead' } = Astro.props;
       try {
         const r = await fetch(form.dataset.endpoint!, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
         if (!r.ok) throw new Error(String(r.status));
-        show(ok);
+        show(ok); (window as any).swGoal?.('lead_sent');
       } catch { show(fail); }
       btn.disabled = false; btn.textContent = btn.dataset.label!; btn.classList.remove('is-busy');
     };

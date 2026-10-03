@@ -1,0 +1,45 @@
+---
+// Уведомление о cookies. Метрика подключается только после согласия на аналитику.
+import { cookies as c, METRIKA_ID } from '../../i18n/ru';
+---
+<div class="ck" id="cookie-bar" role="dialog" aria-label="Cookies" hidden>
+  <p>{c.text} <a href="/privacy#cookies">{c.more}</a></p>
+  <div><button class="btn btn--deep" type="button" data-cookie="all">{c.all}</button><button class="btn btn--grey" type="button" data-cookie="tech">{c.tech}</button></div>
+</div>
+<script is:inline define:vars={{ METRIKA_ID }}>
+  (function () {
+    var KEY = 'sw-cookies', YEAR = 365 * 864e5, bar = document.getElementById('cookie-bar');
+    function read() { try { var v = JSON.parse(localStorage.getItem(KEY) || 'null'); return v && Date.now() - v.t < YEAR ? v.c : null; } catch (e) { return null; } }
+    function metrika() {
+      if (window.ym) return;
+      (function (m, e, t, r, i, k, a) { m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); }; m[i].l = 1 * new Date(); k = e.createElement(t); a = e.getElementsByTagName(t)[0]; k.async = 1; k.src = r; a.parentNode.insertBefore(k, a); })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
+      window.ym(METRIKA_ID, 'init', { webvisor: true, clickmap: true, referrer: document.referrer, url: location.href, accurateTrackBounce: true, trackLinks: true });
+    }
+    // Цели: пока согласия нет, вызовы просто пропускаются
+    window.swGoal = function (name) { if (window.ym) window.ym(METRIKA_ID, 'reachGoal', name); };
+    window.swCookies = function () { bar.hidden = false; };
+    var choice = read();
+    if (choice === 'all') metrika(); else if (!choice) bar.hidden = false;
+    bar.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-cookie]'); if (!b) return;
+      try { localStorage.setItem(KEY, JSON.stringify({ c: b.dataset.cookie, t: Date.now() })); } catch (err) {}
+      if (b.dataset.cookie === 'all') metrika();
+      bar.hidden = true;
+    });
+    document.addEventListener('click', function (e) { if (e.target.closest('[data-cookie-settings]')) { e.preventDefault(); bar.hidden = false; } });
+  })();
+</script>
+<style>
+  .ck{position:fixed;left:3rem;bottom:3rem;z-index:80;width:min(46rem,calc(100vw - 6rem));background:#fff;border-radius:2.4rem;padding:2.4rem;box-shadow:0 2rem 6rem rgba(10,30,20,.18);display:grid;gap:1.6rem;animation:ck-in .5s var(--ease) both}
+  .ck[hidden]{display:none}
+  @keyframes ck-in{from{opacity:0;transform:translateY(2rem)}}
+  .ck p{font-size:max(1.5rem,14px);line-height:1.45}
+  .ck a{color:var(--deep);text-decoration:underline;text-underline-offset:.3rem;white-space:nowrap}
+  .ck div{display:flex;gap:.8rem}
+  .ck .btn{flex:1;height:4.8rem;font-size:max(1.5rem,14px)}
+  @media (max-width:1023px){
+    .ck{left:8px;right:8px;bottom:8px;width:auto;border-radius:20px;padding:16px;gap:12px}
+    .ck .btn{height:46px}
+  }
+  @media (prefers-reduced-motion:reduce){.ck{animation:none}}
+</style>
