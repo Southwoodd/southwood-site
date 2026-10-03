@@ -1,0 +1,14 @@
+---
+// Шапка блока: плашка слева, вводный текст и заголовок справа. На телефоне плашка, заголовок, текст.
+import Badge from './Badge.astro';
+import { nb } from '../../i18n/ru';
+interface Props { badge: string; icon?: any; intro: string; title: string[] }
+const { badge, icon, intro, title } = Astro.props;
+---
+<div class="head">
+  <Badge icon={icon} reveal>{badge}</Badge>
+  <div class="head__text">
+    <p class="head__intro" data-reveal>{nb(intro)}</p>
+    <h2 class="head__title" data-reveal style="--d:80ms">{title.map((l) => <span>{nb(l)} </span>)}</h2>
+  </div>
+</div>

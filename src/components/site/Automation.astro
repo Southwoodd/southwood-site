@@ -1,0 +1,163 @@
+---
+import { automation as a, nb } from '../../i18n/ru';
+import Head from '../ui/Head.astro';
+import Ui from '../ui/Ui.astro';
+import Arrow from './Arrow.astro';
+---
+<section class="section au" id="automation">
+  <Head badge={a.badge} icon="task" intro={a.intro} title={a.title} />
+  <div class="au__cards">
+    <article class="au__card au__link" data-reveal>
+      <ul class="au__flows">
+        {a.link.flows.map((f, i) => (
+          <li style={`--n:${i}`}>
+            <span class="au__apps">{f.apps.map((app, j) => (<>{j > 0 && <Ui n="send" class="au__arr" />}<b>{app}</b></>))}</span>
+            <span class="au__note">{nb(f.note)}</span>
+          </li>
+        ))}
+      </ul>
+      <div class="au__row"><h3>{nb(a.link.title)}</h3><span class="au__price">{a.link.price}</span></div>
+      <p class="au__text">{nb(a.link.text)}</p>
+    </article>
+    <article class="au__card au__one" data-reveal style="--d:90ms">
+      <div class="au__mini">
+        <span class="au__chips">{a.one.apps.map((x) => <b>{x}</b>)}</span>
+        <Ui n="send" class="au__down" />
+        <span class="au__box"><b>{a.one.box}</b><i>{a.one.boxSub}</i></span>
+        <span class="au__boxm">↓ {a.one.box}: {a.one.boxSub}</span>
+      </div>
+      <h3>{a.one.title.map((l) => <span>{l} </span>)}</h3>
+      <p class="au__text">{nb(a.one.text)}</p>
+      <span class="au__price">{a.one.price}</span>
+    </article>
+  </div>
+  <details class="fold au__programs" data-reveal open>
+    <summary><h3>{a.programs.title}</h3><span class="au__pnote">{nb(a.programs.note)}</span><i class="fold__ic"></i></summary>
+    <ul class="au__plist">{a.programs.list.map((x) => <li>{x}</li>)}<li class="more">{a.programs.more}</li></ul>
+    <p class="au__pnote au__pnote--m">{nb(a.programs.note)}</p>
+  </details>
+  <details class="fold au__stepsbox" open>
+    <summary><h3>{a.stepsTitle}</h3><i class="fold__ic"></i></summary>
+    <ol class="au__steps">
+      {a.steps.map((s, i) => (<li data-reveal style={`--d:${i * 70}ms`}><span>{String(i + 1).padStart(2, '0')}</span><b>{s.title}</b><p>{nb(s.text)}</p></li>))}
+    </ol>
+  </details>
+  <div class="au__cta" data-reveal>
+    <div><h3>{nb(a.cta.title)}</h3><p>{nb(a.cta.sub)}</p></div>
+    <button class="btn btn--white au__btn" type="button" data-open="lead" data-chip="link">{a.cta.btn}<Arrow /></button>
+  </div>
+</section>
+<script>
+  // На телефоне списки свернуты, на десктопе раскрыты всегда
+  const mq = matchMedia('(max-width: 1023px)');
+  const sync = () => document.querySelectorAll<HTMLDetailsElement>('details.fold').forEach((d) => { d.open = !mq.matches; });
+  sync(); mq.addEventListener('change', sync);
+</script>
+<style>
+  .au{padding:10rem 4rem;display:flex;flex-direction:column;gap:2rem}
+  .au :global(.head){margin-bottom:7.4rem}
+  .au h3{font-weight:500;letter-spacing:-.03em}
+  .au__cards{display:grid;grid-template-columns:108fr 68fr;gap:2rem}
+  .au__card{border-radius:3.2rem;padding:4rem;display:flex;flex-direction:column;gap:2rem;min-height:56.9rem}
+  .au__link{background:var(--card)}
+  .au__one{background:var(--deep);color:#fff}
+  .au__flows{background:#fff;border-radius:2.4rem;padding:2.4rem}
+  .au__flows li{display:flex;justify-content:space-between;align-items:center;gap:2rem;padding:1rem 0;border-bottom:1px solid var(--line)}
+  .au__flows li:last-child{border-bottom:0}
+  .au__apps{display:flex;align-items:center;gap:1rem}
+  .au__apps b{height:3.6rem;padding:0 1.4rem;border-radius:999px;background:var(--mint);color:var(--deep);font-size:max(1.5rem,12px);font-weight:500;display:inline-flex;align-items:center;white-space:nowrap}
+  .au :global(.au__arr){width:2.3rem;height:2.3rem;color:var(--muted);animation:au-go 2.4s var(--ease) infinite;animation-delay:calc(var(--n) * .5s)}
+  @keyframes au-go{0%,60%,100%{transform:none;opacity:1}30%{transform:translateX(.5rem);opacity:.4}}
+  .au__note{color:var(--muted);font-size:max(1.4rem,12px);text-align:right}
+  .au__row{display:flex;justify-content:space-between;align-items:center;gap:2rem;margin-top:2rem}
+  .au__row h3,.au__one h3{font-size:4rem;line-height:4.4rem}
+  .au__one h3 span{display:block}
+  .au__price{align-self:flex-start;flex:none;height:3.6rem;padding:0 1.6rem;border-radius:999px;background:#fff;color:var(--ink);font-size:max(1.6rem,13px);font-weight:500;display:inline-flex;align-items:center;white-space:nowrap}
+  .au__row .au__price{align-self:center}
+  .au__one .au__price{color:var(--deep)}
+  .au__text{font-size:max(2rem,15px);line-height:1.4}
+  .au__one .au__text{font-size:max(1.8rem,15px);line-height:1.45;color:rgba(255,255,255,.8)}
+  .au__mini{background:rgba(255,255,255,.08);border-radius:2.4rem;padding:2.4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
+  .au__chips{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center}
+  .au__chips b{height:3.6rem;padding:0 1.4rem;border-radius:999px;border:1px solid rgba(255,255,255,.35);font-size:max(1.4rem,12px);font-weight:500;display:inline-flex;align-items:center;white-space:nowrap}
+  .au :global(.au__down){width:2.3rem;height:2.3rem;color:#fff;opacity:.7;transform:rotate(90deg);animation:au-down 2.4s var(--ease) infinite}
+  @keyframes au-down{0%,60%,100%{translate:0 0}30%{translate:0 .4rem}}
+  .au__box{background:#fff;border-radius:1.6rem;padding:1.4rem 2.8rem;display:grid;gap:.4rem;text-align:center;color:var(--ink)}
+  .au__box b{font-size:max(1.8rem,14px);font-weight:500}
+  .au__box i{font-style:normal;font-size:max(1.3rem,11px);color:var(--muted)}
+  .au__boxm{display:none}
+  .au__one .au__mini{margin-bottom:2rem}
+
+  .fold summary{pointer-events:none}
+  .fold__ic{display:none}
+  .au__programs{background:var(--card);border-radius:3.2rem;padding:3.2rem 4rem}
+  .au__programs summary{display:flex;justify-content:space-between;align-items:center;gap:3rem}
+  .au__programs h3{font-size:2.4rem;line-height:3rem}
+  .au__pnote{color:var(--muted);font-size:max(1.5rem,12px)}
+  .au__pnote--m{display:none}
+  .au__plist{margin-top:1.8rem;display:flex;flex-wrap:wrap;gap:.8rem}
+  .au__plist li{height:4rem;padding:0 1.6rem;border-radius:999px;background:#fff;font-size:max(1.6rem,13px);font-weight:500;display:flex;align-items:center;transition:background-color .2s var(--ease)}
+  .au__plist li:hover{background:var(--light)}
+  .au__plist li.more{color:var(--muted)}
+  .au__stepsbox summary{display:none}
+  .au__steps{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem}
+  .au__steps li{border:1px solid var(--line);border-radius:2.4rem;padding:2.8rem;display:flex;flex-direction:column;gap:.8rem}
+  .au__steps span{font-size:max(1.4rem,12px);color:var(--muted)}
+  .au__steps b{font-size:max(2.2rem,16px);line-height:1.27;font-weight:500}
+  .au__steps p{font-size:max(1.6rem,13px);line-height:1.38;color:var(--muted);max-width:37.2rem}
+  .au__cta{background:var(--ink);color:#fff;border-radius:3.2rem;padding:3.2rem 3.2rem 3.2rem 4rem;display:flex;justify-content:space-between;align-items:center;gap:3rem}
+  .au__cta h3{font-size:3rem;line-height:3.6rem}
+  .au__cta p{margin-top:.6rem;font-size:max(1.6rem,13px);color:rgba(255,255,255,.7)}
+  .au__btn{height:5.8rem;padding:0 2.4rem 0 2.8rem;font-size:max(1.7rem,15px)}
+
+  @media (max-width:1023px){
+    .au{padding:56px 12px 12px;gap:12px}
+    .au :global(.head){margin:0;padding:0 8px 12px}
+    .au__cards{grid-template-columns:1fr;gap:12px}
+    .au__card{border-radius:20px;padding:18px;gap:12px;min-height:0}
+    .au__row{order:-2;flex-direction:column-reverse;align-items:flex-start;gap:12px;margin:0}
+    .au__row .au__price{align-self:flex-start;background:var(--mint);color:var(--deep)}
+    .au__row h3,.au__one h3{font-size:22px;line-height:28px}
+    .au__one h3 span{display:inline}
+    .au__link .au__text{order:-1;color:var(--muted)}
+    .au__text,.au__one .au__text{font-size:15px;line-height:21px}
+    .au__flows{background:none;padding:0;display:grid;gap:8px}
+    .au__flows li{flex-direction:column;align-items:flex-start;gap:8px;background:#fff;border:0;border-radius:14px;padding:14px}
+    .au__apps{gap:8px}
+    .au__apps b{background:none;color:var(--ink);height:auto;padding:0 12px;font-size:14px}
+    .au :global(.au__arr){width:18px;height:18px}
+    .au__note{text-align:left;font-size:14px;line-height:19px;color:var(--ink)}
+    .au__one .au__price{order:-3}
+    .au__one h3{order:-2}.au__one .au__text{order:-1}
+    .au__mini{align-items:flex-start;padding:14px;border-radius:14px;gap:10px;margin:0!important}
+    .au__chips{justify-content:flex-start;gap:6px}
+    .au__chips b{background:#fff;color:var(--ink);border:0;height:32px;padding:0 12px;font-size:14px}
+    .au :global(.au__down),.au__box{display:none}
+    .au__boxm{display:block;font-size:14px;line-height:19px;font-weight:500}
+    .fold summary{pointer-events:auto;display:flex;justify-content:space-between;align-items:center;gap:16px}
+    .fold__ic{display:block;flex:none;width:20px;height:20px;border-radius:50%;background:var(--ink);position:relative;transition:transform .3s var(--ease)}
+    .fold__ic::before,.fold__ic::after{content:'';position:absolute;left:5px;right:5px;top:9px;height:2px;border-radius:1px;background:#fff}
+    .fold__ic::after{transform:rotate(90deg);transition:opacity .2s}
+    .fold[open] .fold__ic{transform:rotate(180deg)}.fold[open] .fold__ic::after{opacity:0}
+    .au__programs,.au__stepsbox{background:var(--card);border-radius:20px;padding:18px}
+    .au__programs h3,.au__stepsbox h3{font-size:19px;line-height:24px}
+    .au__programs summary .au__pnote{display:none}
+    .au__pnote--m{display:block;margin-top:12px;font-size:13px;line-height:18px}
+    .au__plist{margin-top:14px;gap:6px}
+    .au__plist li{height:32px;padding:0 12px;font-size:14px}
+    .au__stepsbox summary{display:flex}
+    .au__steps{grid-template-columns:1fr;gap:8px;margin-top:14px}
+    .au__steps li{border:0;background:#fff;border-radius:14px;padding:14px;gap:4px}
+    .au__steps b{font-size:16px}.au__steps p{font-size:14px;line-height:19px;max-width:none}
+    .au__cta{flex-direction:column;align-items:stretch;border-radius:20px;padding:18px;gap:16px}
+    .au__cta h3{font-size:22px;line-height:26px;max-width:260px}
+    .au__cta p{margin-top:10px;font-size:13px;line-height:18px}
+    .au__btn{height:56px;font-size:16px;width:100%}
+  }
+  @media (min-width:768px) and (max-width:1023px){
+    .au{padding:56px 20px 20px}
+    .au__cards{grid-template-columns:1fr 1fr}
+    .au__steps{grid-template-columns:1fr 1fr}
+    .au__cta{flex-direction:row;align-items:center}.au__btn{width:auto;padding:0 24px}
+  }
+</style>

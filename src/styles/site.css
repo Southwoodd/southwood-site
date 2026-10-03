@@ -57,18 +57,20 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 /* Шапка секции: бейдж слева, текст справа */
 .head{display:grid;grid-template-columns:89.1rem 1fr;align-items:start}
 .head>.badge{justify-self:start}
-.head__text{max-width:88.9rem}
-.head__intro{color:var(--grey-text);font-size:max(1.8rem,15px);line-height:1.25}
-.head__title{font-size:4.2rem;line-height:1.05;font-weight:500;letter-spacing:-.03em;color:var(--ink-2);margin-top:5rem}
+.head__text{max-width:66.8rem}
+.head__intro{color:#000;font-size:max(1.8rem,15px);line-height:1.25}
+.head__title{font-size:4.2rem;line-height:4.4rem;font-weight:500;letter-spacing:-.03em;color:var(--ink-2);margin-top:5rem}
 .head--center{display:flex;flex-direction:column;align-items:center;text-align:center}
+.head__title span{display:block}
 .head--center .head__title{margin-top:5rem}
 .head--center .head__intro{margin-top:5rem;max-width:118rem}
 @media (max-width:1023px){
   .head{display:flex;flex-direction:column;align-items:flex-start;gap:14px;padding:0 0 8px}
   .head__text{display:flex;flex-direction:column;gap:14px}
   .head__title{font-size:28px;line-height:32px;margin-top:0;order:2}
-  .head__intro{font-size:15px;line-height:21px;order:3}
+  .head__intro{font-size:15px;line-height:21px;order:3;color:var(--grey-text)}
   .head--center .head__title,.head--center .head__intro{margin-top:0}
+  .head__title span{display:inline}
 }
 
 /* Появление при скролле */
@@ -76,3 +78,10 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 [data-reveal].is-in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){[data-reveal]{opacity:1;transform:none;transition:none}}
 .no-js [data-reveal]{opacity:1;transform:none}
+
+/* Иконки интерфейса */
+.ui-ic{display:block;flex:none;width:2.4rem;height:2.4rem}
+@media (max-width:1023px){.ui-ic{width:20px;height:20px}}
+/* Аккордеон на телефоне, обычный блок на десктопе */
+.fold>summary{list-style:none;cursor:pointer}
+.fold>summary::-webkit-details-marker{display:none}

@@ -1,0 +1,8 @@
+---
+// Иконка интерфейса из src/icons/ui.json. Размер задается классом или стилем снаружи.
+import icons from '../../icons/ui.json';
+interface Props { n: keyof typeof icons; class?: string }
+const { n, class: c } = Astro.props;
+const i = icons[n];
+---
+<svg class:list={['ui-ic', c]} viewBox={i.vb} fill="none" aria-hidden="true" set:html={i.body} />

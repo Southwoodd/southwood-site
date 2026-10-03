@@ -1,16 +1,10 @@
 ---
-import Badge from '../ui/Badge.astro';
+import Head from '../ui/Head.astro';
 import { services, nb } from '../../i18n/ru';
 import Illus from './Illus.astro';
 ---
 <section class="section sv" id="services">
-  <div class="head">
-    <Badge icon="flash" reveal>{services.badge}</Badge>
-    <div class="head__text">
-      <p class="head__intro" data-reveal>{nb(services.intro)}</p>
-      <h2 class="head__title" data-reveal style="--d:80ms">{services.title.map((l) => <span>{nb(l)} </span>)}</h2>
-    </div>
-  </div>
+  <Head badge={services.badge} icon="flash" intro={services.intro} title={services.title} />
   <ul class="sv__grid">
     {services.cards.map((c, i) => (
       <li class:list={['sv__card', { 'sv__card--wide': c.wide }]} data-reveal style={`--d:${(i % 2) * 90}ms`}>
@@ -25,8 +19,6 @@ import Illus from './Illus.astro';
 </section>
 <style>
   .sv{padding:10rem 4rem}
-  .sv .head__title span{display:block}
-  .sv .head__title{line-height:4.4rem}
   .sv__grid{margin-top:10.6rem;display:flex;flex-wrap:wrap;gap:2rem}
   .sv__card{background:var(--card);border-radius:3.2rem;overflow:hidden;width:76.2rem;flex:1 1 76.2rem;display:flex;flex-direction:column}
   .sv__card--wide{flex:1 1 99.8rem;width:99.8rem}
@@ -37,7 +29,6 @@ import Illus from './Illus.astro';
   @media (max-width:1023px){
     .sv{padding:56px 12px 12px}
     .sv :global(.head){padding:0 8px 8px}
-    .sv .head__title{line-height:32px}.sv .head__title span{display:inline}
     .sv__grid{margin-top:20px;display:flex;flex-direction:column;gap:12px}
     .sv__card,.sv__card--wide{width:auto;flex:none;border-radius:20px}
     .sv__body{padding:8px 18px 24px}
