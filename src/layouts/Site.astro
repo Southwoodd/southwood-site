@@ -47,6 +47,15 @@ const url = new URL(path, Astro.site).toString();
       }, { threshold: 0.3 });
       document.querySelectorAll('.il').forEach((el) => il.observe(el));
 
+      // Аккордеоны: на телефоне свернуты, на десктопе раскрыты всегда
+      const mqFold = matchMedia('(max-width: 1023px)');
+      const syncFold = () => document.querySelectorAll<HTMLDetailsElement>('details.fold').forEach((d) => { d.open = !mqFold.matches || d.hasAttribute('data-open-m'); });
+      syncFold(); mqFold.addEventListener('change', syncFold);
+      document.querySelectorAll<HTMLDetailsElement>('details[data-group]').forEach((d) => d.addEventListener('toggle', () => {
+        if (!d.open || !mqFold.matches) return;
+        document.querySelectorAll<HTMLDetailsElement>(`details[data-group="${d.dataset.group}"]`).forEach((o) => { if (o !== d) o.open = false; });
+      }));
+
       // Счетчики
       const nf = new Intl.NumberFormat('ru-RU');
       const co = new IntersectionObserver((entries) => {

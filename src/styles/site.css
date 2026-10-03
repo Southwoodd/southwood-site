@@ -63,7 +63,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .head--center{display:flex;flex-direction:column;align-items:center;text-align:center}
 .head__title span{display:block}
 .head--center .head__title{margin-top:5rem}
-.head--center .head__intro{margin-top:5rem;max-width:118rem}
+.head--center .head__intro{margin-top:5rem;max-width:140rem}
 @media (max-width:1023px){
   .head{display:flex;flex-direction:column;align-items:flex-start;gap:14px;padding:0 0 8px}
   .head__text{display:flex;flex-direction:column;gap:14px}
@@ -85,3 +85,12 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 /* Аккордеон на телефоне, обычный блок на десктопе */
 .fold>summary{list-style:none;cursor:pointer}
 .fold>summary::-webkit-details-marker{display:none}
+.fold>summary{pointer-events:none}
+.fold__ic{display:none}
+@media (max-width:1023px){
+    .fold>summary{pointer-events:auto;display:flex;justify-content:space-between;align-items:center;gap:16px}
+    .fold__ic{display:block;flex:none;width:20px;height:20px;border-radius:50%;background:var(--ink);position:relative;transition:transform .3s var(--ease)}
+    .fold__ic::before,.fold__ic::after{content:'';position:absolute;left:5px;right:5px;top:9px;height:2px;border-radius:1px;background:#fff}
+    .fold__ic::after{transform:rotate(90deg);transition:opacity .2s}
+    .fold[open] .fold__ic{transform:rotate(180deg)}.fold[open] .fold__ic::after{opacity:0}
+}

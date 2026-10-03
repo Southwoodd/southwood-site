@@ -47,12 +47,6 @@ import Arrow from './Arrow.astro';
     <button class="btn btn--white au__btn" type="button" data-open="lead" data-chip="link">{a.cta.btn}<Arrow /></button>
   </div>
 </section>
-<script>
-  // На телефоне списки свернуты, на десктопе раскрыты всегда
-  const mq = matchMedia('(max-width: 1023px)');
-  const sync = () => document.querySelectorAll<HTMLDetailsElement>('details.fold').forEach((d) => { d.open = !mq.matches; });
-  sync(); mq.addEventListener('change', sync);
-</script>
 <style>
   .au{padding:10rem 4rem;display:flex;flex-direction:column;gap:2rem}
   .au :global(.head){margin-bottom:7.4rem}
@@ -88,8 +82,6 @@ import Arrow from './Arrow.astro';
   .au__boxm{display:none}
   .au__one .au__mini{margin-bottom:2rem}
 
-  .fold summary{pointer-events:none}
-  .fold__ic{display:none}
   .au__programs{background:var(--card);border-radius:3.2rem;padding:3.2rem 4rem}
   .au__programs summary{display:flex;justify-content:space-between;align-items:center;gap:3rem}
   .au__programs h3{font-size:2.4rem;line-height:3rem}
@@ -134,11 +126,6 @@ import Arrow from './Arrow.astro';
     .au__chips b{background:#fff;color:var(--ink);border:0;height:32px;padding:0 12px;font-size:14px}
     .au :global(.au__down),.au__box{display:none}
     .au__boxm{display:block;font-size:14px;line-height:19px;font-weight:500}
-    .fold summary{pointer-events:auto;display:flex;justify-content:space-between;align-items:center;gap:16px}
-    .fold__ic{display:block;flex:none;width:20px;height:20px;border-radius:50%;background:var(--ink);position:relative;transition:transform .3s var(--ease)}
-    .fold__ic::before,.fold__ic::after{content:'';position:absolute;left:5px;right:5px;top:9px;height:2px;border-radius:1px;background:#fff}
-    .fold__ic::after{transform:rotate(90deg);transition:opacity .2s}
-    .fold[open] .fold__ic{transform:rotate(180deg)}.fold[open] .fold__ic::after{opacity:0}
     .au__programs,.au__stepsbox{background:var(--card);border-radius:20px;padding:18px}
     .au__programs h3,.au__stepsbox h3{font-size:19px;line-height:24px}
     .au__programs summary .au__pnote{display:none}
