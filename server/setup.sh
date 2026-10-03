@@ -36,7 +36,7 @@ else
   echo "подключено в $F, копия прежнего конфига в /root/nginx-api-backup.conf"
 fi
 nginx -t && systemctl reload nginx
-echo "снаружи: $(curl -s https://api.southwood.pw/health || echo 'нет ответа')"
+echo "через nginx: $(curl -s --max-time 5 --resolve api.southwood.pw:443:127.0.0.1 https://api.southwood.pw/health || echo "нет ответа")"
 
 say "Пользователь для выкладки"
 id deploy >/dev/null 2>&1 || adduser --disabled-password --gecos "" deploy >/dev/null
