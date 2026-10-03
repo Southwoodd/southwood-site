@@ -1,15 +1,17 @@
 ---
-// Форма заявки. Используется в финальном блоке и в модалках. id нужен, чтобы подписи не пересекались.
+// Форма заявки. variant block стоит в финальном блоке, modal открывается в окне.
 import { form as f } from '../../i18n/ru';
-interface Props { id?: string }
-const { id = 'lead' } = Astro.props;
+interface Props { variant?: 'block' | 'modal' }
+const { variant = 'block' } = Astro.props;
+const title = variant === 'modal' ? f.modalTitle : f.title;
+const sub = variant === 'modal' ? f.modalSub : f.sub;
 ---
-<form class="lf ym-disable-keys" data-lead-form data-endpoint={f.endpoint} novalidate>
+<form class="lf ym-disable-keys" data-lead-form data-variant={variant} data-endpoint={f.endpoint} data-sub={sub} novalidate>
   <div class="lf__main">
-    <header><h3>{f.title}</h3><p>{f.sub}</p></header>
+    <header><h3>{title}</h3><p data-sub-text>{sub}</p></header>
     <fieldset class="lf__need" data-field="chips">
       <legend><span>{f.needLabel} <i>*</i></span><small>{f.needHint}</small></legend>
-      <div class="lf__chips">{f.chips.map((c) => <label><input type="checkbox" name="need" value={c.v} /><span>{c.l}</span></label>)}</div>
+      <div class="lf__chips">{f.chips.map((c) => <label><input type="checkbox" name="need" value={c.v} data-label={c.l} /><span>{c.l}</span></label>)}</div>
       <p class="lf__err" hidden>{f.errors.chips}</p>
     </fieldset>
     <div class="lf__row">
@@ -17,7 +19,7 @@ const { id = 'lead' } = Astro.props;
       <label class="lf__field" data-field="company"><span>{f.company} <i>*</i></span><input type="text" name="company" autocomplete="organization" placeholder={f.companyPh} maxlength="120" /><p class="lf__err" hidden>{f.errors.company}</p></label>
     </div>
     <div class="lf__row">
-      <label class="lf__field" data-field="phone"><span>{f.phone} <i>*</i></span><input type="tel" name="phone" autocomplete="tel" inputmode="tel" placeholder={f.phonePh} maxlength="24" /><p class="lf__err" hidden>{f.errors.phone}</p></label>
+      <label class="lf__field" data-field="phone"><span>{f.phone} <i>*</i></span><input type="tel" name="phone" autocomplete="tel" inputmode="tel" placeholder={f.phonePh} maxlength="24" /><p class="lf__err" hidden data-empty={f.errors.phoneEmpty} data-short={f.errors.phone}>{f.errors.phone}</p></label>
       <fieldset class="lf__field lf__via"><legend>{f.via} <i>*</i></legend>
         <div>{f.viaOptions.map((o, i) => <label><input type="radio" name="via" value={o.v} checked={i === 0} /><span>{o.l}</span></label>)}</div>
       </fieldset>
@@ -27,27 +29,23 @@ const { id = 'lead' } = Astro.props;
     <footer>
       <label class="lf__consent" data-field="consent"><input type="checkbox" name="consent" /><i></i><span>{f.consentA}<a href="/consent" target="_blank">{f.consentLink}</a>{f.consentB}<a href="/privacy" target="_blank">{f.policyLink}</a></span></label>
       <p class="lf__err" data-err="consent" hidden>{f.errors.consent}</p>
-      <button class="btn btn--deep lf__submit" type="submit" data-label={f.submit} data-sending={f.sending}>{f.submit}</button>
+      <p class="lf__err lf__failmsg" role="alert" hidden>{f.failText}</p>
+      <button class="btn btn--deep lf__submit" type="submit" data-label={f.submit} data-sending={f.sending} data-retry={f.failRetry}>{f.submit}</button>
     </footer>
   </div>
-  <div class="lf__state lf__ok" hidden role="status">
+  <div class="lf__state lf__ok" hidden role="status" data-via={JSON.stringify(f.okVia)} data-chosen={f.okChosen}>
     <span class="lf__mark"><svg viewBox="0 0 24 24" fill="none"><path d="m5 12.5 4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-    <h3>{f.okTitle}</h3><p>{f.okText}</p>
-    <button class="btn btn--grey" type="button" data-again>{f.okBtn}</button>
-  </div>
-  <div class="lf__state lf__fail" hidden role="alert">
-    <span class="lf__mark lf__mark--bad"><svg viewBox="0 0 24 24" fill="none"><path d="M12 7v6m0 3.5v.1" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span>
-    <h3>{f.failTitle}</h3><p>{f.failText}</p>
-    <div><button class="btn btn--deep" type="button" data-retry>{f.failRetry}</button><a class="btn btn--grey" href="https://t.me/imsouthwood" target="_blank" rel="noopener">{f.failTg}</a></div>
+    <h3>{f.okTitle}</h3><p data-ok-text></p>
+    <button class="btn btn--grey" type="button" data-again>{variant === 'modal' ? f.okClose : f.okBtn}</button>
   </div>
 </form>
 <script>
   document.querySelectorAll<HTMLFormElement>('[data-lead-form]').forEach((form) => {
     const main = form.querySelector<HTMLElement>('.lf__main')!;
     const ok = form.querySelector<HTMLElement>('.lf__ok')!;
-    const fail = form.querySelector<HTMLElement>('.lf__fail')!;
+    const failMsg = form.querySelector<HTMLElement>('.lf__failmsg')!;
     const btn = form.querySelector<HTMLButtonElement>('.lf__submit')!;
-    const show = (el: HTMLElement) => { [main, ok, fail].forEach((x) => { x.hidden = x !== el; }); };
+    const show = (el: HTMLElement) => { [main, ok].forEach((x) => { x.hidden = x !== el; }); };
     const setErr = (name: string, bad: boolean) => {
       const box = form.querySelector<HTMLElement>(`[data-field="${name}"]`)!;
       box.classList.toggle('is-bad', bad);
@@ -67,39 +65,45 @@ const { id = 'lead' } = Astro.props;
     });
     const validate = () => {
       const fd = new FormData(form);
+      const digits = String(fd.get('phone') || '').replace(/\D/g, '');
+      const pe = form.querySelector<HTMLElement>('[data-field="phone"] .lf__err')!; pe.textContent = digits.length ? pe.dataset.short! : pe.dataset.empty!;
       const bad = [
         setErr('chips', fd.getAll('need').length === 0),
         setErr('name', String(fd.get('name') || '').trim().length < 2),
         setErr('company', String(fd.get('company') || '').trim().length < 2),
-        setErr('phone', String(fd.get('phone') || '').replace(/\D/g, '').length < 10),
+        setErr('phone', digits.length < 11),
         setErr('consent', !fd.get('consent')),
       ];
       return !bad.includes(true);
     };
-    form.addEventListener('change', () => { if (form.classList.contains('was-sent')) validate(); });
-    form.addEventListener('input', () => { if (form.classList.contains('was-sent')) validate(); });
+    const live = () => { if (form.classList.contains('was-sent')) validate(); };
+    form.addEventListener('change', live); form.addEventListener('input', live);
     const send = async () => {
       const fd = new FormData(form);
+      const labels = [...form.querySelectorAll<HTMLInputElement>('input[name=need]:checked')].map((i) => i.dataset.label!);
+      const via = String(fd.get('via'));
+      form.querySelector('[data-ok-text]')!.textContent = `${JSON.parse(ok.dataset.via!)[via]} ${ok.dataset.chosen} ${labels.join(', ').toLowerCase()}.`;
       if (fd.get('website')) { show(ok); return; }
-      const body = { need: fd.getAll('need'), name: fd.get('name'), company: fd.get('company'), phone: fd.get('phone'), via: fd.get('via'), task: fd.get('task'), page: location.pathname, context: form.dataset.context || '', consent: true };
-      btn.disabled = true; btn.textContent = btn.dataset.sending!; btn.classList.add('is-busy');
+      const body = { kind: 'lead', need: fd.getAll('need'), needLabels: labels, name: fd.get('name'), company: fd.get('company'), phone: fd.get('phone'), via, task: fd.get('task'), page: location.pathname, context: form.dataset.context || '', consent: true };
+      btn.disabled = true; btn.textContent = btn.dataset.sending!; btn.classList.add('is-busy'); failMsg.hidden = true;
       try {
         const r = await fetch(form.dataset.endpoint!, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
         if (!r.ok) throw new Error(String(r.status));
-        show(ok); (window as any).swGoal?.('lead_sent');
-      } catch { show(fail); }
-      btn.disabled = false; btn.textContent = btn.dataset.label!; btn.classList.remove('is-busy');
+        show(ok); btn.textContent = btn.dataset.label!; (window as any).swGoal?.('lead_sent');
+      } catch { failMsg.hidden = false; btn.textContent = btn.dataset.retry!; }
+      btn.disabled = false; btn.classList.remove('is-busy');
     };
     form.addEventListener('submit', (e) => {
       e.preventDefault(); form.classList.add('was-sent');
       if (!validate()) { form.querySelector<HTMLElement>('.is-bad input, .is-bad textarea')?.focus(); return; }
       send();
     });
-    form.querySelector('[data-retry]')!.addEventListener('click', () => { show(main); send(); });
-    form.querySelector('[data-again]')!.addEventListener('click', () => { form.reset(); form.classList.remove('was-sent'); show(main); });
+    const reset = () => { form.reset(); form.classList.remove('was-sent'); form.querySelectorAll('.is-bad').forEach((x) => x.classList.remove('is-bad')); form.querySelectorAll<HTMLElement>('.lf__err').forEach((x) => { x.hidden = true; }); btn.textContent = btn.dataset.label!; show(main); };
+    form.addEventListener('lf:reset', reset);
+    form.querySelector('[data-again]')!.addEventListener('click', () => { reset(); form.closest('dialog')?.close(); });
   });
 </script>
-<style>
+<style is:global>
   .lf{background:#fff;color:#14201a;border-radius:2.8rem;padding:4rem;display:flex;flex-direction:column}
   .lf__main{display:flex;flex-direction:column;gap:2.8rem;flex:1}
   .lf__main[hidden],.lf__state[hidden]{display:none}
@@ -141,6 +145,7 @@ const { id = 'lead' } = Astro.props;
   .lf__consent a:hover{color:var(--deep)}
   .lf__submit{height:5.6rem;border-radius:2.8rem;font-size:max(1.7rem,16px);width:100%}
   .lf__submit.is-busy{opacity:.7;pointer-events:none}
+  .lf__failmsg{font-size:max(1.4rem,13px);line-height:1.4}
   .lf__state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1.6rem;min-height:40rem}
   .lf__state h3{font-size:3rem;font-weight:700;letter-spacing:-.02em}
   .lf__state p{max-width:42rem;font-size:max(1.7rem,15px);line-height:1.45;color:var(--muted)}

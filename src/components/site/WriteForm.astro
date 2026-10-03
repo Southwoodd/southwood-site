@@ -1,0 +1,82 @@
+---
+import { write as w, form as f } from '../../i18n/ru';
+import Arrow from './Arrow.astro';
+---
+<form class="lf wf ym-disable-keys" data-write-form data-endpoint={f.endpoint} novalidate>
+  <div class="lf__main">
+    <header><h3>{w.title}</h3><p>{w.sub}</p></header>
+    <div class="wf__fast"><span>{w.fast}</span>
+      <ul>{w.links.map((l) => <li><a href={l.href} target="_blank" rel="noopener"><b>{l.label}</b><small>{l.hint}</small><Arrow /></a></li>)}</ul>
+    </div>
+    <p class="wf__or"><span>{w.or}</span></p>
+    <label class="lf__field" data-field="msg"><span>{w.msg} <i>*</i></span><textarea name="msg" placeholder={w.msgPh} maxlength="1500" rows="3"></textarea><p class="lf__err" hidden>{w.errMsg}</p></label>
+    <fieldset class="lf__field lf__via"><legend>{w.where} <i>*</i></legend>
+      <div>{w.ways.map((o, i) => <label><input type="radio" name="via" value={o.v} checked={i === 0} data-label={o.label} data-ph={o.ph} data-err={o.err} data-ok={o.ok} /><span>{o.l}</span></label>)}</div>
+    </fieldset>
+    <div class="lf__row">
+      <label class="lf__field" data-field="contact"><span><span data-contact-label>{w.ways[0].label}</span> <i>*</i></span><input type="text" name="contact" placeholder={w.ways[0].ph} maxlength="80" autocomplete="off" /><p class="lf__err" hidden>{w.ways[0].err}</p></label>
+      <label class="lf__field"><span>{w.name} <em>{w.nameOpt}</em></span><input type="text" name="name" autocomplete="name" placeholder={w.namePh} maxlength="80" /></label>
+    </div>
+    <input class="lf__hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+    <footer>
+      <label class="lf__consent" data-field="consent"><input type="checkbox" name="consent" /><i></i><span>{f.consentA}<a href="/consent" target="_blank">{f.consentLink}</a>{f.consentB}<a href="/privacy" target="_blank">{f.policyLink}</a></span></label>
+      <p class="lf__err" data-err="consent" hidden>{f.errors.consent}</p>
+      <p class="lf__err lf__failmsg" role="alert" hidden>{w.fail}</p>
+      <button class="btn btn--deep lf__submit" type="submit" data-label={w.submit} data-sending={w.sending} data-retry={w.retry}>{w.submit}</button>
+    </footer>
+  </div>
+  <div class="lf__state lf__ok" hidden role="status">
+    <span class="lf__mark"><svg viewBox="0 0 24 24" fill="none"><path d="m5 12.5 4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <h3>{w.okTitle}</h3><p data-ok-text data-tail={w.okTail}></p>
+    <button class="btn btn--grey" type="button" data-again>{w.close}</button>
+  </div>
+</form>
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-write-form]').forEach((form) => {
+    const main = form.querySelector<HTMLElement>('.lf__main')!, ok = form.querySelector<HTMLElement>('.lf__ok')!;
+    const btn = form.querySelector<HTMLButtonElement>('.lf__submit')!, failMsg = form.querySelector<HTMLElement>('.lf__failmsg')!;
+    const contact = form.elements.namedItem('contact') as HTMLInputElement;
+    const way = () => form.querySelector<HTMLInputElement>('input[name=via]:checked')!;
+    const sync = () => { const w = way(); form.querySelector('[data-contact-label]')!.textContent = w.dataset.label!; contact.placeholder = w.dataset.ph!; contact.type = w.value === 'email' ? 'email' : 'text'; contact.inputMode = w.value === 'max' ? 'tel' : w.value === 'email' ? 'email' : 'text'; form.querySelector<HTMLElement>('[data-field=contact] .lf__err')!.textContent = w.dataset.err!; };
+    form.querySelectorAll('input[name=via]').forEach((r) => r.addEventListener('change', () => { contact.value = ''; sync(); }));
+    const setErr = (name: string, bad: boolean) => { const box = form.querySelector<HTMLElement>(`[data-field="${name}"]`)!; box.classList.toggle('is-bad', bad); const e = (box.querySelector('.lf__err') || form.querySelector(`[data-err="${name}"]`)) as HTMLElement; e.hidden = !bad; return bad; };
+    const validate = () => {
+      const fd = new FormData(form); const c = String(fd.get('contact') || '').trim(); const v = way().value;
+      const cBad = v === 'email' ? !/^\S+@\S+\.\S{2,}$/.test(c) : v === 'max' ? c.replace(/\D/g, '').length < 10 : c.replace('@', '').length < 3;
+      return ![setErr('msg', String(fd.get('msg') || '').trim().length < 5), setErr('contact', cBad), setErr('consent', !fd.get('consent'))].includes(true);
+    };
+    const live = () => { if (form.classList.contains('was-sent')) validate(); };
+    form.addEventListener('input', live); form.addEventListener('change', live);
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault(); form.classList.add('was-sent');
+      if (!validate()) { form.querySelector<HTMLElement>('.is-bad input, .is-bad textarea')?.focus(); return; }
+      const fd = new FormData(form); const w = way(); let c = String(fd.get('contact')).trim(); if (w.value === 'telegram' && !c.startsWith('@')) c = '@' + c;
+      const t = form.querySelector<HTMLElement>('[data-ok-text]')!; t.textContent = `${w.dataset.ok} ${c} ${t.dataset.tail}`;
+      const done = () => { main.hidden = true; ok.hidden = false; btn.textContent = btn.dataset.label!; };
+      if (fd.get('website')) { done(); return; }
+      btn.disabled = true; btn.textContent = btn.dataset.sending!; failMsg.hidden = true;
+      try {
+        const r = await fetch(form.dataset.endpoint!, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind: 'write', msg: fd.get('msg'), via: w.value, contact: c, name: fd.get('name'), page: location.pathname, consent: true }) });
+        if (!r.ok) throw new Error(String(r.status));
+        done(); (window as any).swGoal?.('write_sent');
+      } catch { failMsg.hidden = false; btn.textContent = btn.dataset.retry!; }
+      btn.disabled = false;
+    });
+    const reset = () => { form.reset(); sync(); form.classList.remove('was-sent'); form.querySelectorAll('.is-bad').forEach((x) => x.classList.remove('is-bad')); form.querySelectorAll<HTMLElement>('.lf__err').forEach((x) => { x.hidden = true; }); main.hidden = false; ok.hidden = true; };
+    form.addEventListener('lf:reset', reset);
+    form.querySelector('[data-again]')!.addEventListener('click', () => { reset(); form.closest('dialog')?.close(); });
+  });
+</script>
+<style>
+  .wf__fast{display:grid;gap:1.2rem}
+  .wf__fast>span{font-size:max(1.4rem,13px);font-weight:500}
+  .wf__fast ul{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+  .wf__fast a{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:1rem;padding:1.2rem 1.6rem;border-radius:1.4rem;background:var(--card);transition:background-color .2s var(--ease)}
+  .wf__fast a:hover{background:var(--mint)}
+  .wf__fast b{font-size:max(1.5rem,14px);font-weight:500}
+  .wf__fast small{grid-column:1;font-size:max(1.3rem,12px);color:var(--muted)}
+  .wf__fast :global(.arrow){grid-column:2;grid-row:1/3;width:1.8rem;height:1.8rem}
+  .wf__or{display:flex;align-items:center;gap:1.4rem;font-size:max(1.3rem,12px);color:var(--muted)}
+  .wf__or::before,.wf__or::after{content:'';flex:1;height:1px;background:var(--line)}
+  @media (max-width:1023px){.wf__fast a{padding:12px 14px;border-radius:14px}}
+</style>

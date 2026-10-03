@@ -2,6 +2,7 @@
 import '../styles/site.css';
 import '../styles/illus.css';
 import CookieBar from '../components/site/CookieBar.astro';
+import Modals from '../components/site/Modals.astro';
 interface Props { title: string; description: string; lang?: string; noindex?: boolean; path?: string }
 const { title, description, lang = 'ru', noindex = false, path = '/' } = Astro.props;
 const url = new URL(path, Astro.site).toString();
@@ -35,6 +36,7 @@ const url = new URL(path, Astro.site).toString();
   <body>
     <a class="sr-only" href="#main">К содержимому</a>
     <slot />
+    <Modals />
     <CookieBar />
     <script>
       // Появление блоков при скролле
@@ -57,18 +59,6 @@ const url = new URL(path, Astro.site).toString();
         if (!d.open || !mqFold.matches) return;
         document.querySelectorAll<HTMLDetailsElement>(`details[data-group="${d.dataset.group}"]`).forEach((o) => { if (o !== d) o.open = false; });
       }));
-
-      // Заявка из калькулятора. Пока модалок нет, ведет к форме в финальном блоке и подставляет состав
-      window.addEventListener('lead:open', (e) => {
-        const d = (e as CustomEvent).detail || {};
-        const form = document.querySelector<HTMLFormElement>('#contact [data-lead-form]');
-        if (!form) return;
-        form.dataset.context = d.kind || '';
-        if (Array.isArray(d.chips)) form.querySelectorAll<HTMLInputElement>('input[name=need]').forEach((i) => { i.checked = d.chips.includes(i.value); });
-        const ta = form.querySelector<HTMLTextAreaElement>('textarea[name=task]');
-        if (ta && d.text) ta.value = d.text;
-        document.getElementById('contact')!.scrollIntoView({ behavior: 'smooth' });
-      });
 
       // Счетчики
       const nf = new Intl.NumberFormat('ru-RU');
