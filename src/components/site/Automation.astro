@@ -31,6 +31,23 @@ import Arrow from './Arrow.astro';
       <span class="au__price">{a.one.price}</span>
     </article>
   </div>
+  <details class="fold au__sc" open>
+    <summary><div><h3>{a.scenarios.title}</h3><p class="au__scnote">{nb(a.scenarios.note)}</p></div><i class="fold__ic"></i></summary>
+    <ul class="au__sclist">
+      {a.scenarios.list.map((x, i) => (
+        <li data-reveal style={`--d:${(i % 3) * 70}ms`}>
+          <span class="au__who">{x.who}</span>
+          <span class="au__apps au__apps--sc">{x.apps.map((app, j) => (<>{j > 0 && <Ui n="send" class="au__arr2" />}<b>{app}</b></>))}</span>
+          <h4>{nb(x.title)}</h4>
+          <dl><div><dt>{a.scenarios.was}</dt><dd>{nb(x.was)}</dd></div><div class="now"><dt>{a.scenarios.now}</dt><dd>{nb(x.now)}</dd></div></dl>
+          <div class="au__scfoot">
+            <p><b>{x.price}</b><span>{x.term} · {x.cond}</span></p>
+            <button class="btn btn--deep" type="button" data-open="lead" data-chip="link" data-task={`Сценарий: ${x.title}. `} data-context={`scenario:${x.key}`}>{a.scenarios.btn}<Arrow /></button>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </details>
   <details class="fold au__programs" data-reveal open>
     <summary><h3>{a.programs.title}</h3><span class="au__pnote">{nb(a.programs.note)}</span><i class="fold__ic"></i></summary>
     <ul class="au__plist">{a.programs.list.map((x) => <li>{x}</li>)}<li class="more">{a.programs.more}</li></ul>
@@ -82,6 +99,26 @@ import Arrow from './Arrow.astro';
   .au__boxm{display:none}
   .au__one .au__mini{margin-bottom:2rem}
 
+  .au__sc{background:var(--card);border-radius:3.2rem;padding:4rem}
+  .au__sc summary h3{font-size:4rem;line-height:4.4rem}
+  .au__scnote{margin-top:1rem;max-width:90rem;font-size:max(1.6rem,13px);line-height:1.45;color:var(--muted)}
+  .au__sclist{margin-top:3.2rem;display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
+  .au__sclist>li{background:#fff;border-radius:2.4rem;padding:2.8rem;display:flex;flex-direction:column;gap:1.4rem}
+  .au__who{font-size:max(1.4rem,12px);color:var(--muted)}
+  .au__apps--sc{flex-wrap:wrap;gap:.6rem}
+  .au :global(.au__arr2){width:2rem;height:2rem;color:var(--muted)}
+  .au__sclist h4{margin:.6rem 0 0;font-size:2.8rem;line-height:1.15;font-weight:500;letter-spacing:-.03em}
+  .au__sclist dl{margin:0;display:grid;gap:1.2rem}
+  .au__sclist dt{font-size:max(1.3rem,12px);color:var(--muted)}
+  .au__sclist dd{margin:.4rem 0 0;font-size:max(1.6rem,14px);line-height:1.45}
+  .au__sclist .now{background:var(--mint);border-radius:1.6rem;padding:1.4rem 1.6rem}
+  .au__sclist .now dt{color:var(--deep);font-weight:500}
+  .au__scfoot{margin-top:auto;padding-top:1.2rem;display:flex;justify-content:space-between;align-items:flex-end;gap:1.6rem}
+  .au__scfoot p{display:grid;gap:.3rem}
+  .au__scfoot b{font-size:2.4rem;line-height:1.1;font-weight:500;letter-spacing:-.03em;white-space:nowrap}
+  .au__scfoot span{font-size:max(1.3rem,12px);color:var(--muted)}
+  .au__scfoot .btn{flex:none;height:4.8rem;padding:0 2rem;font-size:max(1.5rem,14px)}
+  .au__scfoot .btn :global(.arrow){width:1.6rem;height:1.6rem}
   .au__programs{background:var(--card);border-radius:3.2rem;padding:3.2rem 4rem}
   .au__programs summary{display:flex;justify-content:space-between;align-items:center;gap:3rem}
   .au__programs h3{font-size:2.4rem;line-height:3rem}
@@ -105,6 +142,16 @@ import Arrow from './Arrow.astro';
   @media (max-width:1023px){
     .au{padding:56px 12px 12px;gap:12px}
     .au :global(.head){margin:0;padding:0 8px 12px}
+    .au__sc{border-radius:20px;padding:18px}
+    .au__sc summary h3{font-size:19px;line-height:24px}
+    .au__scnote{display:none}
+    .au__sclist{margin-top:14px;grid-template-columns:1fr;gap:8px}
+    .au__sclist>li{border-radius:14px;padding:14px;gap:10px}
+    .au__sclist h4{font-size:20px;margin:2px 0 0}
+    .au__sclist .now{border-radius:12px;padding:12px}
+    .au__scfoot{flex-direction:column;align-items:stretch;gap:10px}
+    .au__scfoot b{font-size:20px}
+    .au__scfoot .btn{height:48px;font-size:15px}
     .au__cards{grid-template-columns:1fr;gap:12px}
     .au__card{border-radius:20px;padding:18px;gap:12px;min-height:0}
     .au__row{order:-2;flex-direction:column-reverse;align-items:flex-start;gap:12px;margin:0}
@@ -143,6 +190,7 @@ import Arrow from './Arrow.astro';
   }
   @media (min-width:768px) and (max-width:1023px){
     .au{padding:56px 20px 20px}
+    .au__sclist{grid-template-columns:1fr 1fr}
     .au__cards{grid-template-columns:1fr 1fr}
     .au__steps{grid-template-columns:1fr 1fr}
     .au__cta{flex-direction:row;align-items:center}.au__btn{width:auto;padding:0 24px}

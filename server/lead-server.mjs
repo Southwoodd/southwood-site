@@ -27,7 +27,7 @@ const VIA = { telegram: 'Telegram', max: 'MAX', call: 'позвонить', emai
 
 const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
 const esc = (x) => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-const source = (c) => (c === 'calc' ? 'калькулятор' : c === 'quiz' ? 'подбор по вопросам' : c.startsWith('pack:') ? `набор ${c.slice(5)}` : c.startsWith('case:') ? `кейс ${c.slice(5)}` : c);
+const source = (c) => (c === 'calc' ? 'калькулятор' : c === 'quiz' ? 'подбор по вопросам' : c.startsWith('pack:') ? `набор ${c.slice(5)}` : c.startsWith('case:') ? `кейс ${c.slice(5)}` : c.startsWith('scenario:') ? `сценарий автоматизации ${c.slice(9)}` : c);
 // Все поля формы по строкам. Для калькулятора и подбора расчет приходит файлом PDF, без него составом в тексте.
 function build(b) {
   if (b.consent !== true) return { error: 'consent' };
