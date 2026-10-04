@@ -77,6 +77,22 @@ const url = new URL(path, Astro.site).toString();
       // Плавный скролл только на десктопе с мышью
       const desktop = matchMedia('(min-width: 1024px) and (hover: hover) and (pointer: fine)').matches;
       const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      // Якорные ссылки: если страница по пути подросла и прокрутка не доехала, доводим до места
+      document.addEventListener('click', (e) => {
+        const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href*="#"]'); if (!a) return;
+        const u = new URL(a.href, location.href); if (u.pathname !== location.pathname || u.hash.length < 2) return;
+        const el = document.getElementById(decodeURIComponent(u.hash.slice(1))); if (!el) return;
+        let live = true; const stop = () => { live = false; };
+        ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach((n) => addEventListener(n, stop, { once: true, passive: true }));
+        const fix = () => {
+          if (!live) return;
+          const off = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+          const d = el.getBoundingClientRect().top - off; if (Math.abs(d) < 6) return;
+          const L = (window as any).__lenis;
+          if (L) L.scrollTo(scrollY + d, { duration: 0.5 }); else scrollTo({ top: scrollY + d, behavior: 'smooth' });
+        };
+        setTimeout(fix, 1150); setTimeout(fix, 1900);
+      });
       if (desktop && !calm) {
         import('lenis').then(({ default: Lenis }) => {
           const lenis = new Lenis({ duration: 0.9, smoothWheel: true, anchors: { offset: -140 } });

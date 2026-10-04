@@ -108,12 +108,13 @@ import Arrow from './Arrow.astro';
   .au__apps--sc{flex-wrap:wrap;gap:.6rem}
   .au :global(.au__arr2){width:2rem;height:2rem;color:var(--muted)}
   .au__sclist h4{margin:.6rem 0 0;font-size:2.8rem;line-height:1.15;font-weight:500;letter-spacing:-.03em}
-  .au__sclist dl{margin:0;display:grid;gap:1.2rem}
+  .au__sclist dl{margin:0;flex:1;display:flex;flex-direction:column;gap:1.2rem}
+  .au__sclist dl .now{margin-top:auto;min-height:11.9rem}
   .au__sclist dt{font-size:max(1.3rem,12px);color:var(--muted)}
   .au__sclist dd{margin:.4rem 0 0;font-size:max(1.6rem,14px);line-height:1.45}
   .au__sclist .now{background:var(--mint);border-radius:1.6rem;padding:1.4rem 1.6rem}
   .au__sclist .now dt{color:var(--deep);font-weight:500}
-  .au__scfoot{margin-top:auto;padding-top:1.2rem;display:flex;justify-content:space-between;align-items:flex-end;gap:1.6rem}
+  .au__scfoot{padding-top:1.2rem;display:flex;justify-content:space-between;align-items:flex-end;gap:1.6rem}
   .au__scfoot p{display:grid;gap:.3rem}
   .au__scfoot b{font-size:2.4rem;line-height:1.1;font-weight:500;letter-spacing:-.03em;white-space:nowrap}
   .au__scfoot span{font-size:max(1.3rem,12px);color:var(--muted)}
@@ -148,7 +149,7 @@ import Arrow from './Arrow.astro';
     .au__sclist{margin-top:14px;grid-template-columns:1fr;gap:8px}
     .au__sclist>li{border-radius:14px;padding:14px;gap:10px}
     .au__sclist h4{font-size:20px;margin:2px 0 0}
-    .au__sclist .now{border-radius:12px;padding:12px}
+    .au__sclist .now{border-radius:12px;padding:12px;min-height:0}
     .au__scfoot{flex-direction:column;align-items:stretch;gap:10px}
     .au__scfoot b{font-size:20px}
     .au__scfoot .btn{height:48px;font-size:15px}
