@@ -24,6 +24,10 @@ const sub = variant === 'modal' ? f.modalSub : f.sub;
         <div>{f.viaOptions.map((o, i) => <label><input type="radio" name="via" value={o.v} checked={i === 0} /><span>{o.l}</span></label>)}</div>
       </fieldset>
     </div>
+    <div class="lf__row">
+      <label class="lf__field"><span>{f.deadline} <em>{f.taskOpt}</em></span><input type="date" name="deadline" data-min-today /></label>
+      <p class="lf__hint">{f.deadlineHint}</p>
+    </div>
     <label class="lf__field"><span>{f.task} <em>{f.taskOpt}</em></span><textarea name="task" placeholder={f.taskPh} maxlength="1500" rows="3"></textarea></label>
     <input class="lf__hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
     <footer>
@@ -53,6 +57,7 @@ const sub = variant === 'modal' ? f.modalSub : f.sub;
       if (e) e.hidden = !bad;
       return bad;
     };
+    form.querySelectorAll<HTMLInputElement>('[data-min-today]').forEach((i) => { i.min = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10); });
     const phone = form.elements.namedItem('phone') as HTMLInputElement;
     phone.addEventListener('input', () => {
       let d = phone.value.replace(/\D/g, '');
@@ -84,7 +89,7 @@ const sub = variant === 'modal' ? f.modalSub : f.sub;
       const via = String(fd.get('via'));
       form.querySelector('[data-ok-text]')!.textContent = `${JSON.parse(ok.dataset.via!)[via]} ${ok.dataset.chosen} ${labels.join(', ').toLowerCase()}.`;
       if (fd.get('website')) { show(ok); return; }
-      const body: Record<string, unknown> = { kind: 'lead', need: fd.getAll('need'), needLabels: labels, name: fd.get('name'), company: fd.get('company'), phone: fd.get('phone'), via, task: fd.get('task'), page: location.pathname, context: form.dataset.context || '', consent: true };
+      const body: Record<string, unknown> = { kind: 'lead', need: fd.getAll('need'), needLabels: labels, name: fd.get('name'), company: fd.get('company'), phone: fd.get('phone'), via, deadline: fd.get('deadline'), task: fd.get('task'), page: location.pathname, context: form.dataset.context || '', consent: true };
       btn.disabled = true; btn.textContent = btn.dataset.sending!; btn.classList.add('is-busy'); failMsg.hidden = true;
       const post = (b: unknown) => fetch(form.dataset.endpoint!, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) });
       try {
@@ -137,7 +142,9 @@ const sub = variant === 'modal' ? f.modalSub : f.sub;
   .lf__via legend{display:block}
   .lf__field>span,.lf__via legend{font-size:max(1.4rem,13px);font-weight:500}
   .lf__field em{font-style:normal;font-weight:400}
-  .lf input[type=text],.lf input[type=tel],.lf input[type=email],.lf textarea{width:100%;height:4.8rem;padding:0 1.4rem;border-radius:1.2rem;border:1px solid var(--line);background:#fff;-webkit-appearance:none;appearance:none;font:inherit;font-size:max(1.5rem,13px);color:inherit;letter-spacing:inherit;transition:border-color .2s var(--ease),box-shadow .2s var(--ease)}
+  .lf input[type=text],.lf input[type=tel],.lf input[type=email],.lf input[type=date],.lf textarea{width:100%;height:4.8rem;padding:0 1.4rem;border-radius:1.2rem;border:1px solid var(--line);background:#fff;-webkit-appearance:none;appearance:none;font:inherit;font-size:max(1.5rem,13px);color:inherit;letter-spacing:inherit;transition:border-color .2s var(--ease),box-shadow .2s var(--ease)}
+  .lf input[type=date]{min-width:0;display:block;font-family:inherit}
+  .lf__hint{align-self:end;padding-bottom:.6rem;font-size:max(1.3rem,12px);line-height:1.4;color:var(--muted)}
   .lf textarea{height:9.6rem;padding:1.2rem 1.4rem;resize:vertical;min-height:9.6rem;line-height:1.4}
   .lf ::placeholder{color:var(--muted);opacity:1}
   .lf input:focus,.lf textarea:focus{outline:0;border-color:var(--deep);box-shadow:0 0 0 3px rgba(63,107,86,.15)}
@@ -172,7 +179,8 @@ const sub = variant === 'modal' ? f.modalSub : f.sub;
     .lf header h3{font-size:24px}
     .lf__chips{gap:6px}.lf__chips span{height:40px;padding:0 14px;border-radius:20px}
     .lf__row{grid-template-columns:1fr;gap:16px}
-    .lf input[type=text],.lf input[type=tel],.lf input[type=email]{height:48px;border-radius:12px;padding:0 14px;font-size:16px}
+    .lf__hint{padding:0;margin-top:-8px}
+    .lf input[type=text],.lf input[type=tel],.lf input[type=email],.lf input[type=date]{height:48px;border-radius:12px;padding:0 14px;font-size:16px}
     .lf textarea{font-size:16px;border-radius:12px;padding:12px 14px;height:96px;min-height:96px}
     .lf__via>div{height:48px;padding:4px;border-radius:12px;gap:4px}.lf__via span{border-radius:9px}
     .lf__consent>i{width:20px;height:20px;border-radius:6px}

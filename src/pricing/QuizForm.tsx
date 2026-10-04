@@ -14,9 +14,10 @@ const mask = (raw: string) => {
 const b64 = (u: Uint8Array) => { let bin = ''; for (let i = 0; i < u.length; i += 0x8000) bin += String.fromCharCode(...u.subarray(i, i + 0x8000)); return btoa(bin); };
 
 export default function QuizForm({ build, disabled, onSent }: { build: () => QuizPayload; disabled?: boolean; onSent: (via: string) => void }) {
-  const [v, setV] = useState({ name: '', company: '', phone: '', via: f.viaOptions[0].v, task: '', consent: false, website: '' });
+  const [v, setV] = useState({ name: '', company: '', phone: '', via: f.viaOptions[0].v, deadline: '', task: '', consent: false, website: '' });
   const [tried, setTried] = useState(false); const [busy, setBusy] = useState(false); const [fail, setFail] = useState(false);
   const set = (k: keyof typeof v) => (e: Event) => { const t = e.target as HTMLInputElement; setV((p) => ({ ...p, [k]: k === 'consent' ? t.checked : k === 'phone' ? mask(t.value) : t.value })); };
+  const today = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
   const digits = v.phone.replace(/\D/g, '');
   const bad = { name: v.name.trim().length < 2, company: v.company.trim().length < 2, phone: digits.length < 11, consent: !v.consent };
   const err = (k: keyof typeof bad) => tried && bad[k];
@@ -26,7 +27,7 @@ export default function QuizForm({ build, disabled, onSent }: { build: () => Qui
     if (v.website) { onSent(v.via); return; }
     setBusy(true); setFail(false);
     const p = build();
-    const body: Record<string, unknown> = { kind: 'lead', need: p.needs, needLabels: p.labels, name: v.name, company: v.company, phone: v.phone, via: v.via, task: v.task, page: location.pathname, context: p.context, calc: p.calc, consent: true };
+    const body: Record<string, unknown> = { kind: 'lead', need: p.needs, needLabels: p.labels, name: v.name, company: v.company, phone: v.phone, via: v.via, deadline: v.deadline, task: v.task, page: location.pathname, context: p.context, calc: p.calc, consent: true };
     const post = (b: unknown) => fetch(f.endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) });
     try {
       let pdf = ''; try { pdf = b64(await p.pdf()); } catch (x) { console.error(x); }
@@ -51,6 +52,10 @@ export default function QuizForm({ build, disabled, onSent }: { build: () => Qui
           <fieldset class="lf__field lf__via"><legend>{f.via} <i>*</i></legend>
             <div>{f.viaOptions.map((o) => <label><input type="radio" name="quiz-via" value={o.v} checked={v.via === o.v} onChange={set('via')} /><span>{o.l}</span></label>)}</div>
           </fieldset>
+        </div>
+        <div class="lf__row">
+          <label class="lf__field"><span>{f.deadline} <em>{f.taskOpt}</em></span><input type="date" name="deadline" min={today} value={v.deadline} onInput={set('deadline')} /></label>
+          <p class="lf__hint">{f.deadlineHint}</p>
         </div>
         <label class="lf__field"><span>Комментарий <em>{f.taskOpt}</em></span><textarea name="task" placeholder={f.taskPh} maxLength={1500} rows={2} value={v.task} onInput={set('task')} /></label>
         <input class="lf__hp" type="text" name="website" tabIndex={-1} autocomplete="off" aria-hidden="true" value={v.website} onInput={set('website')} />

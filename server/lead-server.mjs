@@ -25,6 +25,7 @@ const clean = (v, max) => String(v ?? '').replace(/[\u0000-\u0008\u000b-\u001f]/
 const EMAIL = /^[^\s@<>"',;]+@[^\s@<>"',;]+\.[a-z]{2,}$/i;
 const VIA = { telegram: 'Telegram', max: 'MAX', call: 'позвонить', email: 'почта' };
 
+const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
 const esc = (x) => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const source = (c) => (c === 'calc' ? 'калькулятор' : c === 'quiz' ? 'подбор по вопросам' : c.startsWith('pack:') ? `набор ${c.slice(5)}` : c.startsWith('case:') ? `кейс ${c.slice(5)}` : c);
 // Все поля формы по строкам. Для калькулятора и подбора расчет приходит файлом PDF, без него составом в тексте.
@@ -45,6 +46,8 @@ function build(b) {
   const labels = Array.isArray(b.needLabels) ? b.needLabels.slice(0, 12).map((x) => clean(x, 40)) : [];
   if (name.length < 2 || company.length < 2 || phone.replace(/\D/g, '').length < 10 || !labels.length) return { error: 'fields' };
   const ctx = clean(b.context, 60);
+  const dm = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(b.deadline || ''));
+  const deadline = dm && MONTHS[+dm[2] - 1] ? `${+dm[3]} ${MONTHS[+dm[2] - 1]} ${dm[1]}` : '';
   let calc = null, pdf = null;
   if (b.calc && typeof b.calc === 'object') {
     const link = String(b.calc.link || '');
@@ -52,6 +55,7 @@ function build(b) {
     if (typeof b.pdf === 'string' && b.pdf.length < 700_000) { const buf = Buffer.from(b.pdf, 'base64'); if (buf.length > 1000 && buf.subarray(0, 5).toString() === '%PDF-') pdf = buf; }
   }
   const lines = [`Заявка с сайта${ctx ? `, ${source(ctx)}` : ''}`, '', `Имя: ${name}`, `Компания: ${company}`, `Телефон: ${phone}`, `Связаться: ${VIA[via] || via}`, `Нужно: ${labels.join(', ')}`];
+  if (deadline) lines.push(`Нужно к дате: ${deadline}`);
   if (task) lines.push(`Комментарий: ${task}`);
   if (calc) {
     lines.push('', `Расчет: ${calc.title || 'без суммы'}${pdf ? ', PDF во вложении' : ''}`);
@@ -63,7 +67,7 @@ function build(b) {
   const tgText = lines.join('\n') + (calc?.link ? `\n\n${LINK}` : '');
   const html = esc(lines.join('\n')) + (calc?.link ? `\n\n<a href="${esc(calc.link)}">${LINK}</a>` : '');
   if (calc?.link) lines.push('', `${LINK}: ${calc.link}`);
-  return { rec: { kind: 'lead', name, company, phone, via, need: labels, task, context: ctx, page, ...(calc ? { calc: { title: calc.title, text: calc.text, link: calc.link } } : {}) },
+  return { rec: { kind: 'lead', name, company, phone, via, need: labels, deadline: dm ? dm[0] : '', task, context: ctx, page, ...(calc ? { calc: { title: calc.title, text: calc.text, link: calc.link } } : {}) },
     subj: `Заявка с сайта: ${name}, ${company}`.slice(0, 120), reply: '', text: lines.join('\n'), html, n: tgText.length, pdf, cap: `Расчет к заявке: ${name}, ${company}`.slice(0, 200) };
 }
 

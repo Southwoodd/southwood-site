@@ -345,6 +345,7 @@ export const form = {
   company: 'Компания', companyPh: 'Название или сайт',
   phone: 'Телефон', phonePh: '+7 900 000-00-00',
   via: 'Как связаться', viaOptions: [{ v: 'telegram', l: 'Telegram' }, { v: 'max', l: 'MAX' }, { v: 'call', l: 'Позвонить' }],
+  deadline: 'К какой дате нужно', deadlineHint: 'Если есть жесткий срок, укажите дату. Сразу скажу, успею ли.',
   task: 'Коротко о задаче', taskOpt: '(необязательно)', taskPh: 'Что сейчас мешает и что хотите получить',
   consentA: 'Даю ', consentLink: 'согласие на обработку персональных данных', consentB: ' и принимаю ', policyLink: 'политику обработки данных',
   submit: 'Отправить заявку', sending: 'Отправляем…',
