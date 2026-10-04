@@ -99,6 +99,7 @@ const sub = variant === 'modal' ? f.modalSub : f.sub;
         if (pdf) { try { r = await post({ ...body, pdf }); } catch { r = null; } }
         if (!r || !r.ok) r = await post(body);
         if (!r.ok) throw new Error(String(r.status));
+        if (calc) window.dispatchEvent(new CustomEvent('lead:sent'));
         (form as any).__calc = null;
         show(ok); btn.textContent = btn.dataset.label!; (window as any).swGoal?.('lead_sent');
       } catch { failMsg.hidden = false; btn.textContent = btn.dataset.retry!; }

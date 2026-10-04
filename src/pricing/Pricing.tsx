@@ -43,6 +43,7 @@ export default function Pricing() {
   const [copied, setCopied] = useState(false);
   const [pdf, setPdf] = useState<'idle' | 'busy' | 'fail'>('idle');
   const [sheet, setSheet] = useState(false);
+  const [sent, setSent] = useState(false); // заявка с этой сборкой уже ушла
   const [mob, setMob] = useState(false);
   const [svc, setSvc] = useState(false);
   const [open, setOpen] = useState<Record<string, boolean>>({});
@@ -107,6 +108,9 @@ export default function Pricing() {
   const go = (d: number) => { setS((p) => { const st = ['what', ...p.tiles, 'terms']; const here = st[p.step] as GroupId; const seen = d > 0 && here !== ('what' as any) && here !== ('terms' as any) && !p.seen.includes(here) ? [...p.seen, here] : p.seen; const n = p.step + d; return n >= st.length ? { ...p, seen, done: true } : { ...p, seen, step: Math.max(0, n) }; }); scrollTop(); };
   const edit = (g: GroupId | 'terms') => { setS((p) => ({ ...p, done: false, step: g === 'terms' ? 1 + p.tiles.length : 1 + p.tiles.indexOf(g) })); scrollTop(); };
   const reset = () => { setS({ ...initial(), mode: s.mode }); setBanner(null); history.replaceState(null, '', location.pathname + location.search + '#pricing'); };
+  useEffect(() => { const f = () => setSent(true); window.addEventListener('lead:sent', f); return () => window.removeEventListener('lead:sent', f); }, []);
+  const sentKey = s.sel.join() + s.after + s.size + s.urgent + s.platform + s.diag + s.pay;
+  useEffect(() => { setSent(false); }, [sentKey]); // состав изменился, заявку можно отправить снова
   const link = () => `${location.origin}${location.pathname}#calc=${encode(s, c.total)}`;
   const copy = async () => { try { await navigator.clipboard.writeText(link()); setCopied(true); (window as any).swGoal?.('calc_link'); setToast('Ссылка на расчет скопирована. Отправьте ее руководителю'); setTimeout(() => setCopied(false), 2000); setTimeout(() => setToast(''), 3500); } catch { setToast('Не получилось скопировать. Выделите адрес в строке браузера'); setTimeout(() => setToast(''), 3500); } };
   const savePdf = async () => { setPdf('busy'); try { const m = await import('./pdf'); await m.makePdf(s, c, link()); setPdf('idle'); (window as any).swGoal?.('calc_pdf'); } catch (e) { console.error(e); setPdf('fail'); setTimeout(() => setPdf('idle'), 4000); } };
@@ -304,7 +308,7 @@ export default function Pricing() {
           : <p class="pr-sum__inst">Рассрочка доступна для сборки от 30 тыс. ₽</p>)}
         {s.mode === 'calc' && !c.large && c.ext.length > 0 && <div class="pr-ext"><p><span>Сторонние сервисы</span><b>≈ {String(Math.round(c.extSum[0] / 100) / 10).replace('.', ',')}–{String(Math.round(c.extSum[1] / 100) / 10).replace('.', ',')} тыс. ₽ в месяц</b></p><small>{c.ext.map((e) => e.name).join(', ')}{c.ai ? ', AI-запросы по тарифу' : ''}. Оплачиваете напрямую сервисам</small></div>}
         <div class="pr-sum__actions">
-          <button type="button" class="btn btn--white pr-sum__cta" disabled={empty} onClick={discuss}>{c.large ? 'Отправить на оценку' : c.onlyTbd ? 'Отправить задачу на оценку' : 'Обсудить эту сборку'}<Arrow /></button>
+          <button type="button" class="btn btn--white pr-sum__cta" disabled={empty || sent} onClick={discuss}>{sent ? 'Заявка отправлена' : c.large ? 'Отправить на оценку' : c.onlyTbd ? 'Отправить задачу на оценку' : 'Отправить заявку'}{!sent && <Arrow />}</button>
           {showSave && <div class="pr-save">
             <button type="button" class="btn" disabled={pdf === 'busy'} onClick={savePdf}>{pdf === 'busy' ? 'Готовлю PDF…' : pdf === 'fail' ? 'Не получилось, повторить' : 'Скачать расчет в PDF'}</button>
             <button type="button" class="btn" onClick={copy}>{copied ? 'Ссылка скопирована' : 'Скопировать ссылку'}</button>
@@ -342,15 +346,17 @@ export default function Pricing() {
             </div>)}
           {s.mode === 'quiz' && s.done && (
             <div class="pr-card pr-ready">
-              <div class="pr-ready__head"><span><svg viewBox="0 0 24 24" fill="none"><path d="m6 12.5 4 4 8-9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg></span><div><h3>Сборка готова</h3><p><span class="pr-desk">Сумма и срок справа. </span>{nb('Скачайте расчет в PDF, чтобы показать коллегам, или сразу обсудите сборку.')}</p></div></div>
+              <div class={'pr-ready__head' + (sent ? ' is-sent' : '')}><span>{sent ? <svg viewBox="0 0 24 24" fill="none"><path d="m6 12.5 4 4 8-9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg> : <svg viewBox="0 0 24 24" fill="none"><path d="M20 4 3.5 10.5l6.5 3 3 6.5L20 4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /><path d="m10 13.5 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>}</span><div>
+                <h3>{sent ? 'Заявка отправлена' : 'Сборка готова, осталось отправить'}</h3>
+                <p>{sent ? nb('Расчет у меня, отвечу в течение часа в рабочее время. Копию можно скачать себе или переслать коллегам.') : nb('Пока эту сборку видите только вы. Отправьте заявку: свяжусь, уточню детали и зафиксирую сумму в договоре. Контакты спрошу на следующем шаге.')}</p></div></div>
               <ul class="pr-answers">
                 {s.diag && <li><b>Диагностика</b><span>Разбор текущей ситуации и план</span><button type="button" class="pr-linkbtn" onClick={() => setS((p) => ({ ...p, done: false, step: 0 }))}>Изменить</button></li>}
                 {s.tiles.map((g) => <li><b>{GROUPS.find((x) => x.id === g)!.step}</b><span>{groupSummary(s, g) || 'ничего не выбрано'}</span><button type="button" class="pr-linkbtn" onClick={() => edit(g)}>Изменить</button></li>)}
                 <li><b>Условия</b><span>{c.sizedOn ? SIZES[s.size].l + ', ' : ''}{s.urgent ? 'срочно' : 'обычные сроки'}, {c.after.s}</span><button type="button" class="pr-linkbtn" onClick={() => edit('terms')}>Изменить</button></li>
               </ul>
               <div class="pr-ready__actions">
-                <button type="button" class="btn btn--deep pr-ready__cta" onClick={discuss}>Обсудить эту сборку</button>
-                {!c.large && !empty && <button type="button" class="btn btn--ink" disabled={pdf === 'busy'} onClick={savePdf}><Ic n="c_fix" />{pdf === 'busy' ? 'Готовлю PDF…' : pdf === 'fail' ? 'Не получилось, повторить' : 'Скачать расчет в PDF'}</button>}
+                {!sent && <button type="button" class="btn btn--deep pr-ready__cta" disabled={empty} onClick={discuss}>{c.large || c.onlyTbd ? 'Отправить на оценку' : 'Отправить заявку'}<Arrow /></button>}
+                {!c.large && !empty && <button type="button" class="btn btn--white" disabled={pdf === 'busy'} onClick={savePdf}><Ic n="c_fix" />{pdf === 'busy' ? 'Готовлю PDF…' : pdf === 'fail' ? 'Не получилось, повторить' : 'Скачать расчет в PDF'}</button>}
                 {!empty && <button type="button" class="btn btn--white" onClick={copy}>{copied ? 'Ссылка скопирована' : 'Скопировать ссылку'}</button>}
                 <span class="pr-ready__links"><button type="button" class="pr-linkbtn pr-desk" onClick={() => setS((p) => ({ ...p, mode: 'calc' }))}>Открыть в калькуляторе</button><button type="button" class="pr-linkbtn pr-linkbtn--muted" onClick={reset}>Пройти заново</button></span>
               </div>
