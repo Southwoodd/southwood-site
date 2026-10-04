@@ -408,10 +408,10 @@ export const cases = {
   title: ['Работы, которые можно', 'открыть и проверить'],
   filters: [
     { key: 'all', label: 'Все' }, { key: 'site', label: 'Сайты' }, { key: 'shop', label: 'Магазины' },
-    { key: 'crm', label: 'CRM и боты' }, { key: 'app', label: 'Приложения' }, { key: 'redesign', label: 'Редизайн' },
+    { key: 'crm', label: 'CRM и боты' }, { key: 'auto', label: 'Автоматизация' }, { key: 'app', label: 'Приложения' }, { key: 'redesign', label: 'Редизайн' },
   ],
   list: [
-    { key: 'alfa', theme: 'light', w: 1080, vw: 1020, vh: 324, big: true, cats: 'site crm', tags: ['Сопровождение 6+ мес.', 'Битрикс', 'Автоматизации', 'Сайт', 'AI боты'], name: 'Alfa Elite Trading & Services', text: 'Международный консалтинг. Два сайта, Битрикс24 с воронками, каналы в мессенджерах с AI-ботами, все заявки в одной воронке.', tw: 62, metric: 'КП за 1 час вместо 1–2 дней', links: [{ label: 'aelitets.com', href: 'https://aelitets.com' }] },
+    { key: 'alfa', theme: 'light', w: 1080, vw: 1020, vh: 324, big: true, cats: 'site crm auto', tags: ['Сопровождение 6+ мес.', 'Битрикс', 'Автоматизации', 'Сайт', 'AI боты'], name: 'Alfa Elite Trading & Services', text: 'Международный консалтинг. Два сайта, Битрикс24 с воронками, каналы в мессенджерах с AI-ботами, все заявки в одной воронке.', tw: 62, metric: 'КП за 1 час вместо 1–2 дней', links: [{ label: 'aelitets.com', href: 'https://aelitets.com' }] },
     { key: 'meetflow', theme: 'black', w: 680, vw: 620, vh: 336, big: false, cats: 'app', tags: ['Свой продукт', 'SaaS', 'AI-помощник', 'Веб-приложение', 'Онлайн-оплата'], name: 'MeetFlow', text: 'AI-помощник для деловых созвонов. Подсказки во время разговора, 7 платформ, сервер в России.', tw: 62, metric: 'В Chrome Web Store меньше чем за месяц', links: [{ label: 'meetflow.host', href: 'https://meetflow.host' }] },
     { key: 'mono', theme: 'green', w: 680, vw: 620, vh: 310, big: false, cats: 'app', tags: ['Приложение', 'Финмодель', 'Подписка', 'Онлайн-оплата', 'Юрдокументы'], name: 'Mono Coffee', text: 'Кофейня с доставкой в жилом комплексе. Финмодель, приложение с заказом до двери и подпиской, юридические документы под оплату.', tw: 62, metric: 'Приложение, финмодель и юрпакет за 1 месяц', links: [{ label: 'kopiku.ru', href: 'https://kopiku.ru' }] },
     { key: 'caro', theme: 'light', w: 1080, vw: 1020, vh: 350, big: true, cats: 'shop', tags: ['Интернет-магазин', 'Каталог', 'Дизайн', 'Анимации'], name: 'Caro', text: 'Магазин свечей с собственным каталогом, интерактивом, анимациями и удобной мобильной версией.', tw: 102, metric: 'Запуск за 2 недели', links: [{ label: 'carocandles.tilda.ws', href: 'https://carocandles.tilda.ws' }, { label: 'Behance', href: 'https://www.behance.net/gallery/209468529/internet-magazin-dlja-brenda-Caro' }] },
@@ -420,15 +420,17 @@ export const cases = {
   ],
   more: {
     title: 'Еще работы',
-    sub: 'Сайты и редизайны поменьше',
+    sub: 'Небольшие проекты и автоматизации',
     list: [
+      { key: 'promo', name: 'Промокоды по товарам', tag: '1 день', cats: 'auto shop', text: 'Магазин на Тильде: у каждой книги свой промокод, скидка считается по каждому товару отдельно' },
+      { key: 'leads', name: 'Прием заявок на этом сайте', tag: 'Свой сервис', cats: 'auto crm', text: 'Заявка с расчетом в PDF уходит в Telegram и на почту, сервер сам следит за собой' },
       { name: 'Belmare', tag: '2024', cats: 'redesign', text: 'Редизайн сайта турагентства', link: { label: 'Behance', href: 'https://www.behance.net/gallery/198242501/redizajn-sajta-turagentstva' } },
       { name: 'Agrorus', tag: '2 недели', cats: 'site', text: 'Сайт агроэкспорта для рынков Персидского залива', link: { label: 'agrorus.pw', href: 'https://agrorus.pw' } },
       { name: 'NewHR', tag: '2 недели', cats: 'site', text: 'Сайт под рекламное продвижение', link: { label: 'newhr.org', href: 'https://newhr.org' } },
       { name: 'Re: Fiori', tag: '1,5 недели', cats: 'redesign', text: 'Редизайн цветочной мастерской', link: { label: 'refiori.ru', href: 'https://refiori.ru' } },
     ],
   },
-  open: 'Открыть кейс',
+  open: 'Открыть кейс', details: 'Подробнее',
 };
 
 export const pages = {
