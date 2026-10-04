@@ -2,4 +2,21 @@ User-agent: *
 Allow: /
 Disallow: /ui
 
+# Поисковые и ответные роботы нейросетей: доступ открыт
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: YandexAdditional
+User-agent: YandexAdditionalBot
+User-agent: GigaChatBot
+Allow: /
+Disallow: /ui
+
 Sitemap: https://southwood.pw/sitemap-index.xml

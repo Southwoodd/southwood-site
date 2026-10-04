@@ -24,3 +24,8 @@ jobs:
           rsync -az --delete -e "ssh -i ~/.ssh/id" dist/ deploy@"$HOST":/var/www/southwood/
           # программа заявок: сервер сам проверит и поставит новую версию
           rsync -az -e "ssh -i ~/.ssh/id" server/lead-server.mjs deploy@"$HOST":incoming/ || echo "Папки incoming на сервере еще нет"
+      - name: Сообщить поисковикам об обновлении (IndexNow)
+        continue-on-error: true
+        run: |
+          curl -sS -m 20 -X POST "https://api.indexnow.org/indexnow" -H "Content-Type: application/json; charset=utf-8" -d '{"host":"southwood.pw","key":"0a4537940f3687fcf00debdcfbe35193","keyLocation":"https://southwood.pw/0a4537940f3687fcf00debdcfbe35193.txt","urlList":["https://southwood.pw/","https://southwood.pw/llms.txt"]}' -w " %{http_code}\n" || true
+          curl -sS -m 20 "https://yandex.com/indexnow?url=https://southwood.pw/&key=0a4537940f3687fcf00debdcfbe35193" -w " %{http_code}\n" || true
