@@ -150,26 +150,26 @@
    ],
    "how": "",
    "metrics": [],
-   "summary": "Работающий магазин на carocandles.tilda.ws, четыре награды дизайн-площадок.",
+   "summary": "Работающий магазин на carocandles.tilda.ws. Сайт дня на Best CSS, отмечен на Top Design King, Design Nominees и Web Guru Awards.",
    "term": "2 недели",
    "next": "koposov",
    "short": "Caro",
    "nextName": "Роман Копосов",
    "awards": [
     {
+     "label": "Best CSS, Site of the Day",
+     "href": "https://www.bestcss.in/user/detail/Caro-43032"
+    },
+    {
      "label": "Top Design King",
-     "href": "https://topdesignking.com/"
+     "href": "https://topdesignking.com/website/1845/caro"
     },
     {
-     "label": "Design Nominees, Site of the Day",
-     "href": "https://www.designnominees.com/"
+     "label": "Design Nominees",
+     "href": "https://www.designnominees.com/sites/caro-3"
     },
     {
-     "label": "Best CSS",
-     "href": "https://www.bestcss.in/"
-    },
-    {
-     "label": "Web Guru Awards, Winner",
+     "label": "Web Guru Awards",
      "href": "https://www.webguruawards.com/"
     }
    ]
@@ -360,25 +360,11 @@
    ],
    "how": "",
    "metrics": [],
-   "summary": "Сайт работает на agrorus.pw и отмечен тремя дизайн-площадками.",
+   "summary": "Сайт работает на agrorus.pw.",
    "term": "2 недели",
    "next": "newhr",
    "short": "сайт для выхода на зарубежный рынок, как для Agrorus",
-   "nextName": "NewHR",
-   "awards": [
-    {
-     "label": "Top Design King",
-     "href": "https://topdesignking.com/"
-    },
-    {
-     "label": "Design Nominees, Site of the Day",
-     "href": "https://www.designnominees.com/"
-    },
-    {
-     "label": "Best CSS",
-     "href": "https://www.bestcss.in/"
-    }
-   ]
+   "nextName": "NewHR"
   },
   "newhr": {
    "noimg": true,
