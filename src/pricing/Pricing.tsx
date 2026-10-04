@@ -114,7 +114,8 @@ export default function Pricing() {
     const map: Record<string, string> = { site: 'site', app: 'app', crm: 'crm', bots: 'bots', docs: 'docs', team: 'team', data: 'data', link: 'link', fix: 'fix' };
     const chips = [...new Set(s.sel.map((id) => map[byId[id].group]))]; if (s.after !== 'none') chips.push('support'); if (s.diag && !chips.length) chips.push('unknown');
     (window as any).swGoal?.('calc_discuss');
-    window.dispatchEvent(new CustomEvent('lead:open', { detail: { kind: 'calc', chips, text: composition(s, c), title: c.large ? 'Крупный проект' : fmtRange(c.total) } }));
+    const url = link(); const snap = s, calc = c;
+    window.dispatchEvent(new CustomEvent('lead:open', { detail: { kind: s.mode === 'quiz' ? 'quiz' : 'calc', chips, text: composition(s, c), link: url, title: c.large ? 'Крупный проект' : c.onlyTbd ? 'После разбора' : fmtRange(c.total), pdf: async () => (await import('./pdf')).buildPdf(snap, calc, url) } }));
     setSheet(false);
   };
   const empty = c.empty && s.after === 'none';

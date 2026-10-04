@@ -55,7 +55,8 @@ const tick = 'M11 1.83a9.17 9.17 0 1 0 0 18.34 9.17 9.17 0 0 0 0-18.34Zm4.38 7.0
   const dlg = document.getElementById('modal') as HTMLDialogElement;
   const box = dlg.querySelector<HTMLElement>('.md__box')!;
   const panels = dlg.querySelectorAll<HTMLElement>('[data-panel]');
-  type Opts = { chips?: string[]; task?: string; sub?: string; msg?: string; context?: string };
+  type Calc = { text: string; link: string; title: string; pdf: () => Promise<Uint8Array> };
+  type Opts = { chips?: string[]; task?: string; sub?: string; msg?: string; context?: string; calc?: Calc };
   const open = (name: string, o: Opts = {}) => {
     const panel = dlg.querySelector<HTMLElement>(`[data-panel="${name}"]`); if (!panel) return;
     panels.forEach((p) => { p.hidden = p !== panel; });
@@ -65,6 +66,7 @@ const tick = 'M11 1.83a9.17 9.17 0 1 0 0 18.34 9.17 9.17 0 0 0 0-18.34Zm4.38 7.0
       if (!form.querySelector<HTMLElement>('.lf__ok')!.hidden) form.dispatchEvent(new Event('lf:reset'));
       if (name === 'lead') {
         form.dataset.context = o.context || '';
+        (form as any).__calc = o.calc || null; // расчет из калькулятора уйдет вместе с заявкой файлом PDF
         form.querySelector('[data-sub-text]')!.textContent = o.sub || form.dataset.sub!;
         if (o.chips) form.querySelectorAll<HTMLInputElement>('input[name=need]').forEach((i) => { i.checked = o.chips!.includes(i.value); });
         if (o.task !== undefined) (form.elements.namedItem('task') as HTMLTextAreaElement).value = o.task;
@@ -93,7 +95,7 @@ const tick = 'M11 1.83a9.17 9.17 0 1 0 0 18.34 9.17 9.17 0 0 0 0-18.34Zm4.38 7.0
   });
   window.addEventListener('lead:open', (e) => {
     const d = (e as CustomEvent).detail || {};
-    open('lead', { chips: d.chips, task: d.text, context: d.kind, sub: d.title ? `Ваша сборка: ${d.title}. Направления уже отмечены, можно поправить.` : undefined });
+    open('lead', { chips: d.chips, task: '', context: d.kind, calc: { text: d.text, link: d.link, title: d.title, pdf: d.pdf }, sub: d.title ? `Ваша сборка: ${d.title}. Расчет приложу к заявке сам, направления уже отмечены.` : undefined });
   });
 </script>
 <style>

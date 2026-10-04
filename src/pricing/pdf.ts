@@ -1,12 +1,13 @@
-// PDF расчета на одну страницу A4. Собирается в браузере посетителя, на сервер ничего не уходит.
+// PDF расчета на одну страницу A4. Собирается в браузере посетителя. На сервер уходит только вместе с заявкой из калькулятора.
 import { PDFDocument, PDFName, PDFString, rgb, type PDFFont, type PDFPage } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import { byId, fmtRange, servicesWord, SIZES, PRESETS, type Calc, type State } from './model';
 
+const LOGO = 'M117.65 66.37A58 58 0 0 1 66.37 117.65L63.57 92.28A32.48 32.48 0 0 0 92.28 63.57ZM53.63 117.65A58 58 0 0 1 2.35 66.37L27.72 63.57A32.48 32.48 0 0 0 56.43 92.28ZM2.35 53.63A58 58 0 0 1 53.63 2.35L56.43 27.72A32.48 32.48 0 0 0 27.72 56.43Z';
 const hex = (h: string) => { const n = parseInt(h.slice(1), 16); return rgb(((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255); };
 const INK = hex('#0a0a0a'), MUTED = hex('#5a6b62'), LINE = hex('#d5e0d8'), DEEP = hex('#3f6b56'), SOFT = hex('#f3f6f2'), WHITE = rgb(1, 1, 1);
 
-export async function makePdf(s: State, c: Calc, url: string) {
+export async function buildPdf(s: State, c: Calc, url: string): Promise<Uint8Array> {
   const doc = await PDFDocument.create(); doc.registerFontkit(fontkit);
   const bytes = await fetch('/fonts/onest-pdf.ttf').then((r) => { if (!r.ok) throw new Error('font'); return r.arrayBuffer(); });
   const font = await doc.embedFont(bytes, { subset: true });
@@ -28,8 +29,13 @@ export async function makePdf(s: State, c: Calc, url: string) {
   const rect = (x: number, top: number, w: number, h: number, color: ReturnType<typeof rgb>, r = 0) => roundRect(page, x * K, 841.89 - (top + h) * sy, w * K, h * sy, r * K, color);
   const hr = (top: number) => page.drawLine({ start: { x: L * K, y: 841.89 - top * sy }, end: { x: Rr * K, y: 841.89 - top * sy }, thickness: 0.6, color: LINE });
 
-  text('Сергей Воробьев', L, 58, 17, INK, { bold: true });
-  text('Сайты, CRM, боты и автоматизация · самозанятый', L, 84, 11, MUTED);
+  // знак и имя, вся шапка слева ведет на сайт
+  const LS = 38, lk = (LS * K) / 120;
+  page.drawSvgPath(LOGO, { x: L * K, y: 841.89 - 56 * sy, scale: lk, color: DEEP });
+  page.drawCircle({ x: L * K + 91.99 * lk, y: 841.89 - 56 * sy - 28.01 * lk, size: 14 * lk, color: hex('#7dab90') });
+  const NX = L + LS + 12;
+  text('Сергей Воробьев', NX, 58, 17, INK, { bold: true });
+  text('Сайты, CRM, боты и автоматизация · самозанятый', NX, 84, 11, MUTED);
   text('southwood.pw', Rr, 58, 11, MUTED, { right: true });
   text('Telegram @imsouthwood', Rr, 78, 11, MUTED, { right: true });
   text('im@southwood.pw', Rr, 98, 11, MUTED, { right: true });
@@ -73,10 +79,16 @@ export async function makePdf(s: State, c: Calc, url: string) {
   text('Обсудить расчет', L + 24, fy + 24, 16, WHITE, { bold: true });
   text('Напишите в Telegram @imsouthwood, отвечу в течение часа. Расчет на сайте открывается по ссылке:', L + 24, fy + 52, 10.5, hex('#c5d9c8'), { max: Rr - L - 48, lh: 15 });
   const linkTop = fy + 72; text('Открыть этот расчет на southwood.pw', L + 24, linkTop, 11.5, WHITE, { bold: true });
-  const ann = doc.context.obj({ Type: 'Annot', Subtype: 'Link', Rect: [(L + 24) * K, 841.89 - (linkTop + 18) * sy, (L + 320) * K, 841.89 - (linkTop - 2) * sy], Border: [0, 0, 0], A: { Type: 'Action', S: 'URI', URI: PDFString.of(url) } });
-  page.node.set(PDFName.of('Annots'), doc.context.obj([doc.context.register(ann)]));
+  const made = H - 34; text('Расчет сформирован на southwood.pw', L, made, 10.5, DEEP, { bold: true });
+  text('Соберите свой за 2 минуты: сайт, CRM, боты и автоматизация под ключ', L + 208, made, 10.5, MUTED);
+  const linkTo = (x1: number, t1: number, x2: number, t2: number, uri: string) => doc.context.register(doc.context.obj({ Type: 'Annot', Subtype: 'Link', Rect: [x1 * K, 841.89 - t2 * sy, x2 * K, 841.89 - t1 * sy], Border: [0, 0, 0], A: { Type: 'Action', S: 'URI', URI: PDFString.of(uri) } }));
+  const SITE = 'https://southwood.pw/?utm_source=pdf&utm_medium=raschet';
+  page.node.set(PDFName.of('Annots'), doc.context.obj([linkTo(L + 24, linkTop - 2, L + 320, linkTop + 18, url), linkTo(L, 50, L + 420, 102, SITE), linkTo(L, made - 4, Rr, made + 16, SITE)]));
 
-  const out = await doc.save(); const blob = new Blob([out as BlobPart], { type: 'application/pdf' });
+  return doc.save();
+}
+export async function makePdf(s: State, c: Calc, url: string) {
+  const out = await buildPdf(s, c, url); const blob = new Blob([out as BlobPart], { type: 'application/pdf' });
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `raschet-southwood-${new Date().toISOString().slice(0, 10)}.pdf`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
 }
 function wrap(t: string, font: PDFFont, size: number, max: number): string[] {

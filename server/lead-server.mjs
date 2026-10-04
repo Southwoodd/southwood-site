@@ -15,32 +15,51 @@ const ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://southwood.pw,https://ww
 const KEEP_DAYS = Number(process.env.KEEP_DAYS || 30);
 const QUEUE = path.join(DIR, 'queue.json');
 const MAILQ = path.join(DIR, 'mailqueue.json');
+const FILES = path.join(DIR, 'files'); // PDF расчетов из калькулятора
 const SMTP = { host: process.env.SMTP_HOST || '', port: Number(process.env.SMTP_PORT || 465), user: process.env.SMTP_USER || '', pass: process.env.SMTP_PASS || '' };
 const MAIL_TO = (process.env.MAIL_TO || SMTP.user).split(',').map((x) => x.trim()).filter(Boolean);
 const MAIL_ON = Boolean(SMTP.host && SMTP.user && SMTP.pass && MAIL_TO.length);
-fs.mkdirSync(DIR, { recursive: true, mode: 0o700 });
+fs.mkdirSync(FILES, { recursive: true, mode: 0o700 });
 
 const clean = (v, max) => String(v ?? '').replace(/[\u0000-\u0008\u000b-\u001f]/g, '').trim().slice(0, max);
 const EMAIL = /^[^\s@<>"',;]+@[^\s@<>"',;]+\.[a-z]{2,}$/i;
 const VIA = { telegram: 'Telegram', max: 'MAX', call: 'позвонить', email: 'почта' };
 
+const source = (c) => (c === 'calc' ? 'калькулятор' : c === 'quiz' ? 'подбор по вопросам' : c.startsWith('pack:') ? `набор ${c.slice(5)}` : c.startsWith('case:') ? `кейс ${c.slice(5)}` : c);
+// Все поля формы по строкам. Для калькулятора и подбора расчет приходит файлом PDF, без него составом в тексте.
 function build(b) {
   if (b.consent !== true) return { error: 'consent' };
   if (b.website) return { spam: true };
+  const page = clean(b.page, 120);
   if (b.kind === 'write') {
-    const msg = clean(b.msg, 1500), contact = clean(b.contact, 80);
+    const msg = clean(b.msg, 1500), contact = clean(b.contact, 80), name = clean(b.name, 80), via = clean(b.via, 12);
     if (msg.length < 5 || contact.length < 3) return { error: 'fields' };
-    return { rec: { kind: 'write', msg, contact, via: clean(b.via, 12), name: clean(b.name, 80), page: clean(b.page, 120) },
-      subj: `Сообщение с сайта${b.name ? `: ${clean(b.name, 60)}` : ''}`, reply: b.via === 'email' && EMAIL.test(contact) ? contact : '',
-      text: `Сообщение с сайта\n\n${msg}\n\nОтветить: ${VIA[b.via] || b.via} ${contact}${b.name ? `\nИмя: ${clean(b.name, 80)}` : ''}` };
+    const lines = ['Сообщение с сайта', '', `Сообщение: ${msg}`, '', `Ответить через: ${VIA[via] || via}`, `Контакт: ${contact}`];
+    if (name) lines.push(`Имя: ${name}`);
+    if (page) lines.push(`Страница: ${page}`);
+    return { rec: { kind: 'write', msg, contact, via, name, page },
+      subj: `Сообщение с сайта${name ? `: ${name}` : ''}`.slice(0, 120), reply: via === 'email' && EMAIL.test(contact) ? contact : '', text: lines.join('\n') };
   }
-  const name = clean(b.name, 80), company = clean(b.company, 120), phone = clean(b.phone, 24), task = clean(b.task, 1500);
+  const name = clean(b.name, 80), company = clean(b.company, 120), phone = clean(b.phone, 24), task = clean(b.task, 1500), via = clean(b.via, 12);
   const labels = Array.isArray(b.needLabels) ? b.needLabels.slice(0, 12).map((x) => clean(x, 40)) : [];
   if (name.length < 2 || company.length < 2 || phone.replace(/\D/g, '').length < 10 || !labels.length) return { error: 'fields' };
   const ctx = clean(b.context, 60);
-  return { rec: { kind: 'lead', name, company, phone, via: clean(b.via, 12), need: labels, task, context: ctx, page: clean(b.page, 120) },
-    subj: `Заявка с сайта: ${name}, ${company}`.slice(0, 120), reply: '',
-    text: `Заявка с сайта${ctx ? ` (${ctx})` : ''}\n\n${name}, ${company}\n${phone}\nСвязаться: ${VIA[b.via] || b.via}\n\nНужно: ${labels.join(', ')}${task ? `\n\n${task}` : ''}` };
+  let calc = null, pdf = null;
+  if (b.calc && typeof b.calc === 'object') {
+    const link = String(b.calc.link || '');
+    calc = { title: clean(b.calc.title, 60), text: clean(b.calc.text, 2000), link: /^https:\/\/southwood\.pw\/\S*$/.test(link) && link.length <= 2500 ? link : '' };
+    if (typeof b.pdf === 'string' && b.pdf.length < 700_000) { const buf = Buffer.from(b.pdf, 'base64'); if (buf.length > 1000 && buf.subarray(0, 5).toString() === '%PDF-') pdf = buf; }
+  }
+  const lines = [`Заявка с сайта${ctx ? `, ${source(ctx)}` : ''}`, '', `Имя: ${name}`, `Компания: ${company}`, `Телефон: ${phone}`, `Связаться: ${VIA[via] || via}`, `Нужно: ${labels.join(', ')}`];
+  if (task) lines.push(`Комментарий: ${task}`);
+  if (calc) {
+    lines.push('', `Расчет: ${calc.title || 'без суммы'}${pdf ? ', PDF во вложении' : ''}`);
+    if (!pdf && calc.text) lines.push(calc.text);
+    if (calc.link) lines.push('', `Открыть расчет на сайте: ${calc.link}`);
+  }
+  if (page) lines.push('', `Страница: ${page}`);
+  return { rec: { kind: 'lead', name, company, phone, via, need: labels, task, context: ctx, page, ...(calc ? { calc: { title: calc.title, text: calc.text, link: calc.link } } : {}) },
+    subj: `Заявка с сайта: ${name}, ${company}`.slice(0, 120), reply: '', text: lines.join('\n'), pdf, cap: `Расчет к заявке: ${name}, ${company}`.slice(0, 200) };
 }
 
 async function tg(text) {
@@ -54,6 +73,24 @@ async function tg(text) {
   }
   throw last;
 }
+async function tgDoc(file, cap) {
+  if (!TOKEN || !CHAT) throw new Error('telegram is not configured');
+  const full = path.join(FILES, path.basename(file));
+  if (!fs.existsSync(full)) return; // файл уже удален по сроку хранения
+  let last;
+  for (const base of TG_BASES) {
+    try {
+      const fd = new FormData(); fd.set('chat_id', CHAT); fd.set('caption', cap);
+      fd.set('document', new Blob([fs.readFileSync(full)], { type: 'application/pdf' }), PDF_NAME());
+      const r = await fetch(`${base}/bot${TOKEN}/sendDocument`, { method: 'POST', body: fd, signal: AbortSignal.timeout(20000) });
+      if (r.ok) return; last = new Error('telegram doc ' + r.status);
+    } catch (e) { last = e; }
+  }
+  throw last;
+}
+const PDF_NAME = () => `raschet-southwood-${new Date().toISOString().slice(0, 10)}.pdf`;
+const tgItem = (it) => (typeof it === 'string' ? tg(it) : tgDoc(it.doc, it.cap));
+
 // Почта: SMTP поверх TLS (порт 465), вход по логину и паролю приложения.
 const b64 = (x) => Buffer.from(x, 'utf8').toString('base64');
 function encWord(x) { // заголовок с кириллицей кусками до 75 знаков
@@ -62,17 +99,25 @@ function encWord(x) { // заголовок с кириллицей кускам
   if (cur) out.push(cur);
   return out.map((p) => `=?UTF-8?B?${b64(p)}?=`).join('\r\n ');
 }
-function mail({ s: subject, t: text, r: reply }) {
+function mail({ s: subject, t: text, r: reply, f: file }) {
   return new Promise((resolve, reject) => {
+    const full = file ? path.join(FILES, path.basename(file)) : '';
+    const att = full && fs.existsSync(full) ? fs.readFileSync(full).toString('base64').replace(/(.{76})/g, '$1\r\n') : '';
+    const bnd = 'sw' + Date.now().toString(36) + Math.random().toString(36).slice(2);
+    const wrap76 = (x) => b64(x).replace(/(.{76})/g, '$1\r\n');
+    const bodyPart = att
+      ? [`Content-Type: multipart/mixed; boundary="${bnd}"`, '', `--${bnd}`, 'Content-Type: text/plain; charset=utf-8', 'Content-Transfer-Encoding: base64', '', wrap76(text),
+        `--${bnd}`, `Content-Type: application/pdf; name="${PDF_NAME()}"`, 'Content-Transfer-Encoding: base64', `Content-Disposition: attachment; filename="${PDF_NAME()}"`, '', att, `--${bnd}--`]
+      : ['Content-Type: text/plain; charset=utf-8', 'Content-Transfer-Encoding: base64', '', wrap76(text)];
     const msg = [`From: ${encWord('Сайт southwood.pw')} <${SMTP.user}>`, `To: ${MAIL_TO.map((x) => `<${x}>`).join(', ')}`, ...(reply ? [`Reply-To: <${reply}>`] : []),
       `Subject: ${encWord(subject)}`, `Date: ${new Date().toUTCString().replace('GMT', '+0000')}`, `Message-ID: <${Date.now()}.${Math.random().toString(36).slice(2)}@southwood.pw>`,
-      'MIME-Version: 1.0', 'Content-Type: text/plain; charset=utf-8', 'Content-Transfer-Encoding: base64', '', b64(text).replace(/(.{76})/g, '$1\r\n')].join('\r\n');
+      'MIME-Version: 1.0', ...bodyPart].join('\r\n');
     const steps = ['EHLO southwood.pw', 'AUTH LOGIN', b64(SMTP.user), b64(SMTP.pass), `MAIL FROM:<${SMTP.user}>`, ...MAIL_TO.map((x) => `RCPT TO:<${x}>`), 'DATA', msg + '\r\n.', 'QUIT'];
     const sentAt = steps.length - 1; // ответ на письмо приходит перед QUIT
     let i = 0, buf = '', done = false;
     const sock = tls.connect({ host: SMTP.host, port: SMTP.port, servername: SMTP.host });
     const fail = (e) => { if (!done) { done = true; sock.destroy(); reject(e); } };
-    sock.setTimeout(15000, () => fail(new Error('mail timeout')));
+    sock.setTimeout(30000, () => fail(new Error('mail timeout')));
     sock.on('error', fail);
     sock.on('close', () => fail(new Error('mail closed')));
     sock.on('data', (d) => {
@@ -97,13 +142,14 @@ async function drain(file, send, label) {
 }
 async function flush() {
   if (flushing) return; flushing = true;
-  await drain(QUEUE, tg, 'queue:');
+  await drain(QUEUE, tgItem, 'queue:');
   if (MAIL_ON) await drain(MAILQ, mail, 'mail queue:');
   flushing = false;
 }
 function sweep() {
   const limit = Date.now() - KEEP_DAYS * 864e5;
   for (const f of fs.readdirSync(DIR)) { const m = f.match(/^(\d{4}-\d{2}-\d{2})\.jsonl$/); if (m && new Date(m[1]).getTime() < limit) fs.unlinkSync(path.join(DIR, f)); }
+  for (const f of fs.readdirSync(FILES)) { const full = path.join(FILES, f); if (fs.statSync(full).mtimeMs < limit) fs.unlinkSync(full); }
 }
 setInterval(flush, 60_000); setInterval(sweep, 6 * 3600_000); sweep(); flush();
 
@@ -123,7 +169,7 @@ http.createServer((req, res) => {
   const ip = String(req.headers['x-real-ip'] || req.socket.remoteAddress || '');
   if (limited(ip)) return send(429, { ok: false, error: 'rate' });
   let raw = ''; let over = false;
-  req.on('data', (c) => { raw += c; if (raw.length > 20_000) { over = true; req.destroy(); } });
+  req.on('data', (c) => { raw += c; if (raw.length > 900_000) { over = true; req.destroy(); } });
   req.on('end', async () => {
     if (over) return;
     let body; try { body = JSON.parse(raw); } catch { return send(400, { ok: false, error: 'json' }); }
@@ -131,13 +177,20 @@ http.createServer((req, res) => {
     if (r.spam) return send(200, { ok: true });
     if (r.error) return send(422, { ok: false, error: r.error });
     const now = new Date();
-    try { fs.appendFileSync(path.join(DIR, now.toISOString().slice(0, 10) + '.jsonl'), JSON.stringify({ t: now.toISOString(), ip, ua: clean(req.headers['user-agent'], 200), ...r.rec }) + '\n', { mode: 0o600 }); }
-    catch (e) { console.error('disk:', e.message); return send(500, { ok: false, error: 'store' }); }
+    let file = '';
+    try {
+      if (r.pdf) { file = `${now.getTime()}-${Math.random().toString(36).slice(2, 8)}.pdf`; fs.writeFileSync(path.join(FILES, file), r.pdf, { mode: 0o600 }); }
+      fs.appendFileSync(path.join(DIR, now.toISOString().slice(0, 10) + '.jsonl'), JSON.stringify({ t: now.toISOString(), ip, ua: clean(req.headers['user-agent'], 200), ...r.rec, ...(file ? { pdf: file } : {}) }) + '\n', { mode: 0o600 });
+    } catch (e) { console.error('disk:', e.message); return send(500, { ok: false, error: 'store' }); }
     // Заявка уже сохранена. Если канал не ответил, она уйдет из очереди позже, посетителю это не мешает.
-    const m = { s: r.subj, t: r.text, r: r.reply };
-    const [a, b2] = await Promise.allSettled([tg(r.text), MAIL_ON ? mail(m) : Promise.resolve()]);
-    if (a.status === 'rejected') { console.error('telegram:', a.reason?.message); writeQueue([...readQueue(), r.text]); }
-    if (b2.status === 'rejected') { console.error('mail:', b2.reason?.message); write(MAILQ, [...read(MAILQ), m]); }
+    const m = { s: r.subj, t: r.text, r: r.reply, ...(file ? { f: file } : {}) };
+    const doc = file ? { doc: file, cap: r.cap } : null;
+    const viaTg = async () => {
+      try { await tg(r.text); } catch (e) { console.error('telegram:', e.message); writeQueue([...readQueue(), r.text, ...(doc ? [doc] : [])]); return; }
+      if (doc) try { await tgDoc(doc.doc, doc.cap); } catch (e) { console.error('telegram doc:', e.message); writeQueue([...readQueue(), doc]); }
+    };
+    const viaMail = async () => { if (MAIL_ON) try { await mail(m); } catch (e) { console.error('mail:', e.message); write(MAILQ, [...read(MAILQ), m]); } };
+    await Promise.all([viaTg(), viaMail()]);
     send(200, { ok: true });
   });
 }).listen(PORT, '127.0.0.1', () => console.log('lead server on 127.0.0.1:' + PORT));
