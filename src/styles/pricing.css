@@ -1,10 +1,23 @@
 /* Блок цен: остров подбора и калькулятора */
 .pr{position:relative;margin-top:10.2rem;color:var(--ink)}
 .pr button{font-family:inherit;letter-spacing:inherit}
-.pr-mode{display:flex;align-items:center;gap:2rem;margin-bottom:2.4rem;color:rgba(255,255,255,.75);font-size:max(1.5rem,13px)}
-.pr-mode__toggle{display:flex;padding:.5rem;border-radius:999px;background:rgba(255,255,255,.14)}
-.pr-mode__toggle button{height:4.8rem;padding:0 2.4rem;border-radius:999px;color:#fff;font-size:max(1.8rem,14px);font-weight:500;transition:background-color .25s var(--ease),color .25s var(--ease)}
-.pr-mode__toggle button.on{background:#fff;color:var(--deep)}
+.pr-modes{display:grid;grid-template-columns:62fr 114fr;gap:2rem;margin-bottom:2rem}
+.pr-modes__intro{border-radius:3.2rem;padding:3.2rem;background:#35594a;color:#fff;display:flex;flex-direction:column;justify-content:space-between;gap:2.4rem}
+.pr-modes__intro b{font-size:3.2rem;line-height:1.15;font-weight:500;letter-spacing:-.03em}
+.pr-modes__intro p{font-size:max(1.6rem,13px);line-height:1.45;color:rgba(255,255,255,.75)}
+.pr-modes__opts{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.pr-modeopt{text-align:left;border-radius:3.2rem;padding:3.2rem;background:rgba(255,255,255,.12);color:#fff;display:flex;flex-direction:column;gap:1.4rem;transition:background-color .25s var(--ease),color .25s var(--ease)}
+.pr-modeopt:hover{background:rgba(255,255,255,.2)}
+.pr-modeopt.on{background:var(--light);color:var(--ink)}
+.pr-modeopt__top{display:flex;justify-content:space-between;align-items:center;gap:1.6rem}
+.pr-modeopt__top b{font-size:2.8rem;line-height:1.15;font-weight:500;letter-spacing:-.03em}
+.pr-modeopt .pr-radio{background:transparent;border-color:rgba(255,255,255,.5)}
+.pr-modeopt.on .pr-radio{border-color:var(--deep);background:radial-gradient(circle,#fff 0 28%,var(--deep) 31%)}
+.pr-modeopt__text{font-size:max(1.6rem,13px);line-height:1.45;color:rgba(255,255,255,.8)}
+.pr-modeopt.on .pr-modeopt__text{color:#2c3d34}
+.pr-modeopt__tags{margin-top:auto;padding-top:.6rem;display:flex;flex-wrap:wrap;gap:.6rem}
+.pr-modeopt__tags em{font-style:normal;height:3rem;padding:0 1.2rem;border-radius:999px;background:rgba(255,255,255,.14);display:inline-flex;align-items:center;font-size:max(1.4rem,12px);font-weight:500;white-space:nowrap}
+.pr-modeopt.on .pr-modeopt__tags em{background:rgba(255,255,255,.6)}
 .pr-banner{margin-bottom:2rem;background:#fff;border-radius:2.4rem;padding:1.6rem 2rem 1.6rem 2.8rem;display:flex;justify-content:space-between;align-items:center;gap:2rem}
 .pr-banner div{display:grid;gap:.2rem}.pr-banner b{font-size:max(1.8rem,15px);font-weight:500}.pr-banner span{font-size:max(1.5rem,13px);color:var(--muted)}
 .pr-banner .btn{height:4.8rem;padding:0 2.2rem;font-size:max(1.6rem,14px)}
@@ -77,25 +90,36 @@
 .pr-next .arrow{width:2rem;height:2rem}
 .pr .btn:disabled{opacity:.4;pointer-events:none}
 
-/* Сборка готова */
-.pr-ready__head{display:flex;gap:2rem;align-items:center}
-.pr-ready__head>span{flex:none;align-self:flex-start;width:4.8rem;height:4.8rem;border-radius:50%;background:var(--mint);color:var(--deep);display:grid;place-items:center}
-.pr-ready__head.is-sent>span{background:var(--deep);color:#fff}
-.pr-ready__head svg{width:2.6rem;height:2.6rem}
-.pr-ready h3{font-size:4rem;line-height:4.4rem;font-weight:500;letter-spacing:-.03em}
-.pr-ready__head p{margin-top:.6rem;font-size:max(1.8rem,14px);color:var(--muted)}
-.pr-answers{margin-top:3.2rem;background:#fff;border-radius:2rem;padding:.6rem 2.4rem}
-.pr-answers li{display:grid;grid-template-columns:21.6rem 1fr auto;gap:2rem;align-items:center;padding:1.8rem 0;border-top:1px solid var(--line)}
-.pr-answers li:first-child{border-top:0}
-.pr-answers b{font-size:max(1.8rem,15px);font-weight:500}
-.pr-answers span{font-size:max(1.8rem,14px);color:var(--muted)}
-.pr-ready__actions{margin-top:2.4rem;display:flex;flex-wrap:wrap;align-items:center;gap:1rem}
-.pr-ready__actions .btn{height:5.2rem;padding:0 2.4rem;font-size:max(1.6rem,14px)}
-.pr-ready__actions .btn .ui-ic{width:2rem;height:2rem}
-.pr-ready__actions .pr-ready__cta{padding:0 2.8rem;gap:1.2rem}
-.pr-ready__actions .btn--white{border:1px solid var(--line)}
-.pr-ready__links{margin-left:auto;display:flex;gap:2.4rem}
-.pr-ready__note{margin-top:2.4rem;font-size:max(1.4rem,12px);color:var(--muted)}
+/* Подбор: вопросы слева, расчет справа в той же карточке, последним шагом контакты */
+.pr--quiz .pr-grid{grid-template-columns:1fr}
+.pr-quiz{padding:0;display:block;min-height:0}
+.pr-split{display:grid;grid-template-columns:110fr 62fr;min-height:88rem}
+.pr-split__main{padding:4rem;display:flex;flex-direction:column;min-width:0}
+.pr-live{padding:4rem;border-left:1px solid var(--line)}
+.pr-sum.pr-sum--live{position:sticky;top:14rem;background:none;color:var(--ink);padding:0;border-radius:0;min-height:0}
+.pr-sum--live .pr-pay{background:#fff}
+.pr-sum--live .pr-pay button{color:var(--ink)}
+.pr-sum--live .pr-pay button.on{background:var(--ink);color:#fff}
+.pr-sum--live .pr-sum__title,.pr-sum--live .pr-sum__label,.pr-sum--live .pr-lines li.mod,.pr-sum--live .pr-facts dt,.pr-sum--live .pr-sum__empty,.pr-sum--live .pr-sum__note,.pr-sum--live .pr-sum__foot{color:var(--muted)}
+.pr-sum--live .pr-lines li.sep{background:var(--line)}
+.pr-sum--live .pr-terms{background:#fff}
+.pr-sum--live .pr-terms button{color:var(--ink)}
+.pr-sum--live .pr-terms button.on{background:var(--deep);color:#fff}
+.pr-sum--live .pr-sum__inst{color:var(--deep)}
+.pr-sum--live .pr-total{font-size:6rem}
+.pr-sum--live .pr-sum__foot{margin-top:3.2rem;text-align:left}
+.pr-fin .pr-form.lf{padding:2.8rem;border-radius:2.4rem}
+.pr-fin .pr-form .lf__main{gap:2rem}
+.pr-fin .pr-form .lf__err{margin-top:0}
+.pr-fin__more{display:flex;flex-wrap:wrap;align-items:center;gap:1rem}
+.pr-fin__more .btn{height:4.8rem;padding:0 2rem;font-size:max(1.5rem,14px);border:1px solid var(--line)}
+.pr-fin__more .btn .ui-ic{width:2rem;height:2rem}
+.pr-fin__links{margin-left:auto;display:flex;flex-wrap:wrap;gap:1rem 2.4rem}
+.pr-fin__ok{background:#fff;border-radius:2.4rem;padding:4.8rem 2.8rem;display:grid;justify-items:center;text-align:center;gap:1.4rem}
+.pr-fin__ok>span{width:6.4rem;height:6.4rem;border-radius:50%;background:var(--deep);color:#fff;display:grid;place-items:center}
+.pr-fin__ok svg{width:3.2rem;height:3.2rem}
+.pr-fin__ok h3{font-size:4rem;line-height:4.4rem;font-weight:500;letter-spacing:-.03em}
+.pr-fin__ok p{max-width:56rem;font-size:max(1.8rem,15px);line-height:1.45;color:var(--muted)}
 
 /* Калькулятор */
 .pr-calc{gap:1.4rem}
@@ -206,15 +230,14 @@
 
 @media (max-width:1023px){
   .pr{margin-top:20px}
-  .pr-mode,.pr-desk,.pr-aside{display:none!important}
+  .pr-modes,.pr-desk,.pr-aside{display:none!important}
   .pr-banner{flex-direction:column;align-items:stretch;border-radius:20px;padding:16px;margin-bottom:12px}
   .pr-banner .btn{height:48px}
   .pr-grid{display:block}
   .pr-card{border-radius:20px;padding:18px}
-  .pr-quiz{min-height:0}
   .pr-progress p{font-size:13px}.pr-bar{margin-top:10px;gap:5px}.pr-bar i{height:4px}
   .pr-step{margin-top:18px;gap:16px}
-  .pr-q h3,.pr-ready h3{font-size:26px;line-height:30px}
+  .pr-q h3,.pr-fin__ok h3{font-size:26px;line-height:30px}
   .pr-q p{margin-top:8px;font-size:15px;line-height:21px}
   .pr-check,.pr-radio{width:20px;height:20px}.pr-check{border-radius:6px}
   .pr-tiles{grid-template-columns:1fr;gap:8px}
@@ -232,7 +255,7 @@
   .pr-param{gap:8px;justify-items:stretch}
   .pr-next__to{display:none}
   .pr-nav .btn{white-space:nowrap}
-  .pr-ready__head p span{display:inline}.pr-row{gap:16px}
+  .pr-row{gap:16px}
   .pr-seg{background:none;padding:0;gap:6px;border-radius:0}
   .pr-seg button{height:38px;padding:0 14px;font-size:15px;background:#fff;box-shadow:inset 0 0 0 1px var(--line)}
   .pr-seg button.on{box-shadow:none}
@@ -247,15 +270,24 @@
   .pr-nav{padding-top:18px;gap:8px}
   .pr-nav .btn{height:52px;font-size:16px;padding:0 20px}
   .pr-next{flex:1;margin:0;min-width:0;padding:0 16px!important}
-  .pr-ready__head>span{display:none}
-  .pr-ready__head p{margin-top:10px;font-size:15px;line-height:21px}
-  .pr-answers{margin-top:16px;background:none;padding:0;display:grid;gap:8px;border-radius:0}
-  .pr-answers li{background:#fff;border:0;border-radius:14px;padding:12px 14px;grid-template-columns:1fr auto;gap:4px 12px}
-  .pr-answers b{font-size:16px}.pr-answers span{grid-column:1/-1;grid-row:2;font-size:13px}
-  .pr-ready__actions{margin-top:16px;flex-direction:column;align-items:stretch;gap:10px}
-  .pr-ready__actions .btn{height:52px;font-size:16px}
-  .pr-ready__links{margin:6px 0 0}
-  .pr-ready__note{display:none}
+  .pr-card.pr-quiz{padding:0}
+  .pr-split{display:block;min-height:0}
+  .pr-split__main{padding:18px}
+  .pr-live{display:none;border:0;padding:0 18px 18px}
+  .pr-quiz.is-done .pr-live{display:block}
+  .pr-sum.pr-sum--live{position:static;background:#fff;border-radius:16px;padding:16px}
+  .pr-sum--live .pr-pay{background:var(--card)}
+  .pr-sum--live .pr-terms{background:var(--card)}
+  .pr-sum--live .pr-total{font-size:36px}
+  .pr-sum--live .pr-sum__foot{margin-top:16px}
+  .pr.is-done .pr-bar-m{display:none}
+  .pr-fin .pr-form.lf{padding:16px;border-radius:16px}
+  .pr-fin__more{flex-direction:column;align-items:stretch;gap:10px}
+  .pr-fin__more .btn{height:52px;font-size:16px}
+  .pr-fin__links{margin:6px 0 0;gap:10px 20px}
+  .pr-fin__ok{border-radius:16px;padding:28px 16px;gap:10px}
+  .pr-fin__ok>span{width:56px;height:56px}.pr-fin__ok svg{width:28px;height:28px}
+  .pr-fin__ok p{font-size:15px;line-height:21px}
   .pr-compare{margin-top:12px;border-radius:20px;padding:18px}
   .pr-compare__head{flex-direction:column;align-items:flex-start;gap:8px}
   .pr-compare__head h3{font-size:24px;line-height:30px}

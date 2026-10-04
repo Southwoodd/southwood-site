@@ -25,6 +25,7 @@ const clean = (v, max) => String(v ?? '').replace(/[\u0000-\u0008\u000b-\u001f]/
 const EMAIL = /^[^\s@<>"',;]+@[^\s@<>"',;]+\.[a-z]{2,}$/i;
 const VIA = { telegram: 'Telegram', max: 'MAX', call: 'позвонить', email: 'почта' };
 
+const esc = (x) => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const source = (c) => (c === 'calc' ? 'калькулятор' : c === 'quiz' ? 'подбор по вопросам' : c.startsWith('pack:') ? `набор ${c.slice(5)}` : c.startsWith('case:') ? `кейс ${c.slice(5)}` : c);
 // Все поля формы по строкам. Для калькулятора и подбора расчет приходит файлом PDF, без него составом в тексте.
 function build(b) {
@@ -38,7 +39,7 @@ function build(b) {
     if (name) lines.push(`Имя: ${name}`);
     if (page) lines.push(`Страница: ${page}`);
     return { rec: { kind: 'write', msg, contact, via, name, page },
-      subj: `Сообщение с сайта${name ? `: ${name}` : ''}`.slice(0, 120), reply: via === 'email' && EMAIL.test(contact) ? contact : '', text: lines.join('\n') };
+      subj: `Сообщение с сайта${name ? `: ${name}` : ''}`.slice(0, 120), reply: via === 'email' && EMAIL.test(contact) ? contact : '', text: lines.join('\n'), html: esc(lines.join('\n')), n: lines.join('\n').length };
   }
   const name = clean(b.name, 80), company = clean(b.company, 120), phone = clean(b.phone, 24), task = clean(b.task, 1500), via = clean(b.via, 12);
   const labels = Array.isArray(b.needLabels) ? b.needLabels.slice(0, 12).map((x) => clean(x, 40)) : [];
@@ -55,41 +56,43 @@ function build(b) {
   if (calc) {
     lines.push('', `Расчет: ${calc.title || 'без суммы'}${pdf ? ', PDF во вложении' : ''}`);
     if (!pdf && calc.text) lines.push(calc.text);
-    if (calc.link) lines.push('', `Открыть расчет на сайте: ${calc.link}`);
   }
   if (page) lines.push('', `Страница: ${page}`);
+  // В Telegram ссылка на расчет уходит словами, в письме адресом
+  const LINK = 'Открыть расчет на сайте';
+  const tgText = lines.join('\n') + (calc?.link ? `\n\n${LINK}` : '');
+  const html = esc(lines.join('\n')) + (calc?.link ? `\n\n<a href="${esc(calc.link)}">${LINK}</a>` : '');
+  if (calc?.link) lines.push('', `${LINK}: ${calc.link}`);
   return { rec: { kind: 'lead', name, company, phone, via, need: labels, task, context: ctx, page, ...(calc ? { calc: { title: calc.title, text: calc.text, link: calc.link } } : {}) },
-    subj: `Заявка с сайта: ${name}, ${company}`.slice(0, 120), reply: '', text: lines.join('\n'), pdf, cap: `Расчет к заявке: ${name}, ${company}`.slice(0, 200) };
+    subj: `Заявка с сайта: ${name}, ${company}`.slice(0, 120), reply: '', text: lines.join('\n'), html, n: tgText.length, pdf, cap: `Расчет к заявке: ${name}, ${company}`.slice(0, 200) };
 }
 
-async function tg(text) {
+async function tgCall(method, make, ms) {
   if (!TOKEN || !CHAT) throw new Error('telegram is not configured');
   let last;
   for (const base of TG_BASES) {
-    try {
-      const r = await fetch(`${base}/bot${TOKEN}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: CHAT, text: text.slice(0, 4000), disable_web_page_preview: true }), signal: AbortSignal.timeout(8000) });
-      if (r.ok) return; last = new Error('telegram ' + r.status);
-    } catch (e) { last = e; }
+    try { const r = await fetch(`${base}/bot${TOKEN}/${method}`, { method: 'POST', ...make(), signal: AbortSignal.timeout(ms) }); if (r.ok) return; last = new Error(`telegram ${method} ${r.status}`); } catch (e) { last = e; }
   }
   throw last;
 }
-async function tgDoc(file, cap) {
-  if (!TOKEN || !CHAT) throw new Error('telegram is not configured');
-  const full = path.join(FILES, path.basename(file));
-  if (!fs.existsSync(full)) return; // файл уже удален по сроку хранения
-  let last;
-  for (const base of TG_BASES) {
-    try {
-      const fd = new FormData(); fd.set('chat_id', CHAT); fd.set('caption', cap);
-      fd.set('document', new Blob([fs.readFileSync(full)], { type: 'application/pdf' }), PDF_NAME());
-      const r = await fetch(`${base}/bot${TOKEN}/sendDocument`, { method: 'POST', body: fd, signal: AbortSignal.timeout(20000) });
-      if (r.ok) return; last = new Error('telegram doc ' + r.status);
-    } catch (e) { last = e; }
-  }
-  throw last;
-}
+const tgMsg = (text, html) => tgCall('sendMessage', () => ({ headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: CHAT, text: text.slice(0, 4000), disable_web_page_preview: true, ...(html ? { parse_mode: 'HTML' } : {}) }) }), 8000);
 const PDF_NAME = () => `raschet-southwood-${new Date().toISOString().slice(0, 10)}.pdf`;
-const tgItem = (it) => (typeof it === 'string' ? tg(it) : tgDoc(it.doc, it.cap));
+const filePath = (f) => path.join(FILES, path.basename(f));
+const tgDoc = (file, cap, html) => tgCall('sendDocument', () => {
+  const fd = new FormData(); fd.set('chat_id', CHAT); fd.set('caption', cap); if (html) fd.set('parse_mode', 'HTML');
+  fd.set('document', new Blob([fs.readFileSync(filePath(file))], { type: 'application/pdf' }), PDF_NAME());
+  return { body: fd };
+}, 20000);
+// Одна заявка в Telegram. С расчетом: файл с подписью из всех полей. Если подпись длиннее лимита, текст и файл отдельно.
+// При сбое на файле после ушедшего текста в ошибке лежит остаток, чтобы текст не дублировался.
+async function tgItem(it) {
+  if (typeof it === 'string') return tgMsg(it);
+  const file = it.doc && fs.existsSync(filePath(it.doc)) ? it.doc : '';
+  if (!it.h) { if (file) await tgDoc(file, it.cap || ''); return; }
+  if (file && it.n <= 1000) return tgDoc(file, it.h, true);
+  await tgMsg(it.h, true);
+  if (file) try { await tgDoc(file, it.cap || ''); } catch (e) { e.rest = { doc: file, cap: it.cap }; throw e; }
+}
 
 // Почта: SMTP поверх TLS (порт 465), вход по логину и паролю приложения.
 const b64 = (x) => Buffer.from(x, 'utf8').toString('base64');
@@ -101,7 +104,7 @@ function encWord(x) { // заголовок с кириллицей кускам
 }
 function mail({ s: subject, t: text, r: reply, f: file }) {
   return new Promise((resolve, reject) => {
-    const full = file ? path.join(FILES, path.basename(file)) : '';
+    const full = file ? filePath(file) : '';
     const att = full && fs.existsSync(full) ? fs.readFileSync(full).toString('base64').replace(/(.{76})/g, '$1\r\n') : '';
     const bnd = 'sw' + Date.now().toString(36) + Math.random().toString(36).slice(2);
     const wrap76 = (x) => b64(x).replace(/(.{76})/g, '$1\r\n');
@@ -138,7 +141,7 @@ const readQueue = () => read(QUEUE);
 const writeQueue = (q) => write(QUEUE, q);
 let flushing = false;
 async function drain(file, send, label) {
-  try { let q = read(file); while (q.length) { await send(q[0]); q = read(file).slice(1); write(file, q); } } catch (e) { console.error(label, e.message); }
+  try { let q = read(file); while (q.length) { await send(q[0]); q = read(file).slice(1); write(file, q); } } catch (e) { console.error(label, e.message); if (e.rest) write(file, [e.rest, ...read(file).slice(1)]); }
 }
 async function flush() {
   if (flushing) return; flushing = true;
@@ -184,11 +187,8 @@ http.createServer((req, res) => {
     } catch (e) { console.error('disk:', e.message); return send(500, { ok: false, error: 'store' }); }
     // Заявка уже сохранена. Если канал не ответил, она уйдет из очереди позже, посетителю это не мешает.
     const m = { s: r.subj, t: r.text, r: r.reply, ...(file ? { f: file } : {}) };
-    const doc = file ? { doc: file, cap: r.cap } : null;
-    const viaTg = async () => {
-      try { await tg(r.text); } catch (e) { console.error('telegram:', e.message); writeQueue([...readQueue(), r.text, ...(doc ? [doc] : [])]); return; }
-      if (doc) try { await tgDoc(doc.doc, doc.cap); } catch (e) { console.error('telegram doc:', e.message); writeQueue([...readQueue(), doc]); }
-    };
+    const item = { h: r.html, n: r.n, ...(file ? { doc: file, cap: r.cap } : {}) };
+    const viaTg = async () => { try { await tgItem(item); } catch (e) { console.error('telegram:', e.message); writeQueue([...readQueue(), e.rest || item]); } };
     const viaMail = async () => { if (MAIL_ON) try { await mail(m); } catch (e) { console.error('mail:', e.message); write(MAILQ, [...read(MAILQ), m]); } };
     await Promise.all([viaTg(), viaMail()]);
     send(200, { ok: true });

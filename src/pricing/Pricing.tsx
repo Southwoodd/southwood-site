@@ -2,6 +2,8 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { ComponentChildren } from 'preact';
 import icons from '../icons/ui.json';
+import QuizForm, { type QuizPayload } from './QuizForm';
+import { form as leadForm } from '../i18n/ru';
 import { AFTER, CHANNELS, DIAG, GROUPS, ITEMS, LINK_METHODS, PLATFORMS, PRESETS, REDESIGN, SIZES, TIERS, TILE_DEFAULT, byId, composition, compute, decode, encode, fmtRange, groupSummary, initial, itemPrice, servicesWord, type Calc, type GroupId, type State } from './model';
 
 const KEY = 'sw-calc-v1';
@@ -44,6 +46,7 @@ export default function Pricing() {
   const [pdf, setPdf] = useState<'idle' | 'busy' | 'fail'>('idle');
   const [sheet, setSheet] = useState(false);
   const [sent, setSent] = useState(false); // заявка с этой сборкой уже ушла
+  const [sentVia, setSentVia] = useState('telegram');
   const [mob, setMob] = useState(false);
   const [svc, setSvc] = useState(false);
   const [open, setOpen] = useState<Record<string, boolean>>({});
@@ -114,12 +117,16 @@ export default function Pricing() {
   const link = () => `${location.origin}${location.pathname}#calc=${encode(s, c.total)}`;
   const copy = async () => { try { await navigator.clipboard.writeText(link()); setCopied(true); (window as any).swGoal?.('calc_link'); setToast('Ссылка на расчет скопирована. Отправьте ее руководителю'); setTimeout(() => setCopied(false), 2000); setTimeout(() => setToast(''), 3500); } catch { setToast('Не получилось скопировать. Выделите адрес в строке браузера'); setTimeout(() => setToast(''), 3500); } };
   const savePdf = async () => { setPdf('busy'); try { const m = await import('./pdf'); await m.makePdf(s, c, link()); setPdf('idle'); (window as any).swGoal?.('calc_pdf'); } catch (e) { console.error(e); setPdf('fail'); setTimeout(() => setPdf('idle'), 4000); } };
-  const discuss = () => {
-    const map: Record<string, string> = { site: 'site', app: 'app', crm: 'crm', bots: 'bots', docs: 'docs', team: 'team', data: 'data', link: 'link', fix: 'fix' };
-    const chips = [...new Set(s.sel.map((id) => map[byId[id].group]))]; if (s.after !== 'none') chips.push('support'); if (s.diag && !chips.length) chips.push('unknown');
-    (window as any).swGoal?.('calc_discuss');
+  const payload = (): QuizPayload => {
+    const needs = [...new Set(s.sel.map((id) => byId[id].group as string))]; if (s.after !== 'none') needs.push('support'); if (!needs.length) needs.push('unknown');
     const url = link(); const snap = s, calc = c;
-    window.dispatchEvent(new CustomEvent('lead:open', { detail: { kind: s.mode === 'quiz' ? 'quiz' : 'calc', chips, text: composition(s, c), link: url, title: c.large ? 'Крупный проект' : c.onlyTbd ? 'После разбора' : fmtRange(c.total), pdf: async () => (await import('./pdf')).buildPdf(snap, calc, url) } }));
+    return { needs, labels: needs.map((n) => leadForm.chips.find((x) => x.v === n)?.l || n), context: s.mode === 'quiz' ? 'quiz' : 'calc', calc: { text: composition(s, c), link: url, title: c.large ? 'Крупный проект' : c.onlyTbd ? 'После разбора' : fmtRange(c.total) }, pdf: async () => (await import('./pdf')).buildPdf(snap, calc, url) };
+  };
+  // Калькулятор: заявка через окно с формой. В подборе контакты спрашивает последний шаг.
+  const discuss = () => {
+    if (s.mode === 'quiz') { setS((p) => ({ ...p, done: true })); setSheet(false); scrollTop(); return; }
+    const p = payload(); (window as any).swGoal?.('calc_discuss');
+    window.dispatchEvent(new CustomEvent('lead:open', { detail: { kind: p.context, chips: p.needs, text: p.calc.text, link: p.calc.link, title: p.calc.title, pdf: p.pdf } }));
     setSheet(false);
   };
   const empty = c.empty && s.after === 'none';
@@ -128,7 +135,7 @@ export default function Pricing() {
   const stepNo = Math.min(s.step, steps.length - 1) + 1;
   const stepName = cur === 'what' ? 'Что нужно' : cur === 'terms' ? 'Условия' : GROUPS.find((g) => g.id === cur)!.step;
   const nextKey = steps[s.step + 1];
-  const nextLabel = !nextKey ? 'Завершить сборку' : `Дальше: ${nextKey === 'terms' ? 'условия' : GROUPS.find((g) => g.id === nextKey)!.next}`;
+  const nextLabel = !nextKey ? 'Дальше: контакты' : `Дальше: ${nextKey === 'terms' ? 'условия' : GROUPS.find((g) => g.id === nextKey)!.next}`;
   const platform = PLATFORMS.find((p) => p.v === s.platform)!;
   const head = (q: string, sub?: string) => <div class="pr-q"><h3>{q}</h3>{sub && <p>{nb(sub)}</p>}</div>;
   const groupOpts = (ids: string[], multi: boolean) => <div class={'pr-opts pr-opts--' + Math.min(ids.length, 3)}>{ids.map((id) => <Opt on={has(id)} multi={multi} title={byId[id].short || byId[id].name} desc={byId[id].desc} sum={price(id, s)} onClick={() => (multi ? toggle(id) : pick(id))} />)}</div>;
@@ -263,11 +270,11 @@ export default function Pricing() {
   const applyPreset = (k: string) => setS((p) => ({ ...initial(), mode: p.mode, pay: p.pay, sel: p.preset === k ? [] : [...PRESETS[k].sel], preset: p.preset === k ? '' : k, tiles: p.preset === k ? [] : tilesOf(PRESETS[k].sel), seen: p.preset === k ? [] : tilesOf(PRESETS[k].sel) }));
 
   // ---------- итог ----------
-  const summary = (compact?: boolean) => {
+  const summary = (kind: 'card' | 'sheet' | 'live' = 'card') => {
     const inst = s.pay === 'inst' && c.instOk;
     const showSave = s.mode === 'calc' && !c.large && !empty;
     return (
-      <div class={'pr-sum' + (compact ? ' pr-sum--sheet' : '')}>
+      <div class={'pr-sum' + (kind === 'sheet' ? ' pr-sum--sheet' : kind === 'live' ? ' pr-sum--live' : '')}>
         <div class="pr-pay" role="radiogroup" aria-label="Способ оплаты">
           <button type="button" role="radio" aria-checked={!inst} class={!inst ? 'on' : ''} onClick={() => setS((p) => ({ ...p, pay: 'once' }))}>{inst ? `В месяц, ${c.term} ${c.term < 5 ? 'платежа' : 'платежей'}` : 'Разово'}</button>
           <button type="button" role="radio" aria-checked={inst} class={inst ? 'on' : ''} disabled={!c.instOk} onClick={() => setS((p) => ({ ...p, pay: 'inst' }))}>В рассрочку</button>
@@ -307,60 +314,80 @@ export default function Pricing() {
           : c.instOk ? <button type="button" class="pr-sum__inst pr-sum__inst--link" onClick={() => setS((p) => ({ ...p, pay: 'inst' }))}>Или в рассрочку без банка: от {c.monthly} тыс. ₽ в месяц<Arrow /></button>
           : <p class="pr-sum__inst">Рассрочка доступна для сборки от 30 тыс. ₽</p>)}
         {s.mode === 'calc' && !c.large && c.ext.length > 0 && <div class="pr-ext"><p><span>Сторонние сервисы</span><b>≈ {String(Math.round(c.extSum[0] / 100) / 10).replace('.', ',')}–{String(Math.round(c.extSum[1] / 100) / 10).replace('.', ',')} тыс. ₽ в месяц</b></p><small>{c.ext.map((e) => e.name).join(', ')}{c.ai ? ', AI-запросы по тарифу' : ''}. Оплачиваете напрямую сервисам</small></div>}
-        <div class="pr-sum__actions">
-          <button type="button" class="btn btn--white pr-sum__cta" disabled={empty || sent} onClick={discuss}>{sent ? 'Заявка отправлена' : c.large ? 'Отправить на оценку' : c.onlyTbd ? 'Отправить задачу на оценку' : 'Отправить заявку'}{!sent && <Arrow />}</button>
+        {kind !== 'live' && <div class="pr-sum__actions">
+          <button type="button" class="btn btn--white pr-sum__cta" disabled={empty || (sent && s.mode === 'calc')} onClick={discuss}>{s.mode === 'quiz' ? 'Перейти к отправке' : sent ? 'Заявка отправлена' : c.large ? 'Отправить на оценку' : c.onlyTbd ? 'Отправить задачу на оценку' : 'Отправить заявку'}{!(sent && s.mode === 'calc') && <Arrow />}</button>
           {showSave && <div class="pr-save">
             <button type="button" class="btn" disabled={pdf === 'busy'} onClick={savePdf}>{pdf === 'busy' ? 'Готовлю PDF…' : pdf === 'fail' ? 'Не получилось, повторить' : 'Скачать расчет в PDF'}</button>
             <button type="button" class="btn" onClick={copy}>{copied ? 'Ссылка скопирована' : 'Скопировать ссылку'}</button>
           </div>}
           <p class="pr-sum__foot">{nb('Минимальный проект 60 тыс. ₽. Расчет можно переслать руководителю. Можно начать с диагностики за 30–50 тыс. ₽, она засчитывается в проект.')}</p>
-        </div>
+        </div>}
+        {kind === 'live' && <p class="pr-sum__foot">{nb('Минимальный проект 60 тыс. ₽. Можно начать с диагностики за 30–50 тыс. ₽, она засчитывается в проект.')}</p>}
       </div>);
   };
   const rel = Math.max(c.studio[1], c.total[1], 1);
   const hideCompare = c.large || empty || c.empty || c.onlyTbd;
 
   return (
-    <div class={'pr pr--' + s.mode} ref={root}>
-      <div class="pr-mode">
-        <div class="pr-mode__toggle" role="radiogroup" aria-label="Режим расчета">
-          <button type="button" role="radio" aria-checked={s.mode === 'quiz'} class={s.mode === 'quiz' ? 'on' : ''} onClick={() => setS((p) => ({ ...p, mode: 'quiz', tiles: tilesOf(p.sel), seen: tilesOf(p.sel), done: p.sel.length > 0 || p.diag, step: 0 }))}>Подбор по вопросам</button>
-          <button type="button" role="radio" aria-checked={s.mode === 'calc'} class={s.mode === 'calc' ? 'on' : ''} onClick={() => setS((p) => ({ ...p, mode: 'calc' }))}>Калькулятор</button>
+    <div class={'pr pr--' + s.mode + (s.mode === 'quiz' && s.done ? ' is-done' : '')} ref={root}>
+      <div class="pr-modes">
+        <div class="pr-modes__intro"><b>Два способа получить расчет</b><p>{nb('Сумма и срок видны сразу, без созвона. Выбор сохраняется при переключении, можно начать в одном и продолжить в другом.')}</p></div>
+        <div class="pr-modes__opts" role="radiogroup" aria-label="Режим расчета">
+          <button type="button" role="radio" aria-checked={s.mode === 'quiz'} class={'pr-modeopt' + (s.mode === 'quiz' ? ' on' : '')} onClick={() => setS((p) => (p.mode === 'quiz' ? p : { ...p, mode: 'quiz', tiles: tilesOf(p.sel), seen: tilesOf(p.sel), done: false, step: 0 }))}>
+            <span class="pr-modeopt__top"><b>Подбор по вопросам</b><i class="pr-radio" /></span>
+            <span class="pr-modeopt__text">{nb('Проще и быстрее. По одному вопросу на экран, подскажу типовой вариант. Подойдет, если не уверены в составе.')}</span>
+            <span class="pr-modeopt__tags"><em>около 2 минут</em><em>по шагам</em><em>заявка последним шагом</em></span>
+          </button>
+          <button type="button" role="radio" aria-checked={s.mode === 'calc'} class={'pr-modeopt' + (s.mode === 'calc' ? ' on' : '')} onClick={() => setS((p) => ({ ...p, mode: 'calc' }))}>
+            <span class="pr-modeopt__top"><b>Калькулятор</b><i class="pr-radio" /></span>
+            <span class="pr-modeopt__text">{nb(`Весь каталог на одном экране: ${ITEMS.length} услуг в любом сочетании и тонкие настройки каждой. Подойдет, если знаете, что нужно.`)}</span>
+            <span class="pr-modeopt__tags"><em>готовые наборы</em><em>своя задача</em><em>PDF и ссылка на расчет</em></span>
+          </button>
         </div>
-        <span>Выбор сохраняется при переключении</span>
       </div>
       {banner && <div class="pr-banner"><div><b>Вы открыли расчет от {banner.date}</b><span>{banner.diff}</span></div><button type="button" class="btn btn--grey" onClick={reset}>Начать заново</button></div>}
       <div class="pr-grid">
         <div class="pr-main">
-          {s.mode === 'quiz' && !s.done && (
-            <div class="pr-card pr-quiz">
-              <div class="pr-progress">
-                <p><span>Шаг {stepNo} из {steps.length} · {stepName}</span><button type="button" class="pr-linkbtn pr-desk" onClick={() => setS((p) => ({ ...p, mode: 'calc' }))}>Показать весь каталог</button></p>
-                <div class="pr-bar">{steps.map((_, i) => <i class={i < stepNo ? 'on' : ''} />)}</div>
+          {s.mode === 'quiz' && (
+            <div class={'pr-card pr-quiz' + (s.done ? ' is-done' : '')}>
+              <div class="pr-split">
+                <div class="pr-split__main">
+                  <div class="pr-progress">
+                    <p><span>Шаг {s.done ? steps.length + 1 : stepNo} из {steps.length + 1} · {s.done ? 'Контакты' : stepName}</span><button type="button" class="pr-linkbtn pr-desk" onClick={() => setS((p) => ({ ...p, mode: 'calc' }))}>Показать весь каталог</button></p>
+                    <div class="pr-bar">{[...steps, 'contacts'].map((_, i) => <i class={s.done || i < stepNo ? 'on' : ''} />)}</div>
+                  </div>
+                  {!s.done && (<>
+                    <div class="pr-step" key={cur}>{body[cur]()}</div>
+                    <div class="pr-nav">
+                      {s.step > 0 && <button type="button" class="btn btn--white pr-back" onClick={() => go(-1)}>Назад</button>}
+                      <button type="button" class={'btn pr-next ' + (nextKey ? 'btn--ink' : 'btn--deep')} disabled={s.step === 0 && !s.tiles.length && !s.diag} onClick={() => go(1)}><span>{nextLabel.split(':')[0]}{nextLabel.includes(':') && <span class={s.step > 0 ? 'pr-next__to' : ''}>:{nextLabel.split(':')[1]}</span>}</span><Arrow /></button>
+                    </div>
+                  </>)}
+                  {s.done && (
+                    <div class="pr-step pr-fin" key="contacts">
+                      {sent ? (
+                        <div class="pr-fin__ok" role="status">
+                          <span><svg viewBox="0 0 24 24" fill="none"><path d="m6 12.5 4 4 8-9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
+                          <h3>Заявка отправлена</h3>
+                          <p>{nb(`${(leadForm.okVia as Record<string, string>)[sentVia] || ''} Расчет приложен к заявке, отвечу в течение часа в рабочее время.`)}</p>
+                        </div>
+                      ) : (<>
+                        {head('Последний шаг: куда ответить', 'Заявка уйдет мне вместе с расчетом. Свяжусь сам, уточню детали и зафиксирую сумму в договоре.')}
+                        <QuizForm build={payload} disabled={empty} onSent={(via) => { setSentVia(via); setSent(true); scrollTop(); }} />
+                      </>)}
+                      <div class="pr-fin__more">
+                        {!c.large && !empty && <button type="button" class="btn btn--white" disabled={pdf === 'busy'} onClick={savePdf}><Ic n="c_fix" />{pdf === 'busy' ? 'Готовлю PDF…' : pdf === 'fail' ? 'Не получилось, повторить' : 'Скачать расчет в PDF'}</button>}
+                        {!empty && <button type="button" class="btn btn--white" onClick={copy}>{copied ? 'Ссылка скопирована' : 'Скопировать ссылку'}</button>}
+                        <span class="pr-fin__links">
+                          {!sent && <button type="button" class="pr-linkbtn" onClick={() => edit('terms')}>Изменить ответы</button>}
+                          <button type="button" class="pr-linkbtn pr-desk" onClick={() => setS((p) => ({ ...p, mode: 'calc' }))}>Открыть в калькуляторе</button>
+                          <button type="button" class="pr-linkbtn pr-linkbtn--muted" onClick={reset}>Пройти заново</button>
+                        </span>
+                      </div>
+                    </div>)}
+                </div>
+                <aside class="pr-live">{summary('live')}</aside>
               </div>
-              <div class="pr-step" key={cur}>{body[cur]()}</div>
-              <div class="pr-nav">
-                {s.step > 0 && <button type="button" class="btn btn--white pr-back" onClick={() => go(-1)}>Назад</button>}
-                <button type="button" class={'btn pr-next ' + (nextKey ? 'btn--ink' : 'btn--deep')} disabled={s.step === 0 && !s.tiles.length && !s.diag} onClick={() => go(1)}><span>{nextLabel.split(':')[0]}{nextLabel.includes(':') && <span class={s.step > 0 ? 'pr-next__to' : ''}>:{nextLabel.split(':')[1]}</span>}</span><Arrow /></button>
-              </div>
-            </div>)}
-          {s.mode === 'quiz' && s.done && (
-            <div class="pr-card pr-ready">
-              <div class={'pr-ready__head' + (sent ? ' is-sent' : '')}><span>{sent ? <svg viewBox="0 0 24 24" fill="none"><path d="m6 12.5 4 4 8-9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg> : <svg viewBox="0 0 24 24" fill="none"><path d="M20 4 3.5 10.5l6.5 3 3 6.5L20 4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" /><path d="m10 13.5 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg>}</span><div>
-                <h3>{sent ? 'Заявка отправлена' : 'Сборка готова, осталось отправить'}</h3>
-                <p>{sent ? nb('Расчет у меня, отвечу в течение часа в рабочее время. Копию можно скачать себе или переслать коллегам.') : nb('Пока эту сборку видите только вы. Отправьте заявку: свяжусь, уточню детали и зафиксирую сумму в договоре. Контакты спрошу на следующем шаге.')}</p></div></div>
-              <ul class="pr-answers">
-                {s.diag && <li><b>Диагностика</b><span>Разбор текущей ситуации и план</span><button type="button" class="pr-linkbtn" onClick={() => setS((p) => ({ ...p, done: false, step: 0 }))}>Изменить</button></li>}
-                {s.tiles.map((g) => <li><b>{GROUPS.find((x) => x.id === g)!.step}</b><span>{groupSummary(s, g) || 'ничего не выбрано'}</span><button type="button" class="pr-linkbtn" onClick={() => edit(g)}>Изменить</button></li>)}
-                <li><b>Условия</b><span>{c.sizedOn ? SIZES[s.size].l + ', ' : ''}{s.urgent ? 'срочно' : 'обычные сроки'}, {c.after.s}</span><button type="button" class="pr-linkbtn" onClick={() => edit('terms')}>Изменить</button></li>
-              </ul>
-              <div class="pr-ready__actions">
-                {!sent && <button type="button" class="btn btn--deep pr-ready__cta" disabled={empty} onClick={discuss}>{c.large || c.onlyTbd ? 'Отправить на оценку' : 'Отправить заявку'}<Arrow /></button>}
-                {!c.large && !empty && <button type="button" class="btn btn--white" disabled={pdf === 'busy'} onClick={savePdf}><Ic n="c_fix" />{pdf === 'busy' ? 'Готовлю PDF…' : pdf === 'fail' ? 'Не получилось, повторить' : 'Скачать расчет в PDF'}</button>}
-                {!empty && <button type="button" class="btn btn--white" onClick={copy}>{copied ? 'Ссылка скопирована' : 'Скопировать ссылку'}</button>}
-                <span class="pr-ready__links"><button type="button" class="pr-linkbtn pr-desk" onClick={() => setS((p) => ({ ...p, mode: 'calc' }))}>Открыть в калькуляторе</button><button type="button" class="pr-linkbtn pr-linkbtn--muted" onClick={reset}>Пройти заново</button></span>
-              </div>
-              <p class="pr-ready__note">{nb('PDF на одну страницу: состав, сумма, сроки, рассрочка и условия. Ссылка открывает эту же сборку на сайте.')}</p>
             </div>)}
           {s.mode === 'calc' && (
             <div class="pr-card pr-calc">
@@ -385,7 +412,7 @@ export default function Pricing() {
               <div class="pr-opts pr-opts--4">{AFTER.map((a) => <Opt on={s.after === a.v} title={a.l} desc={a.d} sum={a.p} onClick={() => up({ after: a.v })} />)}</div>
             </div>)}
         </div>
-        <aside class="pr-aside">{summary()}</aside>
+        {s.mode === 'calc' && <aside class="pr-aside">{summary()}</aside>}
       </div>
 
       {!hideCompare && (
@@ -407,7 +434,7 @@ export default function Pricing() {
         <div><small>{empty ? 'Отметьте, что нужно' : c.onlyTbd ? 'Своя задача' : `${servicesWord(c.count)} · ${c.large ? 'по этапам' : c.weeks}`}</small><b>{empty ? '0 ₽' : c.large ? 'Крупный проект' : c.onlyTbd ? 'После разбора' : fmtRange(c.total)}</b></div>
         <button type="button" onClick={() => setSheet(true)} disabled={empty}>Состав</button>
       </div>
-      {sheet && <div class="pr-sheet" role="dialog" aria-modal="true" aria-label="Состав сборки" onClick={(e) => { if (e.target === e.currentTarget) setSheet(false); }}><div><button type="button" class="pr-sheet__close" aria-label="Закрыть" onClick={() => setSheet(false)} />{summary(true)}</div></div>}
+      {sheet && <div class="pr-sheet" role="dialog" aria-modal="true" aria-label="Состав сборки" onClick={(e) => { if (e.target === e.currentTarget) setSheet(false); }}><div><button type="button" class="pr-sheet__close" aria-label="Закрыть" onClick={() => setSheet(false)} />{summary('sheet')}</div></div>}
       {toast && <div class="pr-toast" role="status">{toast}</div>}
     </div>
   );
