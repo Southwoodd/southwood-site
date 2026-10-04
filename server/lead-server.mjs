@@ -9,7 +9,7 @@ const DIR = process.env.LEADS_DIR || '/var/lib/southwood/leads';
 const TOKEN = process.env.TG_BOT_TOKEN || '';
 const CHAT = process.env.TG_CHAT_ID || '';
 const TG_BASES = (process.env.TG_API_BASES || 'https://api.telegram.org').split(',').map((s) => s.trim()).filter(Boolean);
-const ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://southwood.pw,https://www.southwood.pw,https://new.southwood.pw').split(',');
+const ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://southwood.pw,https://www.southwood.pw').split(',');
 const KEEP_DAYS = Number(process.env.KEEP_DAYS || 30);
 const QUEUE = path.join(DIR, 'queue.json');
 fs.mkdirSync(DIR, { recursive: true, mode: 0o700 });

@@ -16,7 +16,7 @@ sleep 2
 echo "служба: $(systemctl is-active southwood-lead || true)"
 echo "ответ:  $(curl -s 127.0.0.1:8787/health || echo 'нет ответа')"
 
-say "Сайт new.southwood.pw"
+say "Сайт southwood.pw"
 if ! grep -qs "listen 443" /etc/nginx/sites-available/southwood-site; then
   curl -fsSL -o /etc/nginx/sites-available/southwood-site "$R/nginx-site.conf"
 fi

@@ -1,9 +1,17 @@
 ---
 import Arrow from './Arrow.astro';
 import { hero, nb } from '../../i18n/ru';
+// Иконки фона: имя, x, y, ширина, высота в px макета 1920
+const icons: [string, number, number, number, number][] = [
+  ['bitrix', 10, -18, 220, 247], ['pdf', 405, 55, 93, 93], ['figma', 680, 129, 130, 143], ['gpt', 857, -33, 145, 171],
+  ['brave', 1093, 94, 66, 88], ['tilda', 1409, 181, 132, 157], ['hf', 1715, 32, 263, 297], ['yandex', 35, 246, 122, 171],
+  ['opera', 532, 399, 170, 172], ['docker', 297, 515, 243, 283], ['chrome', 1216, 489, 149, 171], ['claude', 1556, 548, 192, 225],
+];
 ---
 <section class="section hero" id="top">
-  <div class="hero__icons" aria-hidden="true"></div>
+  <div class="hero__icons" aria-hidden="true" data-drift>
+    {icons.map(([n, x, y, w, h]) => <img src={`/img/hero/ic/${n}.webp`} alt="" width={w} height={h} decoding="async" style={`left:${x / 10}rem;top:${y / 10}rem;width:${w / 10}rem`} />)}
+  </div>
   <div class="hero__in">
     <span class="badge" data-reveal>
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2l2.4 2.1 3.2-.3.8 3.1 2.7 1.7-1.2 3 1.2 3-2.7 1.7-.8 3.1-3.2-.3L12 22l-2.4-2.1-3.2.3-.8-3.1-2.7-1.7 1.2-3-1.2-3 2.7-1.7.8-3.1 3.2.3L12 2z" fill="#c5d9c8"/><path d="M8.5 12.2l2.3 2.3 4.7-4.8" stroke="#3f6b56" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -25,9 +33,32 @@ import { hero, nb } from '../../i18n/ru';
   <img class="mock__d" src="/img/hero/desktop.webp" srcset="/img/hero/desktop-900.webp 900w, /img/hero/desktop.webp 1885w" sizes="(max-width:1023px) 70vw, 62vw" width="1885" height="1278" alt="" loading="eager" />
 </div>
 
+<script>
+  // Иконки фона неспешно дрейфуют в случайные стороны. Только десктоп, вне экрана стоят.
+  const box = document.querySelector<HTMLElement>('[data-drift]');
+  if (box && matchMedia('(min-width:1024px)').matches && !matchMedia('(prefers-reduced-motion:reduce)').matches) {
+    const rnd = (a: number, b: number) => a + Math.random() * (b - a);
+    let on = false;
+    const step = (el: HTMLElement) => {
+      if (!on) { el.dataset.wait = '1'; return; }
+      const r = box.clientWidth / 186 * rnd(2.5, 6); // радиус в rem макета
+      const a = rnd(0, Math.PI * 2);
+      el.style.transition = `transform ${rnd(7, 13).toFixed(1)}s ease-in-out`;
+      el.style.transform = `translate(${(Math.cos(a) * r).toFixed(1)}px,${(Math.sin(a) * r).toFixed(1)}px) rotate(${rnd(-8, 8).toFixed(1)}deg)`;
+    };
+    const els = [...box.querySelectorAll<HTMLElement>('img')];
+    els.forEach((el) => { el.dataset.wait = '1'; el.addEventListener('transitionend', () => step(el)); });
+    new IntersectionObserver(([e]) => {
+      on = e.isIntersecting;
+      if (on) els.forEach((el) => { if (el.dataset.wait) { delete el.dataset.wait; setTimeout(() => step(el), rnd(0, 1200)); } });
+    }).observe(box);
+  }
+</script>
+
 <style>
   .hero{height:79.8rem;overflow:hidden}
-  .hero__icons{position:absolute;left:5rem;top:-5.7rem;width:185rem;height:79.8rem;background:url('/img/hero/icons.webp') center/100% 100% no-repeat;pointer-events:none}
+  .hero__icons{position:absolute;inset:0;pointer-events:none}
+  .hero__icons img{position:absolute;height:auto;max-width:none;mix-blend-mode:multiply;will-change:transform}
   .hero__in{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:10rem}
   .hero__badge-short{display:none}
   .hero__title{width:92rem;margin-top:5rem;font-size:6.9rem;line-height:7.2rem;font-weight:500;letter-spacing:-.03em;color:var(--ink-2);text-wrap:balance}
