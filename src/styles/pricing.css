@@ -96,7 +96,7 @@
 .pr-split{display:grid;grid-template-columns:110fr 62fr;min-height:88rem}
 .pr-split__main{padding:4rem;display:flex;flex-direction:column;min-width:0}
 .pr-live{padding:4rem;border-left:1px solid var(--line)}
-.pr-sum.pr-sum--live{position:sticky;top:14rem;background:none;color:var(--ink);padding:0;border-radius:0;min-height:0}
+.pr-sum.pr-sum--live{background:none;color:var(--ink);padding:0;border-radius:0;min-height:0}
 .pr-sum--live .pr-pay{background:#fff}
 .pr-sum--live .pr-pay button{color:var(--ink)}
 .pr-sum--live .pr-pay button.on{background:var(--ink);color:#fff}
@@ -275,7 +275,7 @@
   .pr-split__main{padding:18px}
   .pr-live{display:none;border:0;padding:0 18px 18px}
   .pr-quiz.is-done .pr-live{display:block}
-  .pr-sum.pr-sum--live{position:static;background:#fff;border-radius:16px;padding:16px}
+  .pr-sum.pr-sum--live{background:#fff;border-radius:16px;padding:16px}
   .pr-sum--live .pr-pay{background:var(--card)}
   .pr-sum--live .pr-terms{background:var(--card)}
   .pr-sum--live .pr-total{font-size:36px}
