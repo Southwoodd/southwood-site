@@ -29,9 +29,10 @@ import Arrow from './Arrow.astro';
         <li data-cats={m.cats} data-reveal style={`--d:${i * 70}ms`}>
           <div><b>{m.name}</b><span>{m.tag}</span></div>
           <p>{nb(m.text)}</p>
-          {'key' in m
-            ? <button type="button" class="cs__open" data-open="case" data-case={m.key} aria-label={`${c.open}: ${m.name}`}>{c.details}<Arrow /></button>
-            : <a href={m.link.href} target="_blank" rel="noopener">{m.link.label}<Arrow /></a>}
+          <p class="cs__acts">
+            <button type="button" class="cs__open" data-open="case" data-case={m.key} aria-label={`${c.open}: ${m.name}`}>{c.details}<Arrow /></button>
+            {'link' in m && <a href={m.link.href} target="_blank" rel="noopener">{m.link.label}<Arrow /></a>}
+          </p>
         </li>
       ))}
     </ul>
@@ -98,7 +99,9 @@ import Arrow from './Arrow.astro';
   .cs__more li{position:relative;min-height:17rem;background:var(--card);border-radius:2.4rem;padding:2.8rem;display:flex;flex-direction:column;gap:1rem;align-items:flex-start}
   .cs__more li[hidden]{display:none}
   .cs__more li div{width:100%;display:flex;justify-content:space-between;align-items:center;gap:1.2rem}
-  .cs__more li>a,.cs__open{margin-top:auto}
+  .cs__acts{margin-top:auto;width:100%;display:flex;justify-content:space-between;align-items:center;gap:1.6rem}
+  .cs__acts a{position:relative;z-index:1}
+  .cs__acts a:hover{text-decoration:underline;text-underline-offset:.4rem}
   .cs__open{display:inline-flex;align-items:center;gap:.6rem;font-size:max(1.6rem,13px);font-weight:500;color:var(--deep);white-space:nowrap}
   .cs__open::after{content:'';position:absolute;inset:0;border-radius:2.4rem}
   .cs__open :global(.arrow){width:1.8rem;height:1.8rem;transition:transform .25s var(--ease)}

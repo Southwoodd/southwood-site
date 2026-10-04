@@ -33,7 +33,7 @@ const tick = 'M11 1.83a9.17 9.17 0 1 0 0 18.34 9.17 9.17 0 0 0 0-18.34Zm4.38 7.0
         {!c.noimg && <figure class="mc__vis"><img src={`/img/cases/${k}.webp`} alt={`${c.name}: экраны проекта`} loading="lazy" decoding="async" /></figure>}
         <ul class="mc__tags">{c.tags.map((t: string) => <li>{t}</li>)}</ul>
         <h3>{c.name}</h3>
-        {c.links.length > 0 && <p class="mc__links">{c.links.map((l: any) => <a href={l.href} target="_blank" rel="noopener">{l.label}<Arrow /></a>)}</p>}
+        {c.links.length > 0 && <p class="mc__links">{c.links.map((l: any, i: number) => <a class={i === 0 ? 'btn btn--deep' : 'btn btn--grey'} href={l.href} target="_blank" rel="noopener">{i === 0 && l.label !== 'Behance' && !l.label.includes(':') ? `${m.cases.site} ${l.label}` : l.label}<Arrow /></a>)}</p>}
         {c.awards && <p class="mc__awards"><span class="mc__label">{m.cases.awards}</span>{c.awards.map((x: any) => <a href={x.href} target="_blank" rel="noopener nofollow">{x.label}</a>)}</p>}
         <div class="mc__two"><div><span class="mc__label">{m.cases.context}</span><p>{nb(c.context)}</p></div><div><span class="mc__label">{m.cases.task}</span><p>{nb(c.task)}</p></div></div>
         <span class="mc__label">{m.cases.done}</span>
@@ -144,9 +144,8 @@ const tick = 'M11 1.83a9.17 9.17 0 1 0 0 18.34 9.17 9.17 0 0 0 0-18.34Zm4.38 7.0
   .mc__tags{margin-top:3.2rem;display:flex;flex-wrap:wrap;gap:.8rem}
   .mc__tags li{height:3.2rem;padding:0 1.4rem;border-radius:999px;background:var(--card);font-size:max(1.4rem,12px);font-weight:500;display:flex;align-items:center}
   .md__panel--case h3{margin-top:1.6rem;font-size:4.8rem;line-height:1.1;font-weight:500;letter-spacing:-.03em}
-  .mc__links{margin-top:1.6rem;display:flex;flex-wrap:wrap;gap:.8rem 3rem}
-  .mc__links a{display:inline-flex;align-items:center;gap:.8rem;font-size:max(1.8rem,15px);font-weight:500;color:var(--deep)}
-  .mc__links a:hover{text-decoration:underline;text-underline-offset:.4rem}
+  .mc__links{margin-top:2rem;display:flex;flex-wrap:wrap;gap:.8rem}
+  .mc__links a{height:5.2rem;padding:0 2.4rem;gap:1rem;font-size:max(1.6rem,15px)}
   .mc__links :global(.arrow){width:1.8rem;height:1.8rem}
   .mc__label{display:block;margin-top:4rem;font-size:max(1.4rem,12px);color:var(--muted)}
   .mc__awards{margin-top:2rem;display:flex;flex-wrap:wrap;align-items:center;gap:.8rem}
@@ -209,7 +208,8 @@ const tick = 'M11 1.83a9.17 9.17 0 1 0 0 18.34 9.17 9.17 0 0 0 0-18.34Zm4.38 7.0
     .mc__vis{border-radius:14px;aspect-ratio:320/196}
     .mc__tags{margin-top:16px;gap:6px}.mc__tags li{height:28px;padding:0 12px}
     .md__panel--case h3{margin-top:12px;font-size:28px}
-    .mc__links{margin-top:10px}
+    .mc__links{margin-top:12px;flex-direction:column}
+    .mc__links a{height:50px}
     .mc__label{margin-top:24px}
     .mc__two{grid-template-columns:1fr;gap:0}
     .mc__two p,.mc__how p,.mc__sum{margin-top:8px;font-size:15px;line-height:22px}
