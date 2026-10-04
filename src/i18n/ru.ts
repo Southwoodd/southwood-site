@@ -455,7 +455,8 @@ export const cases = {
     list: [
       { key: 'promo', name: 'Промокоды по товарам', tag: '1 день', cats: 'auto shop', text: 'Магазин на Тильде: у каждой книги свой промокод, скидка считается по каждому товару отдельно' },
       { key: 'leads', name: 'Прием заявок на этом сайте', tag: 'Свой сервис', cats: 'auto crm', text: 'Заявка с расчетом в PDF уходит в Telegram и на почту, сервер сам следит за собой' },
-      { key: 'bta', name: 'BTA', tag: 'Site of the Day', cats: 'site', text: 'Сайт и фирменный стиль для компании железнодорожной автоматики и связи' },
+      { key: 'bta', name: 'BTA', tag: 'Site of the Day', cats: 'site', text: 'Сайт и фирменный стиль для компании железнодорожной автоматики и связи', link: { label: 'Behance', href: 'https://www.behance.net/gallery/256641275/balttransavtomatika-(bta)-znak-firmennyj-stil-i-sajt' } },
+      { key: 'evolutif', name: 'Evolutif', tag: 'Редизайн', cats: 'site redesign', text: 'Новый сайт дистрибьютора косметики и тренинг-центра SPA & Wellness на Tilda Zero', link: { label: 'evolutif.ru', href: 'https://evolutif.ru' } },
       { key: 'belmare', name: 'Belmare', tag: '2024', cats: 'redesign', text: 'Концепция редизайна сайта турагентства', link: { label: 'Behance', href: 'https://www.behance.net/gallery/198242501/redizajn-sajta-turagentstva' } },
       { key: 'agrorus', name: 'Agrorus', tag: '2 недели', cats: 'site', text: 'Сайт агроэкспорта для рынков Персидского залива', link: { label: 'agrorus.pw', href: 'https://agrorus.pw' } },
       { key: 'newhr', name: 'NewHR', tag: '2 недели', cats: 'site', text: 'Сайт под рекламное продвижение', link: { label: 'newhr.org', href: 'https://newhr.org' } },

@@ -434,7 +434,12 @@
     "2024"
    ],
    "name": "BTA",
-   "links": [],
+   "links": [
+    {
+     "label": "Behance",
+     "href": "https://www.behance.net/gallery/256641275/balttransavtomatika-(bta)-znak-firmennyj-stil-i-sajt"
+    }
+   ],
    "awards": [
     {
      "label": "Design Nominees, Site of the Day",
@@ -459,10 +464,45 @@
    ],
    "how": "",
    "metrics": [],
-   "summary": "Сайт получил Site of the Day на Design Nominees 10 сентября 2024 и оценку жюри 8,5 на Top Design King. Позже компания прекратила работу, сайт сейчас недоступен, макеты сохранились.",
+   "summary": "Сайт получил Site of the Day на Design Nominees 10 сентября 2024 и оценку жюри 8,5 на Top Design King. Позже компания прекратила работу, сайт сейчас недоступен, макеты сохранились. Полный кейс лежит на Behance.",
    "term": "2024",
-   "next": "alfa",
+   "next": "evolutif",
    "short": "сайт и фирменный стиль, как для BTA",
+   "nextName": "Evolutif"
+  },
+  "evolutif": {
+   "tags": [
+    "Редизайн",
+    "Tilda Zero",
+    "SPA & Wellness"
+   ],
+   "name": "Evolutif",
+   "links": [
+    {
+     "label": "evolutif.ru",
+     "href": "https://evolutif.ru"
+    },
+    {
+     "label": "Behance",
+     "href": "https://www.behance.net/gallery/256644257/Evolutif-redizajn-sajta-distribjutora-SPA-i-Wellness"
+    }
+   ],
+   "context": "Evolutif, Москва: официальный дистрибьютор профессиональной косметики и тренинг-центр для специалистов SPA & Wellness. Прежний сайт был собран на Тильде из шаблонных блоков и не передавал уровень брендов, с которыми работает компания.",
+   "task": "Полностью переделать сайт, оставив его на Тильде, чтобы команда сама меняла тексты и расписание.",
+   "done": [
+    "Новый дизайн в Figma",
+    "Сборка на Tilda Zero Block вместо шаблонных блоков",
+    "Первый экран с двумя дорогами: бренды для партнеров, тренинги для специалистов",
+    "Пять брендов в одном блоке с переключателем",
+    "Разделы тренинг-центра, банного мастерства и залов с галереями",
+    "Версия для телефона"
+   ],
+   "how": "",
+   "metrics": [],
+   "summary": "Сайт работает на evolutif.ru. Полный кейс с макетами лежит на Behance.",
+   "term": "2025",
+   "next": "alfa",
+   "short": "редизайн сайта, как для Evolutif",
    "nextName": "Alfa Elite Trading & Services"
   }
  },
