@@ -423,8 +423,47 @@
    "metrics": [],
    "summary": "Обновленный сайт работает на refiori.ru.",
    "term": "1,5 недели",
-   "next": "alfa",
+   "next": "bta",
    "short": "редизайн сайта, как для Re: Fiori",
+   "nextName": "BTA"
+  },
+  "bta": {
+   "noimg": true,
+   "tags": [
+    "Сайт",
+    "Фирменный стиль",
+    "2024"
+   ],
+   "name": "BTA",
+   "links": [],
+   "awards": [
+    {
+     "label": "Design Nominees, Site of the Day",
+     "href": "https://www.designnominees.com/sites/bta"
+    },
+    {
+     "label": "Top Design King",
+     "href": "https://topdesignking.com/website/1852/bta"
+    },
+    {
+     "label": "Best CSS",
+     "href": "https://www.bestcss.in/user/detail/BTA-43095"
+    }
+   ],
+   "context": "Компания из Санкт-Петербурга: сигнализация, связь и энергетика на железных дорогах. Нужны были сайт и фирменный стиль, с которыми не стыдно идти к крупным заказчикам.",
+   "task": "Сделать лицо компании целиком: от логотипа и визиток до сайта, с которого заявки попадают в CRM.",
+   "done": [
+    "Логотип и фирменный стиль",
+    "Визитки и логотип на носителях: печать заказал в Краснодаре и отправил в Санкт-Петербург",
+    "Корпоративный сайт: дизайн и сборка",
+    "Заявки с сайта сразу попадают в CRM"
+   ],
+   "how": "",
+   "metrics": [],
+   "summary": "Сайт получил Site of the Day на Design Nominees 10 сентября 2024 и оценку жюри 8,5 на Top Design King. Позже компания прекратила работу, сайт сейчас недоступен, макеты сохранились.",
+   "term": "2024",
+   "next": "alfa",
+   "short": "сайт и фирменный стиль, как для BTA",
    "nextName": "Alfa Elite Trading & Services"
   }
  },
