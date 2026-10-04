@@ -20,7 +20,13 @@ import Final from '../components/site/Final.astro';
 import Pricing from '../components/site/Pricing.astro';
 import Footer from '../components/site/Footer.astro';
 ---
-<Site title="Сергей Воробьев: сайты, CRM, боты и автоматизация под ключ" description="Сайты, CRM, боты, автоматизация, дашборды и приложения для бизнеса и учреждений. Собираю в одну систему и веду после запуска.">
+<Site title="Разработка сайтов, CRM и ботов под ключ | Сергей Воробьев" description="Разработка сайтов и интернет-магазинов, внедрение Битрикс24, чат-боты, автоматизация и приложения под ключ. Один исполнитель вместо агентства: фиксированная смета, цены и кейсы на сайте.">
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@graph': [
+  { '@type': 'WebSite', '@id': 'https://southwood.pw/#website', url: 'https://southwood.pw/', name: 'Сергей Воробьев', alternateName: ['Southwood', 'southwood.pw'], inLanguage: 'ru-RU', publisher: { '@id': 'https://southwood.pw/#person' } },
+  { '@type': 'Person', '@id': 'https://southwood.pw/#person', name: 'Сергей Воробьев', alternateName: 'Sergey Southwood', url: 'https://southwood.pw/', image: 'https://southwood.pw/icon-512.png', jobTitle: 'Разработка сайтов, CRM, ботов и автоматизация для бизнеса', email: 'im@southwood.pw', sameAs: ['https://t.me/imsouthwood', 'https://www.behance.net/imsouthwood', 'https://tenchat.ru/imsouthwood', 'https://vk.com/imsouthwood'] },
+  { '@type': 'ProfessionalService', '@id': 'https://southwood.pw/#service', name: 'Сергей Воробьев: разработка сайтов, CRM и ботов', url: 'https://southwood.pw/', image: 'https://southwood.pw/og-cover.png', logo: 'https://southwood.pw/icon-512.png', founder: { '@id': 'https://southwood.pw/#person' }, areaServed: { '@type': 'Country', name: 'Россия' }, email: 'im@southwood.pw',
+    hasOfferCatalog: { '@type': 'OfferCatalog', name: 'Услуги', itemListElement: ['Разработка сайтов под ключ', 'Создание интернет-магазинов', 'Редизайн сайта', 'Разработка сайтов на Тильде и Битрикс', 'Внедрение и настройка Битрикс24', 'Чат-боты для Telegram, VK и MAX', 'Автоматизация бизнес-процессов и интеграции с 1С', 'Разработка веб-приложений и мобильных приложений', 'UX/UI-дизайн'].map((n) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: n } })) } },
+] })} />
   <div class="page">
     <Header />
     <main id="main" style="display:contents">
