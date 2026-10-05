@@ -14,15 +14,15 @@ export const site = {
 };
 
 export const nav = [
-  { icon: 'c_site', label: 'Услуги', href: '/uslugi/', hint: 'Сайты, CRM, боты' },
-  { icon: 'full', label: 'Кейсы', href: '/kejsy/', hint: '14 работ с цифрами' },
-  { icon: 'c_dash', label: 'Цены', href: '/ceny/', hint: 'Расчет за 2 минуты', accent: true },
-  { icon: 'p_brief', label: 'Обо мне', href: '/obo-mne/', hint: 'Кто делает задачу' },
-  { icon: 'c_docs', label: 'Вопросы', href: '/obo-mne/#faq', hint: '15 ответов до старта', swap: true },
-  { icon: 'send', label: 'Контакты', href: '/kontakty/', hint: 'Telegram, MAX, почта' },
+  { icon: 'services', label: 'Услуги', href: '/uslugi/', hint: 'Сайты, CRM, боты' },
+  { icon: 'cases', label: 'Кейсы', href: '/kejsy/', hint: '14 работ с цифрами' },
+  { icon: 'prices', label: 'Цены', href: '/ceny/', hint: 'Расчет за 2 минуты', accent: true },
+  { icon: 'about', label: 'Обо мне', href: '/obo-mne/', hint: 'Кто делает задачу' },
+  { icon: 'faq', label: 'Вопросы', href: '/obo-mne/#faq', hint: '15 ответов до старта', swap: true },
+  { icon: 'contacts', label: 'Контакты', href: '/kontakty/', hint: 'Telegram, MAX, почта' },
 ];
 // Плитка блога встает на место вопросов, когда опубликована первая статья
-export const navBlog = { icon: 'c_docs', label: 'Блог', href: '/blog/', hint: 'Разборы и цены' };
+export const navBlog = { icon: 'blog', label: 'Блог', href: '/blog/', hint: 'Разборы и цены' };
 
 export const header = {
   qatar: 'Инвестиции и регистрация компаний в Катаре',

@@ -1,0 +1,15 @@
+---
+// Иконки меню: один размер, одна толщина линии, чтобы плитки выглядели ровно.
+const icons: Record<string, string> = {
+  services: '<rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/>',
+  cases: '<rect x="3.5" y="7.5" width="17" height="12" rx="2.5"/><path d="M9 7.5V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5M3.5 12.5h17"/>',
+  prices: '<rect x="5" y="3.5" width="14" height="17" rx="2.5"/><path d="M8.5 7.5h7M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"/>',
+  about: '<circle cx="12" cy="8.5" r="3.5"/><path d="M5 19.5c.8-3.3 3.5-5 7-5s6.200 1.700 7 5"/>',
+  faq: '<circle cx="12" cy="12" r="8.500"/><path d="M9.700 9.600a2.400 2.400 0 1 1 3.500 2.100c-.8.400-1.200.9-1.200 1.800M12 16.400h.01"/>',
+  contacts: '<path d="M20 5 3.500 11.200l6 2.300M20 5l-3.200 14-7.300-5.500M20 5 9.500 13.500v5l3-2.800"/>',
+  blog: '<path d="M7 3.500h7l4.500 4.500v10a2.500 2.500 0 0 1-2.500 2.500H7A2.500 2.500 0 0 1 4.500 18V6A2.500 2.500 0 0 1 7 3.500Z"/><path d="M14 3.500V8h4.500M8.500 12.500h7M8.500 16h4.500"/>',
+};
+interface Props { n: string }
+const { n } = Astro.props;
+---
+<svg class="mi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={icons[n] || icons.services} />

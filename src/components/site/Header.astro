@@ -1,7 +1,7 @@
 ---
 import Logo from '../Logo.astro';
 import Arrow from './Arrow.astro';
-import Ui from '../ui/Ui.astro';
+import MenuIcon from './MenuIcon.astro';
 import { nav as navAll, navBlog, header, site, nb } from '../../i18n/ru';
 import { R_ } from '../../i18n/routes';
 import { BLOG_LIVE } from '../../i18n/blog';
@@ -28,7 +28,7 @@ const cur = (href: string) => (!href.includes('#') && path.startsWith(href) ? 'p
   <nav class="menu__grid" aria-label="Разделы">
     {nav.map((n) => (
       <a class:list={['tile', { 'tile--accent': n.accent, 'is-active': cur(n.href) }]} href={n.href} aria-current={cur(n.href)} data-menu-link>
-        <span class="tile__top"><i class="tile__dot"><Ui n={n.icon} /></i><Arrow /></span>
+        <span class="tile__top"><i class="tile__dot"><MenuIcon n={n.icon} /></i><Arrow /></span>
         <span class="tile__text"><b>{n.label}</b><small>{nb(n.hint)}</small></span>
       </a>
     ))}
@@ -103,8 +103,6 @@ const cur = (href: string) => (!href.includes('#') && path.startsWith(href) ? 'p
     .tile__top :global(.arrow){width:16px;height:16px}
     .tile__dot{width:38px;height:38px;border-radius:999px;background:var(--mint);color:var(--deep);display:grid;place-items:center}
     .tile__dot :global(svg){width:20px;height:20px}
-    .tile__dot :global(svg[viewBox='0 0 48 48']){width:44px;height:44px}
-    .tile__dot :global(svg[viewBox='0 0 23 23']){width:18px;height:18px}
     .tile__text{display:flex;flex-direction:column;gap:2px}
     .tile b{font-size:22px;line-height:26px;font-weight:500}
     .tile small{font-size:13px;line-height:17px;color:var(--muted)}

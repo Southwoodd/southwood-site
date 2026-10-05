@@ -3,7 +3,7 @@
 // По клику раскрывается из себя в полное меню. Цвет меняется под фон, на котором стоит.
 import Logo from '../Logo.astro';
 import Arrow from './Arrow.astro';
-import Ui from '../ui/Ui.astro';
+import MenuIcon from './MenuIcon.astro';
 import { site, header, nb } from '../../i18n/ru';
 import { SERVICES, serviceHref, R_, CASES_N } from '../../i18n/routes';
 import { BLOG_LIVE } from '../../i18n/blog';
@@ -11,10 +11,10 @@ interface Props { label: string }
 const { label } = Astro.props;
 const path = Astro.url.pathname;
 const tiles = [
-  { href: R_.cases, title: 'Кейсы', sub: `${CASES_N} работ с цифрами и ссылками`, icon: 'full' },
-  { href: R_.prices, title: 'Цены', sub: 'Наборы и расчет за 2 минуты', icon: 'c_dash', accent: true },
-  BLOG_LIVE ? { href: R_.blog, title: 'Блог', sub: 'Разборы, инструкции, цены', icon: 'c_docs' } : { href: R_.faq, title: 'Вопросы', sub: 'Сроки, гарантии, доступы', icon: 'c_docs' },
-  { href: R_.about, title: 'Обо мне', sub: 'Кто будет делать вашу задачу', icon: 'p_brief' },
+  { href: R_.cases, title: 'Кейсы', sub: `${CASES_N} работ с цифрами и ссылками`, icon: 'cases' },
+  { href: R_.prices, title: 'Цены', sub: 'Наборы и расчет за 2 минуты', icon: 'prices', accent: true },
+  BLOG_LIVE ? { href: R_.blog, title: 'Блог', sub: 'Разборы, инструкции, цены', icon: 'blog' } : { href: R_.faq, title: 'Вопросы', sub: 'Сроки, гарантии, доступы', icon: 'faq' },
+  { href: R_.about, title: 'Обо мне', sub: 'Кто будет делать вашу задачу', icon: 'about' },
 ];
 const on = (href: string) => (path === href || (href !== '/' && path.startsWith(href.split('#')[0]) && !href.includes('#')) ? 'page' : undefined);
 ---
@@ -29,7 +29,7 @@ const on = (href: string) => (path === href || (href !== '/' && path.startsWith(
       <div class="dk-tiles">
         {tiles.map((t) => (
           <a class:list={['dk-tile', { 'dk-tile--accent': t.accent }]} href={t.href} aria-current={on(t.href)}>
-            <span class="dk-tile__top"><i><Ui n={t.icon as any} /></i><Arrow /></span>
+            <span class="dk-tile__top"><i><MenuIcon n={t.icon} /></i><Arrow /></span>
             <span class="dk-tile__text"><b>{t.title}</b><small>{nb(t.sub)}</small></span>
           </a>
         ))}
@@ -155,7 +155,6 @@ const on = (href: string) => (path === href || (href !== '/' && path.startsWith(
     .dk-tile__top{display:flex;justify-content:space-between;align-items:flex-start}
     .dk-tile__top i{width:4rem;height:4rem;border-radius:50%;background:var(--mint);color:var(--deep);display:grid;place-items:center}
     .dk-tile__top i :global(svg){width:2rem;height:2rem}
-    .dk-tile__top i :global(svg[viewBox='0 0 48 48']){width:4.6rem;height:4.6rem}
     .dk-tile__text{display:grid;gap:.4rem}
     .dk-tile b{font-size:3rem;line-height:1;font-weight:500;letter-spacing:-.03em}
     .dk-tile small{font-size:max(1.4rem,12px);color:var(--muted)}
