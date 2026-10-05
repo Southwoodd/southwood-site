@@ -41,6 +41,8 @@ const { head = true, all = 'services' } = Astro.props;
   .stl b{margin-top:auto;width:fit-content;height:4rem;padding:0 1.6rem;border-radius:999px;background:#fff;display:flex;align-items:center;font-size:max(1.5rem,13px);font-weight:500}
   .stl__all a{background:var(--deep);color:#fff}.stl__all a:hover{background:#35594a}
   .stl__all p{color:rgba(255,255,255,.8)}.stl__all b{color:var(--ink-2)}
+  /* телефон: вместо rem берем нижнюю границу в px */
+  @media (max-width:1023px){.stl p{font-size:14px}.stl b{font-size:13px}}
   @media (max-width:1023px){
     .stl__grid{margin-top:20px;grid-template-columns:1fr 1fr;gap:10px}
     .stl__grid a{min-height:0;border-radius:20px;padding:18px;gap:10px}

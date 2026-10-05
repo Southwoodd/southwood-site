@@ -83,6 +83,8 @@
 .facts3 span{display:block;font-size:max(1.5rem,12px);color:var(--grey-text);margin-bottom:1rem}
 .facts3 b{font-size:2.6rem;line-height:1.25;font-weight:500;letter-spacing:-.02em}
 
+  /* телефон: вместо rem берем нижнюю границу в px */
+  @media (max-width:1023px){.ph__lead{font-size:16px}.ph__chips li{font-size:13px}.ph__cta .btn{font-size:15px}.ph__vis p{font-size:14px}.ph__vis small{font-size:13px}.sec__more .btn{font-size:15px}.kinds p{font-size:14px}.kinds small{font-size:13px}.pills li{font-size:13px}.sec__calc{font-size:14px}.sec__calc .btn{font-size:15px}.mult p{font-size:13px}.scn span{font-size:12px}.scn dt{font-size:12px}.scn dd{font-size:14px}.scn em{font-size:13px}.qa h3{font-size:16px}.qa details p{font-size:15px}.facts3 span{font-size:12px}}
 @media (max-width:1023px){
   .ph,.ph--svc{display:flex;flex-direction:column;align-items:stretch;gap:18px;padding:22px 20px 26px}
   .ph h1,.ph--svc h1{font-size:38px;line-height:40px}

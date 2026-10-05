@@ -83,6 +83,8 @@ const ld = [
   .kq__off b{font-size:2.2rem;font-weight:500;letter-spacing:-.02em}
   .kq__off span{font-size:max(1.6rem,14px);color:var(--muted)}
   @media (max-width:1279px) and (min-width:1024px){.kq__steps{grid-template-columns:repeat(3,1fr)}}
+  /* телефон: вместо rem берем нижнюю границу в px */
+  @media (max-width:1023px){.kq__steps span{font-size:12px}.kq__steps p{font-size:14px}.kq__steps em{font-size:12px}.kq__rows p{font-size:14px}.kq__rows span{font-size:14px}.kq__about>div>p{font-size:16px}.kq__off span{font-size:14px}}
   @media (max-width:1023px){
     .kq__steps{margin-top:20px;grid-template-columns:1fr;gap:8px}
     .kq__steps li{border-radius:18px;padding:18px;min-height:0;gap:0}.kq__steps h3{margin-top:10px;font-size:20px}.kq__steps p{margin-top:8px}.kq__steps em{margin-top:16px;height:30px}

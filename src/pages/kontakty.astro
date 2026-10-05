@@ -46,6 +46,8 @@ const ld = [{ '@type': 'ContactPage', url: 'https://southwood.pw/kontakty/', nam
   .ct small{margin-top:auto;padding-top:2rem;font-size:max(1.5rem,13px);color:var(--muted)}
   .ct .hot{background:var(--deep);color:#fff}.ct .hot:hover{background:#35594a}
   .ct .hot em,.ct .hot small{color:rgba(255,255,255,.75)}
+  /* телефон: вместо rem берем нижнюю границу в px */
+  @media (max-width:1023px){.ct em{font-size:13px}.ct small{font-size:13px}}
   @media (max-width:1023px){
     .ct{padding:12px}.ct ul{grid-template-columns:1fr 1fr;gap:8px}
     .ct a{min-height:0;border-radius:18px;padding:16px}.ct b{margin-top:10px;font-size:18px}.ct small{padding-top:12px}

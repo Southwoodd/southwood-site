@@ -80,6 +80,8 @@ const others = post ? list.filter((p) => p.slug !== post.slug).slice(0, 3) : [];
   .bl__grid h3{margin:2.4rem 1.6rem 0;font-size:2.4rem;line-height:1.25;font-weight:500;letter-spacing:-.02em}
   .bl__grid span{margin:auto 1.6rem 0;padding-top:4rem;display:flex;justify-content:space-between;align-items:center;font-size:max(1.4rem,12px);color:var(--grey-text)}
   .bl__grid .arrow{width:2rem;height:2rem;color:var(--ink)}
+  /* телефон: вместо rem берем нижнюю границу в px */
+  @media (max-width:1023px){.ar__draft{font-size:13px}.ar header span{font-size:13px}.ar header p{font-size:17px}.ar__body{font-size:16px}.ar__body table{font-size:14px}.ar__body th{font-size:13px}.ar footer .btn{font-size:15px}.bl__filter button{font-size:13px}.bl__cov em{font-size:12px}.bl__grid span{font-size:12px}}
   @media (max-width:1023px){
     .ar{padding:22px 20px 32px}.ar header{margin-top:24px}.ar h1{font-size:32px;line-height:36px;margin-top:10px}.ar header p{margin-top:14px}
     .ar__body{margin-top:24px}.ar__body h2{margin-top:32px;font-size:24px}.ar__body h3{margin-top:24px;font-size:19px}.ar__body p,.ar__body ul,.ar__body ol,.ar__body table{margin-top:14px}
