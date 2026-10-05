@@ -20,7 +20,7 @@ const ld = post ? [{ '@type': 'Article', headline: post.title, description: post
 const others = post ? list.filter((p) => p.slug !== post.slug).slice(0, 3) : [];
 ---
 {post ? (
-  <Page title={`${post.title} | Сергей Воробьев`} description={post.description} path={`/blog/${post.slug}/`} label="Блог" crumbs={crumbs} ld={ld} noindex={!!post.draft}>
+  <Page title={`${post.title} | Сергей Воробьев`} description={post.description} path={`/blog/${post.slug}/`} label="Блог" image={`/og/blog-${post.slug}.jpg`} crumbs={crumbs} ld={ld} noindex={!!post.draft}>
     <article class="section ar">
       <Crumbs items={crumbs} />
       {post.draft && <p class="ar__draft">Черновик. Страница закрыта от поиска и не показана в меню, пока текст не проверен.</p>}
@@ -34,7 +34,7 @@ const others = post ? list.filter((p) => p.slug !== post.slug).slice(0, 3) : [];
       </div>
       <footer><a class="btn btn--deep" href={R_.calc} data-go="calc">Рассчитать стоимость<Arrow /></a><button class="btn btn--grey" type="button" data-open="write">Задать вопрос<Arrow /></button></footer>
     </article>
-    {others.length > 0 && <section class="section sec bl"><h2 class="bl__h">Читать дальше</h2><ul class="bl__grid">{others.map((p) => <li><a href={`/blog/${p.slug}/`}><i class={`bl__cov bl__cov--${p.theme || 'mint'}`}><em>{p.tag}</em><b>{p.tag}</b></i><h3>{nb(p.title)}</h3><span>{p.minutes} минут чтения<Arrow /></span></a></li>)}</ul></section>}
+    {others.length > 0 && <section class="section sec bl"><h2 class="bl__h">Читать дальше</h2><ul class="bl__grid">{others.map((p) => <li><a href={`/blog/${p.slug}/`}><i class={`bl__cov bl__cov--${p.theme || 'mint'}`}><em>{p.tag}</em><b class:list={{ long: (p.cover || p.tag).length > 14 }}>{p.cover || p.tag}</b>{p.coverNote && <small>{p.coverNote}</small>}</i><h3>{nb(p.title)}</h3><span>{p.minutes} минут чтения<Arrow /></span></a></li>)}</ul></section>}
   </Page>
 ) : (
   <Page title="Блог: разборы про сайты, CRM и ботов | Сергей Воробьев" description="Разборы без воды: сколько стоит, на чем делать, где обычно ломается. По своим проектам, с цифрами и примерами." path="/blog/" label="Блог" crumbs={crumbs} noindex={!BLOG_LIVE}>
@@ -42,7 +42,7 @@ const others = post ? list.filter((p) => p.slug !== post.slug).slice(0, 3) : [];
     <section class="section sec bl" id="posts">
       {!BLOG_LIVE && <p class="ar__draft">Черновики. Раздел закрыт от поиска и не показан в меню, пока тексты не проверены.</p>}
       <div class="bl__filter" role="group" aria-label="Темы"><button type="button" data-tag="all" aria-pressed="true">Все</button>{tags.map((t) => <button type="button" data-tag={t} aria-pressed="false">{t}</button>)}</div>
-      <ul class="bl__grid">{list.map((p) => <li data-tag={p.tag}><a href={`/blog/${p.slug}/`}><i class={`bl__cov bl__cov--${p.theme || 'mint'}`}><em>{p.tag}</em><b>{p.tag}</b></i><h3>{nb(p.title)}</h3><span>{p.minutes} минут чтения<Arrow /></span></a></li>)}</ul>
+      <ul class="bl__grid">{list.map((p) => <li data-tag={p.tag}><a href={`/blog/${p.slug}/`}><i class={`bl__cov bl__cov--${p.theme || 'mint'}`}><em>{p.tag}</em><b class:list={{ long: (p.cover || p.tag).length > 14 }}>{p.cover || p.tag}</b>{p.coverNote && <small>{p.coverNote}</small>}</i><h3>{nb(p.title)}</h3><span>{p.minutes} минут чтения<Arrow /></span></a></li>)}</ul>
     </section>
   </Page>
 )}
@@ -95,7 +95,10 @@ const others = post ? list.filter((p) => p.slug !== post.slug).slice(0, 3) : [];
   .bl__grid a:hover{background:var(--mint)}
   .bl__cov{font-style:normal;height:22rem;border-radius:1.6rem;position:relative;overflow:hidden;display:block;background:var(--mint)}
   .bl__cov em{position:absolute;left:1.6rem;top:1.6rem;font-style:normal;height:3.6rem;padding:0 1.4rem;border-radius:999px;background:#fff;color:var(--ink);display:flex;align-items:center;font-size:max(1.4rem,12px);font-weight:500}
-  .bl__cov b{position:absolute;left:2.4rem;bottom:-1.4rem;font-size:10rem;line-height:1;font-weight:500;letter-spacing:-.05em;white-space:nowrap;opacity:.16}
+  .bl__cov{display:flex;flex-direction:column;justify-content:flex-end;padding:0 2.4rem 2.2rem}
+  .bl__cov b{font-size:5.6rem;line-height:1;font-weight:500;letter-spacing:-.04em;white-space:nowrap}
+  .bl__cov b.long{font-size:3.8rem;letter-spacing:-.035em}
+  .bl__cov small{margin-top:1rem;font-size:max(1.5rem,13px);opacity:.75}
   .bl__cov--green{background:var(--deep);color:#fff}.bl__cov--black{background:var(--ink);color:#fff}.bl__cov--qatar{background:var(--qatar);color:#fff}.bl__cov--light{background:var(--light)}
   .bl__grid h3{margin:2.4rem 1.6rem 0;font-size:2.4rem;line-height:1.25;font-weight:500;letter-spacing:-.02em}
   .bl__grid span{margin:auto 1.6rem 0;padding-top:4rem;display:flex;justify-content:space-between;align-items:center;font-size:max(1.4rem,12px);color:var(--grey-text)}
@@ -106,7 +109,7 @@ const others = post ? list.filter((p) => p.slug !== post.slug).slice(0, 3) : [];
     .ar{padding:22px 20px 32px}.ar header{margin-top:24px}.ar h1{font-size:32px;line-height:36px;margin-top:10px}.ar header p{margin-top:14px}
     .ar__body{margin-top:24px}.ar__body h2{margin-top:32px;font-size:24px}.ar__body h3{margin-top:24px;font-size:19px}.ar__body p,.ar__body ul,.ar__body ol,.ar__body table{margin-top:14px}
     .ar__body table{display:block;overflow-x:auto}.ar footer{margin-top:10px}.sh{margin-top:28px;padding-top:20px;gap:8px}.sh__main{height:52px;width:100%;font-size:15px}.sh__to{height:46px;padding:0 16px;font-size:14px;flex:1 1 auto;justify-content:center}.ar footer .btn{height:54px;flex:1 1 auto}
-    .bl__grid{grid-template-columns:1fr;gap:10px}.bl__cov{height:140px}.bl__cov b{font-size:64px}.bl__grid h3{font-size:19px;margin:16px 8px 0}.bl__grid span{margin:auto 8px 0;padding-top:20px}.bl__grid a{border-radius:20px;padding:8px 8px 18px}
+    .bl__grid{grid-template-columns:1fr;gap:10px}.bl__cov{height:150px;padding:0 16px 16px}.bl__cov b{font-size:36px}.bl__cov b.long{font-size:26px}.bl__cov small{margin-top:6px;font-size:13px}.bl__grid h3{font-size:19px;margin:16px 8px 0}.bl__grid span{margin:auto 8px 0;padding-top:20px}.bl__grid a{border-radius:20px;padding:8px 8px 18px}
     .bl__filter{margin:14px 0 16px;gap:6px}.bl__filter button{height:36px;padding:0 13px}.bl__h{font-size:22px;margin-bottom:14px}
   }
 </style>
