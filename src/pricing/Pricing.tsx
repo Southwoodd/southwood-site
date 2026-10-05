@@ -276,14 +276,14 @@ export default function Pricing() {
     return (
       <div class={'pr-sum' + (kind === 'sheet' ? ' pr-sum--sheet' : kind === 'live' ? ' pr-sum--live' : '')}>
         <div class="pr-pay" role="radiogroup" aria-label="Способ оплаты">
-          <button type="button" role="radio" aria-checked={!inst} class={!inst ? 'on' : ''} onClick={() => setS((p) => ({ ...p, pay: 'once' }))}>{inst ? `В месяц, ${c.term} ${c.term < 5 ? 'платежа' : 'платежей'}` : 'Разово'}</button>
+          <button type="button" role="radio" aria-checked={!inst} class={!inst ? 'on' : ''} onClick={() => setS((p) => ({ ...p, pay: 'once' }))}>Разово</button>
           <button type="button" role="radio" aria-checked={inst} class={inst ? 'on' : ''} disabled={!c.instOk} onClick={() => setS((p) => ({ ...p, pay: 'inst' }))}>В рассрочку</button>
         </div>
         <p class="pr-sum__title">{c.onlyTbd ? 'Ваша задача' : 'Ваша сборка'}{c.count > 0 ? ` · ${servicesWord(c.count)}` : ''}{c.own && c.count > 0 ? ' и своя задача' : ''}{c.lines.some((l) => l.pale) ? ', уточняем' : ''}</p>
         {empty ? <p class="pr-sum__empty">{nb('Отметьте слева услуги или готовый набор, и здесь появится расчет.')}</p>
           : c.empty && !c.own ? <p class="pr-sum__empty">{nb('Сборка не выбрана. Сопровождение того, что у вас уже работает: сайт, CRM, боты.')}</p>
           : c.large ? <p class="pr-sum__empty">{c.lines.slice(0, 5).map((l) => l.name).join(', ')}{c.count > 5 ? ` и еще ${servicesWord(c.count - 5)}` : ''}</p>
-          : <ul class="pr-lines">
+          : <ul class="pr-lines" data-lenis-prevent>
               {c.lines.map((l) => <li class={l.pale ? 'pale' : ''}><span>{l.name}</span><b>{l.text}</b></li>)}
               {c.own && <li><span>Своя задача: {c.own.length > 60 ? c.own.slice(0, 60) + '…' : c.own}</span><b>после разбора</b></li>}
               {(c.sizedOn || c.disc > 0 || s.urgent) && <li class="sep" />}
@@ -299,7 +299,7 @@ export default function Pricing() {
           <p class="pr-sum__label">Разово</p><p class="pr-total">После разбора</p>
           <p class="pr-sum__note">{nb('Посмотрю задачу и пришлю оценку и срок в течение дня')}</p>
         </>) : (<>
-          <p class="pr-sum__label">Разово</p>
+          <p class="pr-sum__label">{inst ? `В месяц, ${c.term} ${c.term < 5 ? 'платежа' : 'платежей'}` : 'Разово'}</p>
           <p class="pr-total" aria-live="polite">{empty || c.empty ? '0 ₽' : inst ? `от ${c.monthly} тыс. ₽` : fmtRange(c.total)}</p>
           {inst && <div class="pr-terms">{c.terms.map((t) => <button type="button" class={t.n === c.term ? 'on' : ''} disabled={!t.ok} onClick={() => setS((p) => ({ ...p, term: t.n }))}>{t.n} мес.</button>)}</div>}
           {inst && c.terms.some((t) => !t.ok) && <p class="pr-sum__note">{c.terms.filter((t) => !t.ok).map((t) => t.n).join(' и ')} мес. недоступно: платеж был бы меньше 15 тыс. ₽</p>}
