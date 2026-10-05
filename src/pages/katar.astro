@@ -51,6 +51,10 @@ const ld = [
   </section>
 </Page>
 <style>
+  /* Бейджи и отметки страницы в цвете Катара */
+  :global(.sec .head>.badge){--badge-bg:var(--qatar)}
+  :global(.sec .head>.badge svg){color:#f3c9d4}
+  :global(.qa details[open] i){background:var(--qatar)}
   :global(.qt .qt__head){display:none}
   :global(.qt .qt__facts){margin-top:0}
   .kq__steps{margin-top:7.2rem;display:grid;grid-template-columns:repeat(5,1fr);gap:2rem}
