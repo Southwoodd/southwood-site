@@ -1,0 +1,44 @@
+---
+// Плашка акции над первым экраном главной. После даты окончания не собирается и сама убирается у тех, у кого страница в кеше.
+import Arrow from './Arrow.astro';
+import { site } from '../../i18n/ru';
+const promo = { until: '2026-11-01T00:00:00+03:00', label: 'До 31 октября', text: 'скидка 10% на новый проект', hint: 'Напишите мне промокод', code: 'ОКТЯБРЬ10' };
+const live = Date.now() < Date.parse(promo.until);
+const tg = `${site.telegram}?text=${encodeURIComponent(`Здравствуйте! Промокод ${promo.code}`)}`;
+---
+{live && (
+  <aside class="section pm" data-promo data-until={promo.until} aria-label="Акция">
+    <p class="pm__main"><span class="pm__tag">{promo.label}</span><b>{promo.text}</b></p>
+    <p class="pm__how"><span>{promo.hint}</span><button type="button" class="pm__code" data-copy={promo.code} aria-label={`Скопировать промокод ${promo.code}`}><span data-code>{promo.code}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.500" y="8.500" width="11" height="11" rx="2.500"/><path d="M15.500 5.500v-.5a2 2 0 0 0-2-2H6.500a2.500 2.500 0 0 0-2.500 2.500V13a2 2 0 0 0 2 2h.5"/></svg></button></p>
+    <a class="btn btn--white pm__btn" href={tg} target="_blank" rel="noopener">Написать в Telegram<Arrow /></a>
+  </aside>
+  <script is:inline>
+    (function () {
+      var el = document.querySelector('[data-promo]'); if (!el) return;
+      if (Date.now() >= Date.parse(el.dataset.until)) { el.remove(); return; }
+      var b = el.querySelector('[data-copy]'), t = el.querySelector('[data-code]'), code = b.dataset.copy;
+      b.addEventListener('click', function () {
+        (navigator.clipboard ? navigator.clipboard.writeText(code) : Promise.reject()).then(function () { t.textContent = 'Скопировано'; setTimeout(function () { t.textContent = code; }, 1600); }).catch(function () {});
+      });
+    })();
+  </script>
+)}
+<style>
+  .pm{background:var(--deep);color:#fff;min-height:8rem;padding:1.2rem 1.2rem 1.2rem 3.2rem;display:flex;align-items:center;gap:2.4rem}
+  .pm__main{display:flex;align-items:center;gap:1.6rem;font-size:max(2.2rem,16px);letter-spacing:-.02em}
+  .pm__tag{height:3.6rem;padding:0 1.4rem;border-radius:999px;background:var(--light);color:var(--ink);display:inline-flex;align-items:center;font-size:max(1.5rem,13px);font-weight:500;white-space:nowrap}
+  .pm__main b{font-weight:500}
+  .pm__how{margin-left:auto;display:flex;align-items:center;gap:1.2rem;font-size:max(1.6rem,14px);color:rgba(255,255,255,.8)}
+  .pm__code{height:4.4rem;padding:0 1.4rem 0 1.8rem;border-radius:999px;border:1px dashed rgba(255,255,255,.55);color:#fff;display:inline-flex;align-items:center;gap:1rem;font-size:max(1.7rem,14px);font-weight:500;letter-spacing:.04em;transition:background-color .2s var(--ease)}
+  .pm__code:hover{background:rgba(255,255,255,.12)}
+  .pm__code svg{width:1.8rem;height:1.8rem;opacity:.8}
+  .pm__btn{height:5.6rem;padding:0 2.4rem;font-size:max(1.6rem,14px);flex:none}
+  @media (max-width:1023px){
+    .pm{flex-wrap:wrap;gap:10px 12px;padding:14px;min-height:0}
+    .pm__main{flex-wrap:wrap;gap:8px;font-size:17px;width:100%}
+    .pm__tag{height:28px;padding:0 10px;font-size:13px}
+    .pm__how{margin-left:0;gap:8px;font-size:14px;flex-wrap:wrap}
+    .pm__code{height:38px;padding:0 10px 0 14px;font-size:14px}.pm__code svg{width:16px;height:16px}
+    .pm__btn{height:48px;width:100%;font-size:15px}
+  }
+</style>
