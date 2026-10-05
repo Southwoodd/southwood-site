@@ -25,13 +25,14 @@ const others = post ? list.filter((p) => p.slug !== post.slug).slice(0, 3) : [];
       <a class="ar__back" href={R_.blog} data-goal="blog_back"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M14 9H4M8.500 4.500 4 9l4.500 4.500" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Все статьи</a>
       <Crumbs items={crumbs} />
       {post.draft && <p class="ar__draft">Черновик. Страница закрыта от поиска и не показана в меню, пока текст не проверен.</p>}
-      <header><span>{post.tag} · {post.minutes} минут чтения · {fmt(post.date)}</span><h1>{nb(post.title)}</h1><p>{nb(post.description)}</p></header>
+      <header><span>{post.tag} · {post.minutes} минут чтения · {fmt(post.date)}<span data-stat-read hidden></span></span><h1>{nb(post.title)}</h1><p>{nb(post.description)}</p></header>
       <div class="ar__body"><post.Content /></div>
-      <div class="sh" data-share data-read-end data-title={post.title} data-url={`https://southwood.pw/blog/${post.slug}/`}>
+      <div class="sh" data-share data-read-end data-slug={post.slug} data-title={post.title} data-url={`https://southwood.pw/blog/${post.slug}/`}>
         <button class="btn btn--deep sh__main" type="button" data-share-native data-goal="share_native"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3.500M7.500 8 12 3.500 16.500 8M5 12.500v5A2.500 2.500 0 0 0 7.500 20h9a2.500 2.500 0 0 0 2.500-2.500v-5"/></svg>Поделиться</button>
         <a class="sh__to" href={`https://t.me/share/url?url=${encodeURIComponent(`https://southwood.pw/blog/${post.slug}/`)}&text=${encodeURIComponent(post.title)}`} target="_blank" rel="noopener" data-goal="share_telegram">Telegram</a>
         <a class="sh__to" href={`https://vk.com/share.php?url=${encodeURIComponent(`https://southwood.pw/blog/${post.slug}/`)}&title=${encodeURIComponent(post.title)}`} target="_blank" rel="noopener" data-goal="share_vk">VK</a>
         <button class="sh__to" type="button" data-share-copy data-goal="share_copy">Скопировать ссылку</button>
+        <span class="sh__n" data-stat-share hidden></span>
       </div>
       <footer><a class="btn btn--deep" href={R_.calc} data-go="calc" data-goal="blog_calc">Рассчитать стоимость<Arrow /></a><button class="btn btn--grey" type="button" data-open="write">Задать вопрос<Arrow /></button></footer>
     </article>
@@ -56,6 +57,19 @@ const others = post ? list.filter((p) => p.slug !== post.slug).slice(0, 3) : [];
     const copy = async () => { try { await navigator.clipboard.writeText(url); const t = copyBtn.textContent; copyBtn.textContent = 'Ссылка скопирована'; setTimeout(() => { copyBtn.textContent = t; }, 1800); } catch {} };
     sh.querySelector('[data-share-native]')!.addEventListener('click', async () => { if (navigator.share) { try { await navigator.share({ title, url }); } catch {} } else copy(); });
     copyBtn.addEventListener('click', copy);
+    // Счетчики: числа приходят с сервера только после порога, до этого на странице ничего не показываем
+    const API = 'https://api.southwood.pw/stat', slug = sh.dataset.slug!;
+    const nf = new Intl.NumberFormat('ru-RU');
+    const paint = (d: any) => {
+      const r = document.querySelector<HTMLElement>('[data-stat-read]')!, n = document.querySelector<HTMLElement>('[data-stat-share]')!;
+      if (d && d.read) { r.textContent = ` · прочитали ${nf.format(d.read)}`; r.hidden = false; }
+      if (d && d.share) { n.textContent = `Поделились ${nf.format(d.share)}`; n.hidden = false; }
+    };
+    const hit = (e: string) => fetch(API, { method: 'POST', body: JSON.stringify({ p: slug, e }), keepalive: true }).then((x) => x.json()).then(paint).catch(() => {});
+    fetch(`${API}?p=${slug}`).then((x) => (x.ok ? x.json() : null)).then(paint).catch(() => {});
+    addEventListener('article:read', () => hit('read'), { once: true });
+    let shared = false;
+    sh.addEventListener('click', (ev) => { if (!shared && (ev.target as HTMLElement).closest('[data-goal^="share_"]')) { shared = true; hit('share'); } });
   }
   const btns = document.querySelectorAll<HTMLButtonElement>('.bl__filter [data-tag]');
   btns.forEach((b) => b.addEventListener('click', () => {
@@ -88,6 +102,7 @@ const others = post ? list.filter((p) => p.slug !== post.slug).slice(0, 3) : [];
   .sh__main svg{width:2rem;height:2rem}
   .sh__to{height:5.6rem;padding:0 2.2rem;border-radius:999px;background:var(--card);display:inline-flex;align-items:center;font-size:max(1.6rem,14px);font-weight:500;transition:background-color .2s var(--ease)}
   .sh__to:hover{background:var(--mint)}
+  .sh__n{margin-left:auto;font-size:max(1.5rem,13px);color:var(--grey-text)}
   .ar footer{margin:2rem auto 0;max-width:100rem;display:flex;flex-wrap:wrap;gap:1.2rem}
   .ar footer .btn{height:6.4rem;padding:0 2.8rem;font-size:max(1.8rem,15px)}
   .bl__h{font-size:3.2rem;font-weight:500;letter-spacing:-.03em;margin-bottom:3.2rem}

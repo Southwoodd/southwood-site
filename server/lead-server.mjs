@@ -164,11 +164,48 @@ const hits = new Map();
 function limited(ip) { const now = Date.now(); const a = (hits.get(ip) || []).filter((t) => now - t < 600_000); a.push(now); hits.set(ip, a); return a.length > 6; }
 setInterval(() => hits.clear(), 3600_000);
 
+// Счетчики статей блога: сколько раз дочитали и сколько раз нажали «Поделиться».
+// Адреса посетителей на диск не пишутся, в памяти держатся сутки только чтобы один человек не считался дважды.
+// Наружу число отдается, когда оно перевалило за порог, до этого на сайте ничего не показывается.
+const STATS = path.join(DIR, 'stats.json');
+const SHOW_READS = Number(process.env.SHOW_READS || 300);
+const SHOW_SHARES = Number(process.env.SHOW_SHARES || 20);
+const STAT_KEYS = 300; // больше страниц не заводим, чтобы файл нельзя было раздуть запросами
+let stats = (() => { const v = read(STATS); return v && !Array.isArray(v) ? v : {}; })();
+let statsDirty = false;
+const saveStats = () => { if (!statsDirty) return; try { write(STATS, stats); statsDirty = false; } catch (e) { console.error('stats:', e.message); } };
+setInterval(saveStats, 30_000);
+process.on('SIGTERM', () => { saveStats(); process.exit(0); });
+const seen = new Map();
+setInterval(() => { const lim = Date.now() - 864e5; for (const [k, t] of seen) if (t < lim) seen.delete(k); }, 3600_000);
+const statOut = (p) => { const v = stats[p] || {}; const on = (v.read || 0) >= SHOW_READS; return { ok: true, read: on ? v.read : null, share: on && (v.share || 0) >= SHOW_SHARES ? v.share : null }; };
+const SLUG = /^[a-z0-9-]{1,80}$/;
+
 http.createServer((req, res) => {
   const origin = req.headers.origin || '';
   const cors = ORIGINS.includes(origin) ? { 'Access-Control-Allow-Origin': origin, Vary: 'Origin' } : {};
   const send = (code, obj) => { res.writeHead(code, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...cors }); res.end(JSON.stringify(obj)); };
   if (req.url === '/health') return send(200, { ok: true, queue: readQueue().length, mail: MAIL_ON ? read(MAILQ).length : -1 });
+  if (req.url === '/stat' || req.url.startsWith('/stat?')) {
+    if (req.method === 'OPTIONS') { res.writeHead(204, { ...cors, 'Access-Control-Allow-Methods': 'GET, POST', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Max-Age': '86400' }); return res.end(); }
+    if (req.method === 'GET') { const p = new URL(req.url, 'http://x').searchParams.get('p') || ''; return SLUG.test(p) ? send(200, statOut(p)) : send(400, { ok: false }); }
+    if (req.method !== 'POST') return send(405, { ok: false });
+    if (!ORIGINS.includes(origin)) return send(403, { ok: false });
+    const ip = String(req.headers['x-real-ip'] || req.socket.remoteAddress || '');
+    let raw = ''; let over = false;
+    req.on('data', (c) => { raw += c; if (raw.length > 300) { over = true; req.destroy(); } });
+    req.on('end', () => {
+      if (over) return;
+      let b; try { b = JSON.parse(raw); } catch { return send(400, { ok: false }); }
+      const p = String(b.p || ''); const e = b.e === 'share' ? 'share' : b.e === 'read' ? 'read' : '';
+      if (!SLUG.test(p) || !e) return send(400, { ok: false });
+      const key = `${ip}|${p}|${e}`;
+      const fresh = !seen.has(key) && seen.size < 50_000 && (stats[p] || Object.keys(stats).length < STAT_KEYS);
+      if (fresh) { seen.set(key, Date.now()); stats[p] = stats[p] || {}; stats[p][e] = (stats[p][e] || 0) + 1; statsDirty = true; }
+      send(200, statOut(p));
+    });
+    return;
+  }
   if (req.url !== '/lead') return send(404, { ok: false });
   if (req.method === 'OPTIONS') { res.writeHead(204, { ...cors, 'Access-Control-Allow-Methods': 'POST', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Max-Age': '86400' }); return res.end(); }
   if (req.method !== 'POST') return send(405, { ok: false });

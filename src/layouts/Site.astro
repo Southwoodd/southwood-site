@@ -106,7 +106,7 @@ const url = new URL(path, Astro.site).toString();
         const t0 = Date.now();
         const ro = new IntersectionObserver((en) => {
           if (!en[0].isIntersecting || Date.now() - t0 < 30000) return; // долистал до конца и провел на странице не меньше 30 секунд
-          (window as any).swGoal?.('article_read'); ro.disconnect();
+          (window as any).swGoal?.('article_read'); window.dispatchEvent(new CustomEvent('article:read')); ro.disconnect();
         });
         ro.observe(endMark);
       }
