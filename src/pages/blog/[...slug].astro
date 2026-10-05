@@ -26,6 +26,12 @@ const others = post ? list.filter((p) => p.slug !== post.slug).slice(0, 3) : [];
       {post.draft && <p class="ar__draft">Черновик. Страница закрыта от поиска и не показана в меню, пока текст не проверен.</p>}
       <header><span>{post.tag} · {post.minutes} минут чтения · {fmt(post.date)}</span><h1>{nb(post.title)}</h1><p>{nb(post.description)}</p></header>
       <div class="ar__body"><post.Content /></div>
+      <div class="sh" data-share data-title={post.title} data-url={`https://southwood.pw/blog/${post.slug}/`}>
+        <button class="btn btn--deep sh__main" type="button" data-share-native><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3.500M7.500 8 12 3.500 16.500 8M5 12.500v5A2.500 2.500 0 0 0 7.500 20h9a2.500 2.500 0 0 0 2.500-2.500v-5"/></svg>Поделиться</button>
+        <a class="sh__to" href={`https://t.me/share/url?url=${encodeURIComponent(`https://southwood.pw/blog/${post.slug}/`)}&text=${encodeURIComponent(post.title)}`} target="_blank" rel="noopener">Telegram</a>
+        <a class="sh__to" href={`https://vk.com/share.php?url=${encodeURIComponent(`https://southwood.pw/blog/${post.slug}/`)}&title=${encodeURIComponent(post.title)}`} target="_blank" rel="noopener">VK</a>
+        <button class="sh__to" type="button" data-share-copy>Скопировать ссылку</button>
+      </div>
       <footer><a class="btn btn--deep" href={R_.calc} data-go="calc">Рассчитать стоимость<Arrow /></a><button class="btn btn--grey" type="button" data-open="write">Задать вопрос<Arrow /></button></footer>
     </article>
     {others.length > 0 && <section class="section sec bl"><h2 class="bl__h">Читать дальше</h2><ul class="bl__grid">{others.map((p) => <li><a href={`/blog/${p.slug}/`}><i class={`bl__cov bl__cov--${p.theme || 'mint'}`}><em>{p.tag}</em><b>{p.tag}</b></i><h3>{nb(p.title)}</h3><span>{p.minutes} минут чтения<Arrow /></span></a></li>)}</ul></section>}
@@ -41,6 +47,15 @@ const others = post ? list.filter((p) => p.slug !== post.slug).slice(0, 3) : [];
   </Page>
 )}
 <script>
+  // Поделиться статьей: системное окно на телефоне, на десктопе копирование ссылки
+  const sh = document.querySelector<HTMLElement>('[data-share]');
+  if (sh) {
+    const url = sh.dataset.url!, title = sh.dataset.title!;
+    const copyBtn = sh.querySelector<HTMLButtonElement>('[data-share-copy]')!;
+    const copy = async () => { try { await navigator.clipboard.writeText(url); const t = copyBtn.textContent; copyBtn.textContent = 'Ссылка скопирована'; setTimeout(() => { copyBtn.textContent = t; }, 1800); } catch {} };
+    sh.querySelector('[data-share-native]')!.addEventListener('click', async () => { if (navigator.share) { try { await navigator.share({ title, url }); } catch {} } else copy(); });
+    copyBtn.addEventListener('click', copy);
+  }
   const btns = document.querySelectorAll<HTMLButtonElement>('.bl__filter [data-tag]');
   btns.forEach((b) => b.addEventListener('click', () => {
     btns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
@@ -63,7 +78,12 @@ const others = post ? list.filter((p) => p.slug !== post.slug).slice(0, 3) : [];
   .ar__body table{width:100%;border-collapse:collapse;font-size:max(1.7rem,14px)}
   .ar__body th,.ar__body td{text-align:left;padding:1.4rem 1.6rem 1.4rem 0;border-bottom:1px solid var(--line);vertical-align:top}
   .ar__body th{font-weight:500;color:var(--grey-text);font-size:max(1.5rem,13px)}
-  .ar footer{margin:6rem auto 0;max-width:100rem;display:flex;flex-wrap:wrap;gap:1.2rem}
+  .sh{margin:5.6rem auto 0;max-width:100rem;padding-top:3.2rem;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;align-items:center;gap:1rem}
+  .sh__main{height:5.6rem;padding:0 2.4rem;font-size:max(1.7rem,15px);gap:1rem}
+  .sh__main svg{width:2rem;height:2rem}
+  .sh__to{height:5.6rem;padding:0 2.2rem;border-radius:999px;background:var(--card);display:inline-flex;align-items:center;font-size:max(1.6rem,14px);font-weight:500;transition:background-color .2s var(--ease)}
+  .sh__to:hover{background:var(--mint)}
+  .ar footer{margin:2rem auto 0;max-width:100rem;display:flex;flex-wrap:wrap;gap:1.2rem}
   .ar footer .btn{height:6.4rem;padding:0 2.8rem;font-size:max(1.8rem,15px)}
   .bl__h{font-size:3.2rem;font-weight:500;letter-spacing:-.03em;margin-bottom:3.2rem}
   .bl__filter{display:flex;flex-wrap:wrap;gap:.8rem;margin:2.4rem 0 3.2rem}
@@ -85,7 +105,7 @@ const others = post ? list.filter((p) => p.slug !== post.slug).slice(0, 3) : [];
   @media (max-width:1023px){
     .ar{padding:22px 20px 32px}.ar header{margin-top:24px}.ar h1{font-size:32px;line-height:36px;margin-top:10px}.ar header p{margin-top:14px}
     .ar__body{margin-top:24px}.ar__body h2{margin-top:32px;font-size:24px}.ar__body h3{margin-top:24px;font-size:19px}.ar__body p,.ar__body ul,.ar__body ol,.ar__body table{margin-top:14px}
-    .ar__body table{display:block;overflow-x:auto}.ar footer{margin-top:28px}.ar footer .btn{height:54px;flex:1 1 auto}
+    .ar__body table{display:block;overflow-x:auto}.ar footer{margin-top:10px}.sh{margin-top:28px;padding-top:20px;gap:8px}.sh__main{height:52px;width:100%;font-size:15px}.sh__to{height:46px;padding:0 16px;font-size:14px;flex:1 1 auto;justify-content:center}.ar footer .btn{height:54px;flex:1 1 auto}
     .bl__grid{grid-template-columns:1fr;gap:10px}.bl__cov{height:140px}.bl__cov b{font-size:64px}.bl__grid h3{font-size:19px;margin:16px 8px 0}.bl__grid span{margin:auto 8px 0;padding-top:20px}.bl__grid a{border-radius:20px;padding:8px 8px 18px}
     .bl__filter{margin:14px 0 16px;gap:6px}.bl__filter button{height:36px;padding:0 13px}.bl__h{font-size:22px;margin-bottom:14px}
   }
