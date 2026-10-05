@@ -60,7 +60,7 @@ export default function QuizForm({ build, disabled, onSent }: { build: () => Qui
         <label class="lf__field"><span>Комментарий <em>{f.taskOpt}</em></span><textarea name="task" placeholder={f.taskPh} maxLength={1500} rows={2} value={v.task} onInput={set('task')} /></label>
         <input class="lf__hp" type="text" name="website" tabIndex={-1} autocomplete="off" aria-hidden="true" value={v.website} onInput={set('website')} />
         <footer>
-          <label class={'lf__consent' + (err('consent') ? ' is-bad' : '')}><input type="checkbox" checked={v.consent} onChange={set('consent')} /><i></i><span>{f.consentA}<a href="/consent" target="_blank">{f.consentLink}</a>{f.consentB}<a href="/privacy" target="_blank">{f.policyLink}</a></span></label>
+          <label class={'lf__consent' + (err('consent') ? ' is-bad' : '')}><input type="checkbox" checked={v.consent} onChange={set('consent')} /><i></i><span>{f.consentA}<a href="/consent/" target="_blank">{f.consentLink}</a>{f.consentB}<a href="/privacy/" target="_blank">{f.policyLink}</a></span></label>
           {err('consent') && <p class="lf__err">{f.errors.consent}</p>}
           {fail && <p class="lf__err lf__failmsg" role="alert">{f.failText}</p>}
           <button class={'btn btn--deep lf__submit' + (busy ? ' is-busy' : '')} type="submit" disabled={busy || disabled}>{busy ? f.sending : fail ? f.failRetry : f.submit}</button>

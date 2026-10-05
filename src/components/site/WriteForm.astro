@@ -19,7 +19,7 @@ import Arrow from './Arrow.astro';
     </div>
     <input class="lf__hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
     <footer>
-      <label class="lf__consent" data-field="consent"><input type="checkbox" name="consent" /><i></i><span>{f.consentA}<a href="/consent" target="_blank">{f.consentLink}</a>{f.consentB}<a href="/privacy" target="_blank">{f.policyLink}</a></span></label>
+      <label class="lf__consent" data-field="consent"><input type="checkbox" name="consent" /><i></i><span>{f.consentA}<a href="/consent/" target="_blank">{f.consentLink}</a>{f.consentB}<a href="/privacy/" target="_blank">{f.policyLink}</a></span></label>
       <p class="lf__err" data-err="consent" hidden>{f.errors.consent}</p>
       <p class="lf__err lf__failmsg" role="alert" hidden>{w.fail}</p>
       <button class="btn btn--deep lf__submit" type="submit" data-label={w.submit} data-sending={w.sending} data-retry={w.retry}>{w.submit}</button>

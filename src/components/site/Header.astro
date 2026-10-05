@@ -15,10 +15,6 @@ const cur = (href: string) => (!href.includes('#') && path.startsWith(href) ? 'p
     <Logo size={32} /><span>{site.name}</span>
   </a>
   <div class="hdr__right">
-    <div class="lang" role="group" aria-label="Язык" style="display:none" data-en-pending>
-      <span class="lang__on" aria-current="true">RU</span>
-      <a href="/en/" hreflang="en">EN</a>
-    </div>
     <button class="btn btn--deep hdr__cta" type="button" data-open="write"><span class="hdr__cta-full">{header.cta}</span><span class="hdr__cta-short">{header.ctaShort}</span><Arrow /></button>
     <button class="hdr__burger" type="button" aria-label="Меню" aria-expanded="false" aria-controls="menu" data-menu-open><i></i><i></i></button>
   </div>
