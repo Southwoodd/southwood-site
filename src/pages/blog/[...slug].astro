@@ -22,6 +22,7 @@ const others = post ? list.filter((p) => p.slug !== post.slug).slice(0, 3) : [];
 {post ? (
   <Page title={`${post.title} | Сергей Воробьев`} description={post.description} path={`/blog/${post.slug}/`} label="Блог" image={`/og/blog-${post.slug}.jpg`} crumbs={crumbs} ld={ld} noindex={!!post.draft}>
     <article class="section ar">
+      <a class="ar__back" href={R_.blog}><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M14 9H4M8.500 4.500 4 9l4.500 4.500" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Все статьи</a>
       <Crumbs items={crumbs} />
       {post.draft && <p class="ar__draft">Черновик. Страница закрыта от поиска и не показана в меню, пока текст не проверен.</p>}
       <header><span>{post.tag} · {post.minutes} минут чтения · {fmt(post.date)}</span><h1>{nb(post.title)}</h1><p>{nb(post.description)}</p></header>
@@ -64,6 +65,10 @@ const others = post ? list.filter((p) => p.slug !== post.slug).slice(0, 3) : [];
 </script>
 <style is:global>
   .ar{padding:4rem 4rem 8rem}
+  .ar__back{position:sticky;top:2rem;z-index:5;width:fit-content;height:4.8rem;margin-bottom:2.4rem;padding:0 2rem 0 1.6rem;border-radius:999px;background:var(--ink);color:#fff;display:flex;align-items:center;gap:1rem;font-size:max(1.6rem,14px);font-weight:500;box-shadow:0 .8rem 2.4rem rgba(10,20,15,.18);transition:background-color .2s var(--ease)}
+  .ar__back:hover{background:var(--deep)}
+  .ar__back svg{width:1.8rem;height:1.8rem;transition:transform .25s var(--ease)}
+  .ar__back:hover svg{transform:translateX(-.3rem)}
   .ar__draft{margin:2.4rem 0 0;width:fit-content;padding:1.2rem 1.8rem;border-radius:1.4rem;background:#fff4d6;color:#6b4e00;font-size:max(1.5rem,13px)}
   .ar header{margin:7rem auto 0;max-width:100rem}
   .ar header span{font-size:max(1.5rem,13px);color:var(--grey-text)}
@@ -106,7 +111,7 @@ const others = post ? list.filter((p) => p.slug !== post.slug).slice(0, 3) : [];
   /* телефон: вместо rem берем нижнюю границу в px */
   @media (max-width:1023px){.ar__draft{font-size:13px}.ar header span{font-size:13px}.ar header p{font-size:17px}.ar__body{font-size:16px}.ar__body table{font-size:14px}.ar__body th{font-size:13px}.ar footer .btn{font-size:15px}.bl__filter button{font-size:13px}.bl__cov em{font-size:12px}.bl__grid span{font-size:12px}}
   @media (max-width:1023px){
-    .ar{padding:22px 20px 32px}.ar header{margin-top:24px}.ar h1{font-size:32px;line-height:36px;margin-top:10px}.ar header p{margin-top:14px}
+    .ar{padding:16px 20px 32px}.ar__back{top:76px;height:40px;margin-bottom:14px;padding:0 16px 0 12px;font-size:14px;gap:8px}.ar__back svg{width:16px;height:16px}.ar header{margin-top:24px}.ar h1{font-size:32px;line-height:36px;margin-top:10px}.ar header p{margin-top:14px}
     .ar__body{margin-top:24px}.ar__body h2{margin-top:32px;font-size:24px}.ar__body h3{margin-top:24px;font-size:19px}.ar__body p,.ar__body ul,.ar__body ol,.ar__body table{margin-top:14px}
     .ar__body table{display:block;overflow-x:auto}.ar footer{margin-top:10px}.sh{margin-top:28px;padding-top:20px;gap:8px}.sh__main{height:52px;width:100%;font-size:15px}.sh__to{height:46px;padding:0 16px;font-size:14px;flex:1 1 auto;justify-content:center}.ar footer .btn{height:54px;flex:1 1 auto}
     .bl__grid{grid-template-columns:1fr;gap:10px}.bl__cov{height:150px;padding:0 16px 16px}.bl__cov b{font-size:36px}.bl__cov b.long{font-size:26px}.bl__cov small{margin-top:6px;font-size:13px}.bl__grid h3{font-size:19px;margin:16px 8px 0}.bl__grid span{margin:auto 8px 0;padding-top:20px}.bl__grid a{border-radius:20px;padding:8px 8px 18px}
