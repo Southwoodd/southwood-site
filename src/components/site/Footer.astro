@@ -2,8 +2,10 @@
 import Logo from '../Logo.astro';
 import Arrow from './Arrow.astro';
 import { footer, site, nb } from '../../i18n/ru';
-const base = Astro.url.pathname === '/' ? '' : '/';
-const h = (x: string) => (x.startsWith('#') ? base + x : x);
+import { calcHref, SERVICES, serviceHref } from '../../i18n/routes';
+import { BLOG_LIVE } from '../../i18n/blog';
+const h = (x: string) => x;
+const links = [...footer.sectionLinks, ...(BLOG_LIVE ? [{ label: 'Блог', href: '/blog/' }] : [])];
 ---
 <footer class="section ft">
   <div class="ft__cols">
@@ -12,12 +14,16 @@ const h = (x: string) => (x.startsWith('#') ? base + x : x);
       <p>{nb(footer.desc)}</p>
       <div class="ft__actions">
         <button class="btn btn--white" type="button" data-open="write">{footer.write}<Arrow /></button>
-        <a class="btn ft__ghost" href={h('#pricing')}>{footer.quote}<Arrow /></a>
+        <a class="btn ft__ghost" href={calcHref(Astro.url.pathname)}>{footer.quote}<Arrow /></a>
       </div>
     </div>
     <nav class="ft__col" aria-label={footer.sections}>
       <h3>{footer.sections}</h3>
-      <ul>{footer.sectionLinks.map((l) => <li><a href={h(l.href)}>{l.label}</a></li>)}</ul>
+      <ul>{links.map((l) => <li><a href={h(l.href)}>{l.label}</a></li>)}</ul>
+    </nav>
+    <nav class="ft__col ft__col--srv" aria-label="Услуги">
+      <h3>Услуги</h3>
+      <ul>{SERVICES.map((s) => <li><a href={serviceHref(s.slug)}>{s.menu}</a></li>)}</ul>
     </nav>
     <div class="ft__col">
       <h3>{footer.contacts}</h3>
@@ -37,14 +43,14 @@ const h = (x: string) => (x.startsWith('#') ? base + x : x);
 <style>
   .ft{background:var(--deep);color:#fff;padding:4.8rem 4rem 3.2rem;--logo-dot:var(--light)}
   .ft__cols{display:flex;gap:4rem}
-  .ft__brand{width:52rem;margin-right:auto;display:flex;flex-direction:column;gap:2rem}
+  .ft__brand{width:44rem;margin-right:auto;display:flex;flex-direction:column;gap:2rem}
   .ft__logo{display:flex;align-items:center;gap:1.2rem;font-size:2.6rem;font-weight:500}
   .ft__logo :global(svg){width:4rem;height:4rem}
   .ft__brand p{color:rgba(255,255,255,.65);font-size:max(1.7rem,14px);line-height:1.47}
   .ft__actions{display:flex;gap:1rem}
   .ft__actions .btn{height:5rem;padding:0 2.4rem;font-size:max(1.6rem,14px)}
   .ft__ghost{background:rgba(255,255,255,.14);color:#fff}.ft__ghost:hover{background:rgba(255,255,255,.24)}
-  .ft__col{width:22rem}.ft__col--wide{width:26rem}
+  .ft__col{width:20rem}.ft__col--srv{width:23rem}.ft__col--wide{width:26rem}
   .ft__col h3{font-size:max(1.4rem,12px);font-weight:500;color:rgba(255,255,255,.65);margin-bottom:1.4rem}
   .ft__col ul{display:flex;flex-direction:column;gap:1.4rem;font-size:max(1.7rem,14px);font-weight:500}
   .ft__col a{transition:opacity .2s}.ft__col a:hover{opacity:.7}

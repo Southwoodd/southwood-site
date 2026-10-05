@@ -27,5 +27,8 @@ jobs:
       - name: Сообщить поисковикам об обновлении (IndexNow)
         continue-on-error: true
         run: |
-          curl -sS -m 20 -X POST "https://api.indexnow.org/indexnow" -H "Content-Type: application/json; charset=utf-8" -d '{"host":"southwood.pw","key":"0a4537940f3687fcf00debdcfbe35193","keyLocation":"https://southwood.pw/0a4537940f3687fcf00debdcfbe35193.txt","urlList":["https://southwood.pw/","https://southwood.pw/llms.txt"]}' -w " %{http_code}\n" || true
-          curl -sS -m 20 "https://yandex.com/indexnow?url=https://southwood.pw/&key=0a4537940f3687fcf00debdcfbe35193" -w " %{http_code}\n" || true
+          # Все адреса из карты сайта одним запросом: новые страницы попадают в Яндекс и Bing без ручного добавления
+          URLS=$(grep -o '<loc>[^<]*</loc>' dist/sitemap-0.xml | sed -e 's/<[^>]*>//g' -e 's/.*/"&"/' | paste -sd, -)
+          BODY='{"host":"southwood.pw","key":"0a4537940f3687fcf00debdcfbe35193","keyLocation":"https://southwood.pw/0a4537940f3687fcf00debdcfbe35193.txt","urlList":['"$URLS"']}'
+          curl -sS -m 20 -X POST "https://api.indexnow.org/indexnow" -H "Content-Type: application/json; charset=utf-8" -d "$BODY" -w " %{http_code}\n" || true
+          curl -sS -m 20 -X POST "https://yandex.com/indexnow" -H "Content-Type: application/json; charset=utf-8" -d "$BODY" -w " %{http_code}\n" || true

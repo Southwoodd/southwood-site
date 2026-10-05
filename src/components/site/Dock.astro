@@ -1,0 +1,178 @@
+---
+// Нижняя плашка на десктопе: свернута показывает логотип, имя, страницу, меню и кнопку написать.
+// По клику раскрывается из себя в полное меню. Цвет меняется под фон, на котором стоит.
+import Logo from '../Logo.astro';
+import Arrow from './Arrow.astro';
+import Ui from '../ui/Ui.astro';
+import { site, header, nb } from '../../i18n/ru';
+import { SERVICES, serviceHref, R_, CASES_N } from '../../i18n/routes';
+import { BLOG_LIVE } from '../../i18n/blog';
+interface Props { label: string }
+const { label } = Astro.props;
+const path = Astro.url.pathname;
+const tiles = [
+  { href: R_.cases, title: 'Кейсы', sub: `${CASES_N} работ с цифрами и ссылками`, icon: 'full' },
+  { href: R_.prices, title: 'Цены', sub: 'Наборы и расчет за 2 минуты', icon: 'c_dash', accent: true },
+  BLOG_LIVE ? { href: R_.blog, title: 'Блог', sub: 'Разборы, инструкции, цены', icon: 'c_docs' } : { href: R_.faq, title: 'Вопросы', sub: 'Сроки, гарантии, доступы', icon: 'c_docs' },
+  { href: R_.about, title: 'Обо мне', sub: 'Кто будет делать вашу задачу', icon: 'p_brief' },
+];
+const on = (href: string) => (path === href || (href !== '/' && path.startsWith(href.split('#')[0]) && !href.includes('#')) ? 'page' : undefined);
+---
+<div class="dock-scrim" data-dock-scrim hidden></div>
+<div class="dock" data-dock>
+  <div class="dock__body" id="dock-menu" data-dock-body inert>
+    <nav class="dock__in" aria-label="Меню сайта" data-lenis-prevent>
+      <div class="dk-srv">
+        <div class="dk-srv__top"><b>Услуги</b><a href={R_.services} aria-current={on(R_.services) && path === R_.services ? 'page' : undefined}>Все услуги<Arrow /></a></div>
+        <ul>{SERVICES.map((s) => <li><a href={serviceHref(s.slug)} aria-current={on(serviceHref(s.slug))}>{s.menu}<Arrow /></a></li>)}</ul>
+      </div>
+      <div class="dk-tiles">
+        {tiles.map((t) => (
+          <a class:list={['dk-tile', { 'dk-tile--accent': t.accent }]} href={t.href} aria-current={on(t.href)}>
+            <span class="dk-tile__top"><i><Ui n={t.icon as any} /></i><Arrow /></span>
+            <span class="dk-tile__text"><b>{t.title}</b><small>{nb(t.sub)}</small></span>
+          </a>
+        ))}
+      </div>
+      <a class="dk-row dk-row--qatar" href={R_.qatar} aria-current={on(R_.qatar)}><span><b>{header.qatar}</b><small>Отдельное направление с Alfa Elite</small></span><Arrow /></a>
+      <a class="dk-row" href={R_.contacts} aria-current={on(R_.contacts)}><span><b>Контакты</b><small>Telegram, MAX, почта</small></span><Arrow /></a>
+      <div class="dk-ask">
+        <div><b>Есть задача?</b><small>Отвечаю сам, в течение часа, без менеджеров</small></div>
+        <p><a href={site.telegram} target="_blank" rel="noopener">Telegram</a><a href={site.max} target="_blank" rel="noopener">MAX</a><a href={`mailto:${site.email}`}>Почта</a></p>
+      </div>
+    </nav>
+  </div>
+  <div class="dock__bar">
+    <a class="dock__logo" href="/" aria-label={`${site.name}, на главную`}><Logo size={32} /></a>
+    <a class="dock__name" href="/"><b>{site.name}</b><i></i><span>{label}</span></a>
+    <button class="dock__menu" type="button" aria-expanded="false" aria-controls="dock-menu" data-dock-toggle>
+      <span class="dock__burger"><i></i><i></i></span><span data-dock-label>Меню</span>
+    </button>
+    <button class="dock__write" type="button" data-open="write">{header.cta}<Arrow /></button>
+  </div>
+</div>
+<script>
+  const dock = document.querySelector<HTMLElement>('[data-dock]');
+  if (dock) {
+    const body = dock.querySelector<HTMLElement>('[data-dock-body]')!;
+    const btn = dock.querySelector<HTMLButtonElement>('[data-dock-toggle]')!;
+    const lbl = dock.querySelector<HTMLElement>('[data-dock-label]')!;
+    const scrim = document.querySelector<HTMLElement>('[data-dock-scrim]')!;
+    const bar = dock.querySelector<HTMLElement>('.dock__bar')!;
+    const mq = matchMedia('(min-width:1024px)');
+    let open = false;
+    // Ширина свернутой плашки зависит от названия страницы, поэтому меряем ее и анимируем до полной
+    const fit = () => {
+      if (!mq.matches) return;
+      dock.style.transition = 'none'; dock.classList.remove('is-ready');
+      const w = dock.getBoundingClientRect().width;
+      dock.style.setProperty('--dock-w', `${Math.ceil(w) + 1}px`);
+      dock.classList.add('is-ready'); void dock.offsetWidth; dock.style.transition = '';
+    };
+    const set = (v: boolean) => {
+      open = v; dock.classList.toggle('is-open', v); scrim.hidden = !v; body.inert = !v;
+      btn.setAttribute('aria-expanded', String(v)); lbl.textContent = v ? 'Закрыть' : 'Меню';
+      (window as any).__lenis?.[v ? 'stop' : 'start']?.();
+      if (!v) tone();
+    };
+    btn.addEventListener('click', () => set(!open));
+    scrim.addEventListener('click', () => set(false));
+    addEventListener('keydown', (e) => { if (e.key === 'Escape' && open) { set(false); btn.focus(); } });
+    dock.querySelector('.dock__write')!.addEventListener('click', () => open && set(false));
+    mq.addEventListener('change', () => { set(false); fit(); });
+
+    // Цвет плашки: темная на светлом фоне, светлая на зеленом, черном и бордовом
+    const lum = (c: string) => { const m = c.match(/[\d.]+/g); if (!m || (m[3] !== undefined && +m[3] < 0.5)) return -1; const [r, g, b] = m.map(Number); return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255; };
+    let tick = false;
+    const tone = () => {
+      tick = false; if (open || !mq.matches) return;
+      const r = dock.getBoundingClientRect(); let dark = 0, n = 0;
+      for (const x of [r.left + 24, r.left + r.width / 2, r.right - 24]) {
+        const el = document.elementsFromPoint(x, r.top + r.height / 2).find((e) => !dock.contains(e) && !e.closest('.ck,dialog'));
+        let p: Element | null = el || null, l = -1;
+        while (p && l < 0) { l = lum(getComputedStyle(p).backgroundColor); p = p.parentElement; }
+        if (l < 0) l = 1; n++; if (l < 0.42) dark++;
+      }
+      dock.classList.toggle('dock--light', dark * 2 > n);
+    };
+    const ask = () => { if (!tick) { tick = true; requestAnimationFrame(tone); } };
+    addEventListener('scroll', ask, { passive: true }); addEventListener('resize', () => { fit(); ask(); });
+    fit(); tone(); document.fonts?.ready.then(() => { fit(); tone(); });
+  }
+</script>
+<style>
+  .dock,.dock-scrim{display:none}
+  @media (min-width:1024px){
+    .dock-scrim{display:block;position:fixed;inset:0;z-index:59;background:rgba(10,14,12,.42);backdrop-filter:blur(.4rem);animation:dkFade .3s var(--ease)}
+    .dock-scrim[hidden]{display:none}
+    @keyframes dkFade{from{opacity:0}to{opacity:1}}
+    .dock{--dk:#0a0a0a;--seg:#1c1c1c;--txt:#fff;--sub:rgba(255,255,255,.5);--cta:var(--light);--cta-txt:var(--ink);--logo-bg:#fff;
+      display:block;position:fixed;left:50%;bottom:2.4rem;z-index:60;transform:translateX(-50%);width:max-content;max-width:calc(100vw - 4rem);
+      background:var(--dk);border-radius:2.6rem;padding:.8rem;box-shadow:0 1.6rem 4.8rem rgba(10,20,15,.28);
+      transition:width .5s var(--ease),background-color .35s var(--ease),box-shadow .35s var(--ease)}
+    .dock.is-ready{width:var(--dock-w)}
+    .dock.is-open{width:min(118rem,calc(100vw - 4rem))}
+    .dock--light:not(.is-open){--dk:#fff;--seg:#f3f3f3;--txt:var(--ink);--sub:var(--grey-text);--cta:var(--deep);--cta-txt:#fff;--logo-bg:var(--mint);box-shadow:0 1.6rem 4.8rem rgba(0,0,0,.3)}
+    .dock__bar{display:flex;gap:.8rem;height:6rem}
+    .dock__bar>*{border-radius:1.8rem;background:var(--seg);color:var(--txt);display:flex;align-items:center;white-space:nowrap;font-size:max(1.6rem,13px);font-weight:500;transition:background-color .35s var(--ease),color .35s var(--ease)}
+    .dock__bar .dock__logo{width:6rem;flex:none;justify-content:center;background:var(--logo-bg);color:var(--deep);--logo-dot:var(--accent)}
+    .dock__logo :global(svg){width:3.2rem;height:3.2rem}
+    .dock__name{flex:1 1 auto;min-width:0;padding:0 2.2rem;gap:1.1rem;overflow:hidden}
+    .dock__name b{font-weight:500}
+    .dock__name i{width:.4rem;height:.4rem;border-radius:50%;background:var(--sub);flex:none}
+    .dock__name span{color:var(--sub);font-weight:400;font-size:max(1.4rem,12px);overflow:hidden;text-overflow:ellipsis}
+    .dock__menu{flex:none;padding:0 2.2rem;gap:1.2rem}
+    .dock__menu:hover{background:color-mix(in srgb,var(--seg) 82%,var(--txt))}
+    .dock__burger{display:grid;width:1.8rem;height:1.8rem;place-items:center}
+    .dock__burger i{grid-area:1/1;width:1.8rem;height:.2rem;border-radius:1px;background:currentColor;transition:transform .35s var(--ease)}
+    .dock__burger i:first-child{transform:translateY(-.35rem)}.dock__burger i:last-child{transform:translateY(.35rem)}
+    .is-open .dock__burger i:first-child{transform:rotate(45deg)}.is-open .dock__burger i:last-child{transform:rotate(-45deg)}
+    .is-open .dock__menu{background:#fff;color:var(--ink)}
+    .dock__bar .dock__write{flex:none;padding:0 2.6rem;gap:1.4rem;background:var(--cta);color:var(--cta-txt)}
+    .dock__write:hover{filter:brightness(1.06)}
+    .dock__write :global(.arrow){width:1.8rem;height:1.8rem;transition:transform .25s var(--ease)}
+    .dock__write:hover :global(.arrow){transform:translate(.2rem,-.2rem)}
+
+    .dock__body{position:relative;height:0;overflow:hidden;transition:height .5s var(--ease)}
+    .is-open .dock__body{height:min(62.4rem,calc(100vh - 12rem))}
+    .dock__in{position:absolute;top:0;bottom:.8rem;left:50%;width:min(116.4rem,calc(100vw - 5.6rem));transform:translateX(-50%);overflow-y:auto;scrollbar-width:none;
+      display:grid;grid-template-columns:47rem 1fr 1fr 1fr 1fr;grid-template-rows:minmax(34rem,1fr) 8.4rem 9.6rem;gap:.8rem;opacity:0;transition:opacity .25s var(--ease)}
+    .is-open .dock__in{opacity:1;transition-delay:.18s}
+    .dock__in a{transition:background-color .2s var(--ease),color .2s var(--ease)}
+    .dock__in :global(.arrow){width:1.6rem;height:1.6rem;flex:none;transition:transform .25s var(--ease)}
+    .dock__in a:hover :global(.arrow){transform:translate(.2rem,-.2rem)}
+    .dk-srv{grid-row:1;grid-column:1;background:#fff;color:var(--ink);border-radius:2rem;padding:2.4rem 2.4rem 1.2rem;display:flex;flex-direction:column}
+    .dk-srv__top{display:flex;justify-content:space-between;align-items:center;padding-bottom:2.4rem}
+    .dk-srv__top b{font-size:2.8rem;line-height:1;font-weight:500;letter-spacing:-.03em}
+    .dk-srv__top a{display:flex;align-items:center;gap:.8rem;font-size:max(1.5rem,12px);font-weight:500;color:var(--deep)}
+    .dk-srv ul{flex:1;display:flex;flex-direction:column}
+    .dk-srv li{flex:1;border-top:1px solid #e6e6e6;display:flex}
+    .dk-srv li a{flex:1;display:flex;align-items:center;justify-content:space-between;gap:1.2rem;font-size:max(1.8rem,14px);font-weight:500;min-height:4rem}
+    .dk-srv li a:hover,.dk-srv a[aria-current]{color:var(--deep)}
+    .dk-tiles{grid-row:1;grid-column:2/-1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:.8rem}
+    .dk-tile{background:#fff;color:var(--ink);border-radius:2rem;padding:2rem;display:flex;flex-direction:column;justify-content:space-between}
+    .dk-tile:hover{background:var(--mint)}
+    .dk-tile__top{display:flex;justify-content:space-between;align-items:flex-start}
+    .dk-tile__top i{width:4rem;height:4rem;border-radius:50%;background:var(--mint);color:var(--deep);display:grid;place-items:center}
+    .dk-tile__top i :global(svg){width:2rem;height:2rem}
+    .dk-tile__text{display:grid;gap:.4rem}
+    .dk-tile b{font-size:3rem;line-height:1;font-weight:500;letter-spacing:-.03em}
+    .dk-tile small{font-size:max(1.4rem,12px);color:var(--muted)}
+    .dk-tile--accent{background:var(--deep);color:#fff}.dk-tile--accent:hover{background:#35594a}
+    .dk-tile--accent small{color:rgba(255,255,255,.75)}.dk-tile--accent i{background:rgba(255,255,255,.16);color:#fff}
+    .dk-tile[aria-current]:not(.dk-tile--accent){box-shadow:inset 0 0 0 .2rem var(--deep)}
+    .dk-row{grid-row:2;grid-column:4/-1;background:#fff;color:var(--ink);border-radius:2rem;padding:0 2.4rem;display:flex;align-items:center;justify-content:space-between;gap:1.6rem}
+    .dk-row:hover{background:var(--mint)}
+    .dk-row span{display:grid;gap:.3rem}
+    .dk-row b{font-size:max(1.9rem,14px);font-weight:500}.dk-row small{font-size:max(1.4rem,12px);color:var(--muted)}
+    .dk-row--qatar{grid-column:1/4;background:var(--qatar);color:#fff}.dk-row--qatar:hover{background:#9d1a41}
+    .dk-row--qatar small{color:rgba(255,255,255,.7)}
+    .dk-ask{grid-row:3;grid-column:1/-1;background:var(--seg);color:#fff;border-radius:2rem;padding:0 2rem 0 2.8rem;display:flex;align-items:center;justify-content:space-between;gap:2rem}
+    .dk-ask div{display:grid;gap:.4rem}
+    .dk-ask b{font-size:2.2rem;font-weight:500;letter-spacing:-.02em}.dk-ask small{font-size:max(1.4rem,12px);color:rgba(255,255,255,.6)}
+    .dk-ask p{display:flex;gap:.8rem}
+    .dk-ask a{height:5.6rem;padding:0 2.8rem;border-radius:999px;background:rgba(255,255,255,.12);display:flex;align-items:center;font-size:max(1.6rem,13px);font-weight:500}
+    .dk-ask a:hover{background:rgba(255,255,255,.22)}
+  }
+  @media (prefers-reduced-motion:reduce){.dock,.dock__body,.dock__in{transition:none}}
+</style>

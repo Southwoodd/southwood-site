@@ -78,6 +78,15 @@ const url = new URL(path, Astro.site).toString();
       }, { threshold: 0.6 });
       document.querySelectorAll('[data-count]').forEach((el) => co.observe(el));
 
+      // Кнопки с набором или режимом калькулятора: передаем команду, в том числе через переход на страницу цен
+      document.addEventListener('click', (e) => {
+        const el = (e.target as HTMLElement).closest<HTMLElement>('a[data-pack], a[data-go], button[data-go]');
+        if (!el) return;
+        const detail = { pack: el.dataset.pack, go: el.dataset.go };
+        try { sessionStorage.setItem('pricingGo', JSON.stringify(detail)); } catch {}
+        (window as any).__pricingGo = detail; // остров заберет команду, если еще не загрузился
+        window.dispatchEvent(new CustomEvent('pricing:go', { detail }));
+      });
       // Плавный скролл только на десктопе с мышью
       const desktop = matchMedia('(min-width: 1024px) and (hover: hover) and (pointer: fine)').matches;
       const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -99,7 +108,7 @@ const url = new URL(path, Astro.site).toString();
       });
       if (desktop && !calm) {
         import('lenis').then(({ default: Lenis }) => {
-          const lenis = new Lenis({ duration: 0.9, smoothWheel: true, anchors: { offset: -140 } });
+          const lenis = new Lenis({ duration: 0.9, smoothWheel: true, anchors: { offset: -30 } });
           (window as any).__lenis = lenis;
           const raf = (t: number) => { lenis.raf(t); requestAnimationFrame(raf); };
           requestAnimationFrame(raf);

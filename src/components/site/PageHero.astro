@@ -1,0 +1,12 @@
+---
+// Первый экран простой страницы: крошки, заголовок слева, вводный текст справа.
+import Crumbs from './Crumbs.astro';
+import { nb } from '../../i18n/ru';
+interface Props { crumbs: { label: string; href?: string }[]; title: string[]; lead: string }
+const { crumbs, title, lead } = Astro.props;
+---
+<section class="section ph">
+  <Crumbs items={crumbs} />
+  <h1>{title.map((l) => <span>{nb(l)} </span>)}</h1>
+  <p class="ph__lead">{nb(lead)}</p>
+</section>

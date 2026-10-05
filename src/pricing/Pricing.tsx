@@ -5,6 +5,7 @@ import icons from '../icons/ui.json';
 import QuizForm, { type QuizPayload } from './QuizForm';
 import { form as leadForm } from '../i18n/ru';
 import { AFTER, CHANNELS, DIAG, GROUPS, ITEMS, LINK_METHODS, PLATFORMS, PRESETS, REDESIGN, SIZES, TIERS, TILE_DEFAULT, byId, composition, compute, decode, encode, fmtRange, groupSummary, initial, itemPrice, servicesWord, type Calc, type GroupId, type State } from './model';
+const WORK_HREF: Record<string, string> = { 'Роман Копосов': '/kejsy/roman-koposov/', 'Alfa Elite': '/kejsy/alfa-elite/', Caro: '/kejsy/caro/', 'Mono Coffee': '/kejsy/mono-coffee/', MeetFlow: '/kejsy/meetflow/' };
 
 const KEY = 'sw-calc-v1';
 const Ic = ({ n, c }: { n: keyof typeof icons; c?: string }) => <svg class={'ui-ic ' + (c || '')} viewBox={icons[n].vb} fill="none" aria-hidden="true" dangerouslySetInnerHTML={{ __html: icons[n].body }} />;
@@ -243,7 +244,7 @@ export default function Pricing() {
     return (<div class="pr-item__more">
       {out.length > 0 && <div class="pr-item__params">{out}</div>}
       {id === 'link' && <textarea class="pr-area" rows={2} maxLength={600} placeholder="Какие программы и что должно происходить" value={s.linkText} onInput={(e) => up({ linkText: (e.target as HTMLTextAreaElement).value })} />}
-      {it.work && <a class="pr-work" href="#cases">Похожая работа · {it.work}<Arrow /></a>}
+      {it.work && <a class="pr-work" href={WORK_HREF[it.work] || '/kejsy/'}>Похожая работа · {it.work}<Arrow /></a>}
       {hint && <p class="pr-hint">{nb(hint)}</p>}
     </div>);
   };

@@ -7,7 +7,8 @@ import WriteForm from './WriteForm.astro';
 import Ui from '../ui/Ui.astro';
 import Arrow from './Arrow.astro';
 const packs = Object.entries(data.packs) as [string, any][];
-const cases = Object.entries(data.cases) as [string, any][];
+import { calcHref } from '../../i18n/routes';
+const calc = calcHref(Astro.url.pathname);
 const tick = 'M11 1.83a9.17 9.17 0 1 0 0 18.34 9.17 9.17 0 0 0 0-18.34Zm4.38 7.06-5.2 5.2a.69.69 0 0 1-.97 0l-2.6-2.6a.69.69 0 0 1 .98-.97l2.1 2.11 4.72-4.71a.69.69 0 0 1 .97.97Z';
 ---
 <dialog class="md" id="modal" aria-label="Окно">
@@ -24,30 +25,8 @@ const tick = 'M11 1.83a9.17 9.17 0 1 0 0 18.34 9.17 9.17 0 0 0 0-18.34Zm4.38 7.0
         <ol class="mp__steps">{p.steps.map((s: string, i: number) => <li><span>0{i + 1}</span>{nb(s)}</li>)}</ol>
         <div class="mp__actions">
           <button class="btn btn--deep" type="button" data-open="lead" data-chips={p.chips} data-sub={`${p.name}. ${m.pack.leadSub}`} data-context={`pack:${k}`}>{m.pack.discuss}<Arrow /></button>
-          <a class="btn btn--grey" href="#pricing" data-pack={k} data-go="calc" data-close><span class="d">{m.pack.edit}</span><span class="mob">{m.pack.editM}</span></a>
+          <a class="btn btn--grey" href={calc} data-pack={k} data-go="calc" data-close><span class="d">{m.pack.edit}</span><span class="mob">{m.pack.editM}</span></a>
         </div>
-      </section>
-    ))}
-    {cases.map(([k, c]) => (
-      <section class="md__panel md__panel--case" data-panel={`case-${k}`} hidden>
-        {!c.noimg && <figure class="mc__vis"><img src={`/img/cases/${k}.webp`} alt={`${c.name}: экраны проекта`} loading="lazy" decoding="async" /></figure>}
-        <ul class="mc__tags">{c.tags.map((t: string) => <li>{t}</li>)}</ul>
-        <h3>{c.name}</h3>
-        {c.links.length > 0 && <p class="mc__links">{c.links.map((l: any, i: number) => <a class={i === 0 ? 'btn btn--deep' : 'btn btn--grey'} href={l.href} target="_blank" rel="noopener">{i === 0 && l.label !== 'Behance' && !l.label.includes(':') ? `${m.cases.site} ${l.label}` : l.label}<Arrow /></a>)}</p>}
-        {c.awards && <p class="mc__awards"><span class="mc__label">{m.cases.awards}</span>{c.awards.map((x: any) => <a href={x.href} target="_blank" rel="noopener nofollow">{x.label}</a>)}</p>}
-        <div class="mc__two"><div><span class="mc__label">{m.cases.context}</span><p>{nb(c.context)}</p></div><div><span class="mc__label">{m.cases.task}</span><p>{nb(c.task)}</p></div></div>
-        <span class="mc__label">{m.cases.done}</span>
-        <ul class="mc__done">{c.done.map((d: string) => <li><svg viewBox="0 0 22 22" aria-hidden="true"><path d={tick} fill="currentColor" /></svg>{nb(d)}</li>)}</ul>
-        {c.how && <div class="mc__how"><span class="mc__label">{m.cases.how}</span><p>{nb(c.how)}</p></div>}
-        <span class="mc__label">{m.cases.result}</span>
-        {c.metrics.length > 0 && <ul class="mc__metrics">{c.metrics.map((x: any) => <li><span>{x.label}</span>{x.old && <s>{x.old}</s>}<b>{x.value}</b></li>)}</ul>}
-        <p class="mc__sum">{nb(c.summary)}</p>
-        <p class="mc__term"><span class="mc__label">{m.cases.term}</span><b>{c.term}</b></p>
-        <div class="mc__cta"><div><h4>{m.cases.ctaTitle}</h4><p>{m.cases.ctaText}</p></div>
-          <button class="btn btn--white" type="button" data-open="lead" data-task={`${m.cases.leadTask} ${c.short}`} data-context={`case:${k}`}>{m.cases.discuss}<Arrow /></button>
-          <a class="btn mc__tg" href="https://t.me/imsouthwood" target="_blank" rel="noopener">{m.cases.tg}</a>
-        </div>
-        <div class="mc__nav"><button type="button" data-close>{m.cases.all}</button><button type="button" data-open="case" data-case={c.next}>{m.cases.next} · {c.nextName}<Arrow /></button></div>
       </section>
     ))}
   </div>

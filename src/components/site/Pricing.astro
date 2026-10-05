@@ -1,6 +1,7 @@
 ---
 import '../../styles/pricing.css';
 import { pricing as p, nb } from '../../i18n/ru';
+import { R_ } from '../../i18n/routes';
 import Head from '../ui/Head.astro';
 import Ui from '../ui/Ui.astro';
 import Arrow from './Arrow.astro';
@@ -25,16 +26,11 @@ import Calc from '../../pricing/Pricing.tsx';
   </div>
 </section>
 <script>
-  // Ссылка на сохраненный расчет: сразу к блоку цен, чтобы калькулятор загрузился
-  if (/calc=/.test(location.hash)) requestAnimationFrame(() => document.getElementById('pricing')!.scrollIntoView());
-  // Кнопки из других блоков передают в калькулятор набор или режим
-  document.addEventListener('click', (e) => {
-    const el = (e.target as HTMLElement).closest<HTMLElement>('a[data-pack], a[data-go], button[data-go]');
-    if (!el) return;
-    const detail = { pack: el.dataset.pack, go: el.dataset.go };
-    (window as any).__pricingGo = detail; // остров заберет команду, если еще не загрузился
-    window.dispatchEvent(new CustomEvent('pricing:go', { detail }));
-  });
+  // Команда с другой страницы: набор или режим калькулятора
+  let go = false;
+  try { const raw = sessionStorage.getItem('pricingGo'); if (raw) { sessionStorage.removeItem('pricingGo'); (window as any).__pricingGo = JSON.parse(raw); go = true; } } catch {}
+  // Ссылка на сохраненный расчет или переход с командой: сразу к блоку цен, чтобы калькулятор загрузился
+  if (/calc=/.test(location.hash) || (go && location.hash === '#pricing')) requestAnimationFrame(() => document.getElementById('pricing')!.scrollIntoView());
 </script>
 <style>
   .pz{background:var(--deep);color:#fff;padding:10rem 4rem}

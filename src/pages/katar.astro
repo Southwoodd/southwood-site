@@ -1,0 +1,92 @@
+---
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/site/PageHero.astro';
+import Qatar from '../components/site/Qatar.astro';
+import Head from '../components/ui/Head.astro';
+import Arrow from '../components/site/Arrow.astro';
+import { qatar, nb } from '../i18n/ru';
+import { qatarPage as p } from '../i18n/qatar';
+import { caseHref } from '../i18n/routes';
+const crumbs = [{ label: 'Бизнес в Катаре' }];
+const ld = [
+  { '@type': 'Service', name: 'Регистрация компаний и привлечение инвестиций в Катаре', description: p.lead, url: 'https://southwood.pw/katar/', areaServed: [{ '@type': 'Country', name: 'Катар' }, { '@type': 'Country', name: 'Россия' }], provider: { '@type': 'Organization', name: 'Alfa Elite Trading & Services', url: 'https://aelitets.com' } },
+  { '@type': 'FAQPage', mainEntity: p.faq.list.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
+];
+---
+<Page title="Регистрация компании в Катаре и инвестиции | Сергей Воробьев" description="Регистрация компании в Катаре под ключ от $9 100 за 3–6 недель: MOCI, QFC, QFZ. Привлечение инвестиций из стран GCC, экспорт, локализация производства. Вместе с Alfa Elite, без предоплаты." path="/katar/" label="Катар" crumbs={crumbs} ld={ld} final={false}>
+  <PageHero crumbs={crumbs} title={p.h1} lead={p.lead} />
+  <Qatar />
+
+  <section class="section sec">
+    <Head badge="Process" icon="task" intro={p.steps.intro} title={p.steps.title} />
+    <ol class="kq__steps">{p.steps.list.map((s, i) => <li data-reveal style={`--d:${i * 60}ms`}><span>{String(i + 1).padStart(2, '0')}</span><h3>{s.title}</h3><p>{nb(s.text)}</p><em>{s.tag}</em></li>)}</ol>
+  </section>
+
+  <section class="section sec" id="prices">
+    <Head badge="Prices" icon="shield" intro={p.prices.intro} title={p.prices.title} />
+    <ul class="kq__rows">{p.prices.rows.map((r) => <li data-reveal><h3>{r.name}</h3><p>{nb(r.text)}</p><span>{r.term}</span><b>{r.price}</b></li>)}</ul>
+    <ul class="pills kq__terms">{p.prices.terms.map((t) => <li>{t}</li>)}</ul>
+  </section>
+
+  <section class="section sec sec--mint" id="faq">
+    <Head badge="FAQ" icon="shield" intro={p.faq.intro} title={p.faq.title} />
+    <div class="qa">{p.faq.list.map((f, i) => <details name="qatar-faq" open={i === 0}><summary><h3>{nb(f.q)}</h3><i></i></summary><p>{nb(f.a)}</p></details>)}</div>
+  </section>
+
+  <section class="section sec kq__about">
+    <div>
+      <h2>{p.about.title}</h2>
+      <p>{nb(p.about.text)}</p>
+      <ul class="pills">{p.about.creds.map((c) => <li>{c}</li>)}</ul>
+      <div class="ph__cta">
+        <button class="btn kq__talk" type="button" data-open="write" data-msg="Вопрос про Катар">{qatar.talk}<Arrow /></button>
+        <a class="btn btn--grey" href={qatar.siteHref} target="_blank" rel="noopener">{qatar.site}<Arrow /></a>
+        <a class="btn btn--grey" href={caseHref('alfa')}>{p.about.caseLabel}<Arrow /></a>
+      </div>
+    </div>
+    <ul class="kq__off">
+      {p.about.offices.map((o) => <li><b>{o.city}</b><span>{o.addr}</span></li>)}
+      <li><b><a href={`mailto:${p.about.mail}`}>{p.about.mail}</a></b><span>{p.about.hours}</span></li>
+    </ul>
+  </section>
+</Page>
+<style>
+  :global(.qt .qt__head){display:none}
+  :global(.qt .qt__facts){margin-top:0}
+  .kq__steps{margin-top:7.2rem;display:grid;grid-template-columns:repeat(5,1fr);gap:2rem}
+  .kq__steps li{background:var(--card);border-radius:2.4rem;padding:2.8rem;min-height:40rem;display:flex;flex-direction:column}
+  .kq__steps span{font-size:max(1.4rem,12px);color:var(--grey-text)}
+  .kq__steps h3{margin-top:3.2rem;font-size:2.6rem;line-height:1.15;font-weight:500;letter-spacing:-.02em}
+  .kq__steps p{margin-top:1.6rem;font-size:max(1.6rem,14px);line-height:1.45;color:var(--muted)}
+  .kq__steps em{font-style:normal;margin-top:auto;width:fit-content;height:3.6rem;padding:0 1.4rem;border-radius:999px;background:#fff;display:flex;align-items:center;font-size:max(1.4rem,12px);font-weight:500;white-space:nowrap}
+  .kq__steps li:first-child{background:var(--qatar);color:#fff}.kq__steps li:first-child p,.kq__steps li:first-child span{color:rgba(255,255,255,.8)}.kq__steps li:first-child em{color:var(--ink)}
+  .kq__rows{margin-top:7.2rem}
+  .kq__rows li{display:grid;grid-template-columns:44rem 1fr 28rem 26rem;gap:3.2rem;align-items:baseline;padding:2.8rem 0;border-top:1px solid var(--line)}
+  .kq__rows li:last-child{border-bottom:1px solid var(--line)}
+  .kq__rows h3{font-size:2.6rem;font-weight:500;letter-spacing:-.02em}
+  .kq__rows p{font-size:max(1.6rem,14px);line-height:1.45;color:var(--muted)}
+  .kq__rows span{font-size:max(1.6rem,14px);color:var(--grey-text)}
+  .kq__rows b{font-size:3rem;font-weight:500;letter-spacing:-.03em;text-align:right;white-space:nowrap;color:var(--qatar)}
+  .kq__terms{margin-top:3.2rem}
+  .kq__about{display:grid;grid-template-columns:1fr 62rem;gap:8rem}
+  .kq__about h2{font-size:4.8rem;line-height:1.05;font-weight:500;letter-spacing:-.03em}
+  .kq__about>div>p{margin-top:2.4rem;max-width:90rem;font-size:max(2rem,16px);line-height:1.45;color:var(--muted)}
+  .kq__about :global(.pills){margin-top:2.8rem}
+  .kq__about :global(.ph__cta){padding-top:4.8rem}
+  .kq__talk{background:var(--qatar);color:#fff}.kq__talk:hover{background:#9d1a41}
+  .kq__off li{display:grid;gap:.6rem;padding:2.2rem 0;border-top:1px solid var(--line)}
+  .kq__off li:last-child{border-bottom:1px solid var(--line)}
+  .kq__off b{font-size:2.2rem;font-weight:500;letter-spacing:-.02em}
+  .kq__off span{font-size:max(1.6rem,14px);color:var(--muted)}
+  @media (max-width:1279px) and (min-width:1024px){.kq__steps{grid-template-columns:repeat(3,1fr)}}
+  @media (max-width:1023px){
+    .kq__steps{margin-top:20px;grid-template-columns:1fr;gap:8px}
+    .kq__steps li{border-radius:18px;padding:18px;min-height:0;gap:0}.kq__steps h3{margin-top:10px;font-size:20px}.kq__steps p{margin-top:8px}.kq__steps em{margin-top:16px;height:30px}
+    .kq__rows{margin-top:20px}.kq__rows li{grid-template-columns:1fr auto;gap:6px 14px;padding:18px 0}
+    .kq__rows h3{font-size:19px}.kq__rows p{grid-column:1/-1;order:3}.kq__rows span{order:4;grid-column:1/-1}.kq__rows b{font-size:19px}
+    .kq__terms{margin-top:18px}
+    .kq__about{grid-template-columns:1fr;gap:28px}.kq__about h2{font-size:28px}.kq__about>div>p{margin-top:12px}
+    .kq__about :global(.pills){margin-top:16px}.kq__about :global(.ph__cta){padding-top:22px}
+    .kq__off li{padding:14px 0}.kq__off b{font-size:18px}
+  }
+</style>

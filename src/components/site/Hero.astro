@@ -1,6 +1,7 @@
 ---
 import Arrow from './Arrow.astro';
 import { hero, nb } from '../../i18n/ru';
+import { R_ } from '../../i18n/routes';
 // Иконки фона: имя, x, y, ширина, высота в px макета 1920
 const icons: [string, number, number, number, number][] = [
   ['bitrix', 10, -18, 220, 247], ['pdf', 405, 55, 93, 93], ['figma', 680, 129, 130, 143], ['gpt', 857, -33, 145, 171],
@@ -8,7 +9,7 @@ const icons: [string, number, number, number, number][] = [
   ['opera', 532, 399, 170, 172], ['docker', 297, 515, 243, 283], ['chrome', 1216, 489, 149, 171], ['claude', 1556, 548, 192, 225],
 ];
 ---
-<section class="section hero" id="top">
+<section class="section hero" id="hero">
   <div class="hero__icons" aria-hidden="true" data-drift>
     {icons.map(([n, x, y, w, h]) => <img src={`/img/hero/ic/${n}.webp`} alt="" width={w} height={h} decoding="async" style={`left:${x / 10}rem;top:${y / 10}rem;width:${w / 10}rem`} />)}
   </div>
@@ -20,7 +21,7 @@ const icons: [string, number, number, number, number][] = [
     <h1 class="hero__title" data-reveal style="--d:60ms">{nb(hero.title)}</h1>
     <div class="hero__sub" data-reveal style="--d:120ms">{hero.sub.map((s) => <p>{nb(s)}</p>)}</div>
     <div class="hero__cta" data-reveal style="--d:180ms">
-      <a class="btn btn--deep hero__btn" href="#pricing">{hero.primary}<Arrow /></a>
+      <a class="btn btn--deep hero__btn" href={R_.calc}>{hero.primary}<Arrow /></a>
       <button class="btn btn--grey hero__btn" type="button" data-open="lead">{hero.secondary}<Arrow /></button>
     </div>
     <p class="hero__proof" data-reveal style="--d:240ms">{nb(hero.proof)}</p>

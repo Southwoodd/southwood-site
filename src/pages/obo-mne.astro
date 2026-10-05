@@ -1,0 +1,20 @@
+---
+import Page from '../layouts/Page.astro';
+import About from '../components/site/About.astro';
+import Proofs from '../components/site/Proofs.astro';
+import Process from '../components/site/Process.astro';
+import Why from '../components/site/Why.astro';
+import Faq from '../components/site/Faq.astro';
+import PageHero from '../components/site/PageHero.astro';
+import { faq } from '../i18n/ru';
+const crumbs = [{ label: 'Обо мне' }];
+const ld = [{ '@type': 'FAQPage', mainEntity: faq.list.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) }];
+---
+<Page title="Сергей Воробьев: кто делает вашу задачу и как устроена работа" description="Продуктовый дизайнер и разработчик, 9+ лет опыта. Живу в Краснодаре, работаю удаленно по всей России. Как устроена работа, оплата, гарантии и ответы на вопросы до старта." path="/obo-mne/" label="Обо мне" crumbs={crumbs} ld={ld}>
+  <PageHero crumbs={crumbs} title={['Обо мне']} lead="Вы работаете не с компанией, а с конкретным человеком. Здесь о том, кто будет делать вашу задачу, как устроена работа и что записано в договоре." />
+  <About />
+  <Proofs />
+  <Process />
+  <Why />
+  <Faq />
+</Page>

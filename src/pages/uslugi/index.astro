@@ -1,0 +1,20 @@
+---
+import Page from '../../layouts/Page.astro';
+import PageHero from '../../components/site/PageHero.astro';
+import ServiceTiles from '../../components/site/ServiceTiles.astro';
+import Start from '../../components/site/Start.astro';
+import Services from '../../components/site/Services.astro';
+import Support from '../../components/site/Support.astro';
+import Automation from '../../components/site/Automation.astro';
+import { SERVICES, serviceHref } from '../../i18n/routes';
+const crumbs = [{ label: 'Услуги' }];
+const ld = [{ '@type': 'ItemList', name: 'Услуги', itemListElement: SERVICES.map((s, i) => ({ '@type': 'ListItem', position: i + 1, url: 'https://southwood.pw' + serviceHref(s.slug), name: s.menu })) }];
+---
+<Page title="Услуги: сайты, CRM, боты, автоматизация | Сергей Воробьев" description="Разработка сайтов и интернет-магазинов, внедрение Битрикс24, чат-боты, интеграция с 1С, приложения и редизайн. У каждой услуги своя страница с ценами, сроками и примерами." path="/uslugi/" label="Услуги" crumbs={crumbs} ld={ld}>
+  <PageHero crumbs={crumbs} title={['Услуги']} lead="Семь направлений, у каждого своя страница с ценами, сроками и примерами. Можно взять одну задачу или собрать всю цифровую часть в одну систему." />
+  <ServiceTiles head={false} all="prices" />
+  <Start />
+  <Services />
+  <Support />
+  <Automation />
+</Page>

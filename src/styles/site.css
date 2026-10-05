@@ -32,6 +32,8 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
   .section--pad{padding:56px 20px 32px}
 }
 @media (max-width:767px){.page{padding:8px}}
+/* На десктопе меню живет в нижней плашке: шапки нет, внизу оставлен запас под плашку */
+@media (min-width:1024px){html{scroll-padding-top:3rem}.page{padding-bottom:12.4rem}}
 
 /* Кнопки */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:1rem;border-radius:999px;font-weight:500;white-space:nowrap;transition:background-color .2s var(--ease),color .2s var(--ease),transform .2s var(--ease),box-shadow .2s var(--ease)}

@@ -1,0 +1,112 @@
+---
+// Страница услуги. Один шаблон на все семь: цены и допы берутся из каталога калькулятора.
+import Page from '../../layouts/Page.astro';
+import Crumbs from '../../components/site/Crumbs.astro';
+import Head from '../../components/ui/Head.astro';
+import Arrow from '../../components/site/Arrow.astro';
+import Process from '../../components/site/Process.astro';
+import Cases from '../../components/site/Cases.astro';
+import { nb, automation } from '../../i18n/ru';
+import { SERVICES, serviceHref, addonLabel, caseBy, R_, type Service } from '../../i18n/routes';
+export function getStaticPaths() { return SERVICES.map((s) => ({ params: { slug: s.slug }, props: { s } })); }
+const { s } = Astro.props as { s: Service };
+const path = serviceHref(s.slug);
+const crumbs = [{ label: 'Услуги', href: R_.services }, { label: s.menu }];
+const first = caseBy[s.cases[0]];
+const scn = (s.scenarios || []).map((k) => (automation.scenarios.list as any[]).find((x) => x.key === k)).filter(Boolean);
+const others = SERVICES.filter((x) => x.slug !== s.slug);
+const ld = [
+  { '@type': 'Service', '@id': `https://southwood.pw${path}#service`, name: s.h1.join(' '), description: s.lead, url: `https://southwood.pw${path}`, serviceType: s.menu, areaServed: { '@type': 'Country', name: 'Россия' }, provider: { '@id': 'https://southwood.pw/#person' },
+    offers: { '@type': 'AggregateOffer', priceCurrency: 'RUB', lowPrice: s.from * 1000, offerCount: s.kinds.length } },
+  { '@type': 'FAQPage', mainEntity: s.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
+];
+---
+<Page title={s.seoTitle} description={s.seoDesc} path={path} label={s.menu} crumbs={crumbs} ld={ld}>
+  <section class="section ph ph--svc">
+    <div class="ph__left">
+      <Crumbs items={crumbs} />
+      <h1>{s.h1.map((l) => <span>{nb(l)} </span>)}</h1>
+      <p class="ph__lead">{nb(s.lead)}</p>
+      <ul class="ph__chips"><li>от {s.from} тыс. ₽</li>{s.chips.map((c) => <li>{c}</li>)}</ul>
+      <div class="ph__cta">
+        <a class="btn btn--deep" href={R_.calc} data-go="calc">Рассчитать стоимость<Arrow /></a>
+        <button class="btn btn--grey" type="button" data-open="lead" data-chips={s.chipsForm} data-context={`service:${s.slug}`}>Бесплатная консультация<Arrow /></button>
+      </div>
+    </div>
+    {first.noimg ? (
+      <div class="ph__vis ph__vis--plain"><p>{nb(first.summary)}</p></div>
+    ) : (
+      <div class="ph__vis">
+        <a href={first.href} aria-label={`Кейс: ${first.name}`}>
+          <img src={`/img/cases/${first.key}.webp`} alt={`${first.name}: экраны проекта`} loading="eager" decoding="async" />
+          <b>{first.name}</b>
+          <p>{nb(first.lead)}</p>
+          <small>{first.term}</small>
+        </a>
+      </div>
+    )}
+  </section>
+
+  <section class="section sec" id="prices">
+    <Head badge="Prices" icon="shield" intro={s.kindsIntro} title={s.kindsTitle} />
+    <ul class="kinds">
+      {s.kinds.map((k, i) => (
+        <li class:list={{ hot: k.hot }} data-reveal style={`--d:${i * 80}ms`}>
+          <h3>{k.title}</h3>
+          <b>{nb(k.price)}</b>
+          <p>{nb(k.text)}</p>
+          {k.note && <small>{k.note}</small>}
+        </li>
+      ))}
+    </ul>
+    <h3 class="sec__h3">Можно добавить</h3>
+    <ul class="pills">{s.addons.map((a) => <li>{addonLabel(a)}</li>)}{(s.extra || []).map((e) => <li>{e}</li>)}</ul>
+    <p class="sec__calc"><a class="btn btn--ink" href={R_.calc} data-go="calc">Собрать в калькуляторе<Arrow /></a><span>{nb('Цены для компании до 50 человек. Точную сумму фиксирую в договоре после брифа на 30–45 минут.')}</span></p>
+  </section>
+
+  {s.mult && (
+    <section class="section sec sec--deep">
+      <Head badge={s.mult.badge} icon="task" intro={s.mult.intro} title={[s.mult.title]} />
+      <ul class="mult">{s.mult.list.map((m, i) => <li class:list={{ hot: m.hot }} data-reveal style={`--d:${i * 60}ms`}><h3>{m.title}</h3><b>{m.k}</b><p>{nb(m.text)}</p></li>)}</ul>
+    </section>
+  )}
+
+  {scn.length > 0 && (
+    <section class="section sec">
+      <Head badge="Scenarios" icon="flash" intro={automation.scenarios.note} title={['Типовые сценарии']} />
+      <ul class="scn">
+        {scn.map((x: any) => (
+          <li data-reveal>
+            <span>{x.who} · {x.apps.join(' → ')}</span>
+            <h3>{x.title}</h3>
+            <dl><div><dt>{automation.scenarios.was}</dt><dd>{nb(x.was)}</dd></div><div><dt>{automation.scenarios.now}</dt><dd>{nb(x.now)}</dd></div></dl>
+            <em><span>{x.price}</span><span>·</span><span>{x.term}</span><span>·</span><span>{x.cond}</span></em>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <Process />
+  <Cases keys={s.cases} title={[s.casesTitle]} intro="Работы, которые можно открыть и проверить. У каждой своя страница с задачей, решением и сроком." />
+
+  <section class="section sec sec--mint" id="faq">
+    <Head badge="FAQ" icon="shield" intro={`Вопросы именно про эту услугу. Общие вопросы о сроках, гарантии и доступах собраны на странице Обо мне.`} title={['Частые вопросы']} />
+    <div class="qa">{s.faq.map((f, i) => <details name="svc-faq" open={i === 0}><summary><h3>{nb(f.q)}</h3><i></i></summary><p>{nb(f.a)}</p></details>)}</div>
+  </section>
+
+  <section class="section sec oth">
+    <h2>Другие услуги</h2>
+    <ul>{others.map((o) => <li><a href={serviceHref(o.slug)}><span>{o.menu}</span><small>от {o.from} тыс. ₽</small><Arrow /></a></li>)}</ul>
+  </section>
+</Page>
+<style>
+  .oth{padding-top:5.6rem;padding-bottom:5.6rem}
+  .oth h2{font-size:2.4rem;font-weight:500;letter-spacing:-.02em}
+  .oth ul{margin-top:2.4rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
+  .oth a{height:7.2rem;padding:0 2.4rem;border-radius:2rem;background:var(--card);display:flex;align-items:center;gap:1.6rem;font-size:max(1.8rem,15px);font-weight:500;transition:background-color .2s var(--ease)}
+  .oth a:hover{background:var(--mint)}
+  .oth small{margin-left:auto;font-size:max(1.5rem,13px);font-weight:400;color:var(--muted);white-space:nowrap}
+  .oth :global(.arrow){width:1.8rem;height:1.8rem;flex:none}
+  @media (max-width:1023px){.oth ul{grid-template-columns:1fr;gap:8px;margin-top:14px}.oth a{height:56px;padding:0 16px;border-radius:16px}.oth h2{font-size:20px}}
+</style>

@@ -1,0 +1,52 @@
+---
+// Плитка услуг: семь страниц услуг с ценой от и зеленая карточка со всеми ценами.
+import Head from '../ui/Head.astro';
+import Arrow from './Arrow.astro';
+import { nb } from '../../i18n/ru';
+import { SERVICES, serviceHref, R_ } from '../../i18n/routes';
+interface Props { head?: boolean; all?: 'services' | 'prices' }
+const { head = true, all = 'services' } = Astro.props;
+---
+<section class="section sec stl" id="services">
+  {head && <Head badge="Services" icon="flash" intro="Семь направлений, у каждого своя страница с ценами, сроками и примерами." title={['Услуги под ключ:', 'от сайта до автоматизации']} />}
+  <ul class:list={['stl__grid', { 'stl__grid--top': !head }]}>
+    {SERVICES.map((s, i) => (
+      <li data-reveal style={`--d:${(i % 4) * 70}ms`}>
+        <a href={serviceHref(s.slug)}>
+          <span class="stl__top"><h3>{s.menu}</h3><Arrow /></span>
+          <p>{nb(s.card)}</p>
+          <b>от {s.from} тыс. ₽</b>
+        </a>
+      </li>
+    ))}
+    <li class="stl__all" data-reveal style="--d:210ms">
+      <a href={all === 'prices' ? R_.prices : R_.services}>
+        <span class="stl__top"><h3>{all === 'prices' ? 'Все цены и калькулятор' : 'Все услуги и цены'}</h3><Arrow /></span>
+        <p>{nb('Готовые наборы от 160 тыс. ₽ и калькулятор, который считает сумму за 2 минуты.')}</p>
+        <b>{all === 'prices' ? 'Открыть цены' : 'Открыть услуги'}</b>
+      </a>
+    </li>
+  </ul>
+</section>
+<style>
+  .stl__grid{margin-top:7.2rem;display:grid;grid-template-columns:repeat(4,1fr);gap:2rem}
+  .stl__grid--top{margin-top:0}
+  .stl__grid a{height:100%;min-height:30rem;background:var(--card);border-radius:2.4rem;padding:2.8rem;display:flex;flex-direction:column;gap:1.6rem;transition:background-color .25s var(--ease),transform .35s var(--ease)}
+  .stl__grid a:hover{background:var(--mint);transform:translateY(-.4rem)}
+  .stl__top{display:flex;justify-content:space-between;align-items:flex-start;gap:1.2rem}
+  .stl__top :global(.arrow){width:2rem;height:2rem;flex:none;margin-top:.4rem;transition:transform .25s var(--ease)}
+  .stl__grid a:hover :global(.arrow){transform:translate(.2rem,-.2rem)}
+  .stl h3{font-size:2.6rem;line-height:1.15;font-weight:500;letter-spacing:-.02em}
+  .stl p{font-size:max(1.6rem,14px);line-height:1.45;color:var(--muted)}
+  .stl b{margin-top:auto;width:fit-content;height:4rem;padding:0 1.6rem;border-radius:999px;background:#fff;display:flex;align-items:center;font-size:max(1.5rem,13px);font-weight:500}
+  .stl__all a{background:var(--deep);color:#fff}.stl__all a:hover{background:#35594a}
+  .stl__all p{color:rgba(255,255,255,.8)}.stl__all b{color:var(--ink-2)}
+  @media (max-width:1023px){
+    .stl__grid{margin-top:20px;grid-template-columns:1fr 1fr;gap:10px}
+    .stl__grid a{min-height:0;border-radius:20px;padding:18px;gap:10px}
+    .stl__grid a:hover{transform:none}
+    .stl h3{font-size:19px}.stl p{font-size:14px;line-height:20px}.stl b{height:34px;padding:0 12px;font-size:13px;margin-top:6px}
+    .stl__top :global(.arrow){width:16px;height:16px}
+  }
+  @media (max-width:600px){.stl__grid{grid-template-columns:1fr}}
+</style>

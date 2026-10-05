@@ -2,6 +2,8 @@
 import { final as c, nb } from '../../i18n/ru';
 import LeadForm from './LeadForm.astro';
 import Arrow from './Arrow.astro';
+import { calcHref } from '../../i18n/routes';
+const calc = calcHref(Astro.url.pathname);
 ---
 <section class="section fn" id="contact">
   <div class="fn__left">
@@ -13,7 +15,7 @@ import Arrow from './Arrow.astro';
     <p class="fn__note">{c.openNote}</p>
     <div class="fn__alt">
       <a class="fn__tg" href={c.tg.href} target="_blank" rel="noopener" data-reveal><span><b>{c.tg.title}</b><em>{c.tg.sub}</em></span><Arrow /></a>
-      <a class="fn__calc" href={c.calc.href} data-reveal style="--d:80ms"><span><b>{c.calc.title}</b><em>{c.calc.sub}</em></span><Arrow /></a>
+      <a class="fn__calc" href={calc} data-reveal style="--d:80ms"><span><b>{c.calc.title}</b><em>{c.calc.sub}</em></span><Arrow /></a>
     </div>
   </div>
   <div class="fn__form" data-reveal style="--d:120ms"><LeadForm /></div>

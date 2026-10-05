@@ -1,0 +1,18 @@
+---
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/site/PageHero.astro';
+import Packages from '../components/site/Packages.astro';
+import Pricing from '../components/site/Pricing.astro';
+import { ITEMS } from '../pricing/model';
+import { pricing } from '../i18n/ru';
+const crumbs = [{ label: 'Цены' }];
+const ld = [
+  { '@type': 'OfferCatalog', name: 'Услуги и цены', itemListElement: ITEMS.filter((i) => !i.tbd && i.base[1] > 0).map((i) => ({ '@type': 'Offer', priceCurrency: 'RUB', priceSpecification: { '@type': 'PriceSpecification', priceCurrency: 'RUB', minPrice: i.base[0] * 1000, maxPrice: i.base[1] * 1000 }, itemOffered: { '@type': 'Service', name: i.name, description: i.desc } })) },
+  { '@type': 'FAQPage', mainEntity: pricing.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
+];
+---
+<Page title="Цены на сайты, CRM и ботов: калькулятор | Сергей Воробьев" description="Цены на разработку сайтов, CRM, ботов и автоматизацию. Готовые наборы от 160 тыс. ₽ и калькулятор: отметьте услуги и сразу увидите сумму, сравнение с рынком и платеж в рассрочку." path="/ceny/" label="Цены" crumbs={crumbs} ld={ld}>
+  <PageHero crumbs={crumbs} title={['Цены']} lead="Готовые наборы и калькулятор. Отметьте услуги и сразу увидите сумму, сравнение с рынком и платеж в рассрочку. Сумму фиксирую в договоре после брифа." />
+  <Packages />
+  <Pricing />
+</Page>

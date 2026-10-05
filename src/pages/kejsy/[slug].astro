@@ -1,0 +1,158 @@
+---
+// Страница кейса. Один шаблон на все работы: контекст, задача, что сделано, результат, цена похожей задачи.
+import Page from '../../layouts/Page.astro';
+import Crumbs from '../../components/site/Crumbs.astro';
+import Badge from '../../components/ui/Badge.astro';
+import Arrow from '../../components/site/Arrow.astro';
+import { nb, modal } from '../../i18n/ru';
+import { CASES, caseBy, serviceBy, serviceHref, R_ } from '../../i18n/routes';
+export function getStaticPaths() { return CASES.map((c) => ({ params: { slug: c.slug }, props: { c } })); }
+const { c } = Astro.props as { c: (typeof CASES)[number] };
+const srv = serviceBy[c.service];
+const next = caseBy[c.next];
+const crumbs = [{ label: 'Кейсы', href: R_.cases }, { label: c.name }];
+const tags: string[] = c.card?.tags || c.tags;
+const what = tags.filter((t) => !/\d/.test(t) && t !== 'Клиент').join(', ');
+const isYear = /^\d{4}$/.test(c.term);
+const termNote = isYear ? 'год проекта' : /недел|месяц|день|дня/.test(c.term) ? 'срок работы' : '';
+const task = `${modal.cases.leadTask} ${c.short}`;
+const live = (c.links as any[]).filter((l) => l.label !== 'Behance');
+const desc = `${c.lead} Срок: ${c.term}.`.replace(/\.\./g, '.');
+const theme = c.card?.theme === 'black' ? 'black' : c.card?.theme === 'green' ? 'green' : 'mint';
+const ld = [{
+  '@type': 'CreativeWork', '@id': `https://southwood.pw${c.href}#case`, name: c.name, headline: `${c.name}: ${c.lead}`, description: c.context, url: `https://southwood.pw${c.href}`,
+  creator: { '@id': 'https://southwood.pw/#person' }, keywords: tags.join(', '), ...(c.noimg ? {} : { image: `https://southwood.pw/img/cases/${c.key}.webp` }),
+  ...(live[0] ? { sameAs: (c.links as any[]).map((l) => l.href) } : {}), ...(c.awards ? { award: c.awards.map((a: any) => a.label) } : {}),
+}];
+---
+<Page title={`${c.name}: кейс | Сергей Воробьев`} description={desc} path={c.href} label="Кейсы" crumbs={crumbs} ld={ld}>
+  <section class="section ph ch">
+    <div class="ch__left">
+      <Crumbs items={crumbs} />
+      <ul class="ch__tags">{tags.map((t: string) => <li>{t}</li>)}</ul>
+      <h1>{c.name}</h1>
+      <p class="ph__lead">{nb(c.lead)}</p>
+      <div class="ph__cta">
+        {(c.links as any[]).map((l, i) => <a class={i === 0 ? 'btn btn--deep' : 'btn btn--grey'} href={l.href} target="_blank" rel="noopener">{i === 0 && l.label !== 'Behance' && !l.label.includes(':') ? `Открыть ${l.label}` : l.label}<Arrow /></a>)}
+        {c.links.length === 0 && <button class="btn btn--deep" type="button" data-open="lead" data-task={task} data-context={`case:${c.key}`}>Обсудить похожую задачу<Arrow /></button>}
+      </div>
+    </div>
+    <dl class="ch__facts">
+      <div><dt>{isYear ? 'Год' : 'Срок'}</dt><dd>{c.term}</dd></div>
+      <div><dt>Направление</dt><dd><a href={serviceHref(srv.slug)}>{srv.menu}<Arrow /></a></dd></div>
+      {c.awards ? <div><dt>Награды</dt><dd class="ch__aw">{c.awards.map((a: any) => <a href={a.href} target="_blank" rel="noopener nofollow">{a.label}</a>)}</dd></div> : <div><dt>Что сделал</dt><dd>{what}</dd></div>}
+    </dl>
+  </section>
+
+  {!c.noimg && <figure class={`section ch__vis ch__vis--${theme}`} data-reveal><img src={`/img/cases/${c.key}.webp`} alt={`${c.name}: экраны проекта`} loading="eager" decoding="async" /></figure>}
+
+  <section class="section sec ch__two">
+    <div><h2>Контекст</h2><p>{nb(c.context)}</p></div>
+    <div><h2>Задача</h2><p>{nb(c.task)}</p></div>
+  </section>
+
+  <section class="section sec sec--mint">
+    <div class="ch__head"><Badge icon="shield" reveal>Done</Badge><h2>Что сделано</h2></div>
+    <ol class="ch__done">{c.done.map((d: string, i: number) => <li data-reveal style={`--d:${(i % 2) * 80}ms`}><span>{String(i + 1).padStart(2, '0')}</span><p>{nb(d)}</p></li>)}</ol>
+    {c.how && <div class="ch__how"><h3>Как это работает</h3><p>{nb(c.how)}</p></div>}
+  </section>
+
+  <section class="section sec sec--deep ch__res">
+    <div class="ch__big"><span>Результат</span><b class:list={{ long: c.term.length > 12 }}>{c.term}</b>{termNote && <small>{termNote}</small>}</div>
+    <p class="ch__sum">{nb(c.summary)}</p>
+    {c.metrics.length > 0 && <ul class="ch__metrics">{c.metrics.map((x: any) => <li><span>{x.label}</span>{x.old && <s>{x.old}</s>}<b>{x.value}</b></li>)}</ul>}
+  </section>
+
+  <section class="section sec ch__like">
+    <div>
+      <h2>Сколько стоит похожая задача</h2>
+      <p>{nb(c.like.length ? 'Это ориентир из каталога услуг для компании до 50 человек, а не стоимость этого проекта. Точную сумму называю после брифа и фиксирую в договоре.' : 'Такой проект считается после разбора задачи. Расскажите, что нужно, назову цену и срок.')}</p>
+      <div class="ph__cta">
+        <a class="btn btn--deep" href={serviceHref(srv.slug)}>{srv.menu}: цены и сроки<Arrow /></a>
+        <button class="btn btn--grey" type="button" data-open="lead" data-task={task} data-context={`case:${c.key}`}>Обсудить похожую задачу<Arrow /></button>
+      </div>
+    </div>
+    {c.like.length > 0 && <ul>{c.like.map((l) => <li><span>{l.name}</span><b>{nb(l.price)}</b></li>)}</ul>}
+  </section>
+
+  <section class="section sec ch__next">
+    <div><span>Следующий кейс</span><h2><a href={next.href}>{next.name}</a></h2><p>{nb(next.lead)}</p></div>
+    <p><a class="btn btn--grey" href={R_.cases}>Все кейсы<Arrow /></a><a class="btn btn--deep" href={next.href}>Смотреть кейс<Arrow /></a></p>
+  </section>
+</Page>
+<style>
+  .ch{grid-template-columns:1fr 62rem;align-items:stretch;row-gap:0;column-gap:8rem}
+  .ch__left{display:flex;flex-direction:column;align-items:flex-start}
+  .ch__tags{margin-top:4rem;display:flex;flex-wrap:wrap;gap:.8rem}
+  .ch__tags li{height:3.8rem;padding:0 1.6rem;border-radius:999px;background:var(--card);display:flex;align-items:center;font-size:max(1.5rem,13px);font-weight:500}
+  .ch h1{margin-top:2.4rem;font-size:7.2rem;line-height:1.04}
+  .ch :global(.ph__lead){margin-top:2.8rem;max-width:86rem}
+  .ch :global(.ph__cta){padding-top:4.8rem}
+  .ch__facts{margin:6rem 0 0;display:flex;flex-direction:column}
+  .ch__facts div{flex:1;border-top:1px solid var(--line);padding:2.4rem 0 3.2rem}
+  .ch__facts dt{font-size:max(1.5rem,12px);color:var(--grey-text)}
+  .ch__facts dd{margin:1.2rem 0 0;font-size:2.8rem;line-height:1.2;font-weight:500;letter-spacing:-.02em}
+  .ch__facts dd a{display:inline-flex;align-items:center;gap:1rem;color:var(--deep)}
+  .ch__facts dd :global(.arrow){width:2.2rem;height:2.2rem}
+  .ch__aw{display:flex;flex-direction:column;gap:.6rem;font-size:2rem!important}
+  .ch__aw a{text-decoration:underline;text-underline-offset:.25em;text-decoration-thickness:1px}
+  .ch__vis{padding:9rem 18rem;display:grid;place-items:center}
+  .ch__vis img{width:100%;border-radius:2.4rem;box-shadow:0 3rem 8rem rgba(0,0,0,.18)}
+  .ch__vis--mint{background:var(--mint)}.ch__vis--green{background:var(--deep)}.ch__vis--black{background:var(--ink)}
+  .ch__two{display:grid;grid-template-columns:1fr 1fr;gap:8rem}
+  .ch__two h2,.ch__next span,.ch__big span{font-size:max(1.5rem,12px);font-weight:400;color:var(--grey-text);letter-spacing:0}
+  .ch__two p{margin-top:2.4rem;font-size:max(2.8rem,17px);line-height:1.36;letter-spacing:-.02em;max-width:84rem}
+  .ch__head{display:grid;grid-template-columns:89.1rem 1fr;align-items:center}
+  .ch__head h2,.ch__like h2{font-size:4.2rem;line-height:1.05;font-weight:500;letter-spacing:-.03em}
+  .ch__done{margin-top:5.6rem;display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+  .ch__done li{background:#fff;border-radius:2.4rem;padding:3.2rem;min-height:16rem;display:grid;grid-template-columns:6rem 1fr;align-items:start}
+  .ch__done span{font-size:max(1.4rem,12px);color:var(--grey-text);padding-top:.5rem}
+  .ch__done p{font-size:max(2rem,15px);line-height:1.42;font-weight:500}
+  .ch__how{margin-top:2rem;background:#fff;border-radius:2.4rem;padding:3.2rem;display:grid;grid-template-columns:28rem 1fr;gap:2rem}
+  .ch__how h3{font-size:max(1.5rem,12px);font-weight:400;color:var(--grey-text)}
+  .ch__how p{font-size:max(2rem,15px);line-height:1.45;max-width:110rem}
+  .ch__res{display:grid;grid-template-columns:1fr 1fr;gap:6rem 8rem;align-items:center}
+  .ch__big span{color:rgba(255,255,255,.7);display:block}
+  .ch__big b{display:block;margin-top:3.2rem;font-size:15rem;line-height:.95;font-weight:400;letter-spacing:-.05em}
+  .ch__big b.long{font-size:6.4rem;line-height:1.05;letter-spacing:-.035em;max-width:70rem}
+  .ch__big small{display:block;margin-top:2.4rem;font-size:max(1.7rem,13px);color:rgba(255,255,255,.75)}
+  .ch__sum{font-size:max(3rem,18px);line-height:1.3;letter-spacing:-.02em;max-width:72rem}
+  .ch__metrics{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
+  .ch__metrics li{background:rgba(255,255,255,.1);border-radius:2.4rem;padding:2.8rem;display:grid;gap:.8rem}
+  .ch__metrics span{font-size:max(1.5rem,12px);color:rgba(255,255,255,.7)}
+  .ch__metrics s{font-size:max(1.7rem,14px);color:rgba(255,255,255,.55)}
+  .ch__metrics b{font-size:3.4rem;line-height:1.1;font-weight:500;letter-spacing:-.03em}
+  .ch__like{display:grid;grid-template-columns:1fr 1fr;gap:8rem;align-items:start}
+  .ch__like>div>p{margin-top:2.4rem;max-width:72rem;font-size:max(1.8rem,15px);line-height:1.45;color:var(--muted)}
+  .ch__like :global(.ph__cta){padding-top:4rem}
+  .ch__like ul{display:grid}
+  .ch__like li{display:flex;justify-content:space-between;align-items:baseline;gap:2rem;padding:2.2rem 0;border-top:1px solid var(--line);font-size:max(2rem,15px)}
+  .ch__like li:last-child{border-bottom:1px solid var(--line)}
+  .ch__like li b{font-size:2.8rem;font-weight:500;letter-spacing:-.02em;white-space:nowrap}
+  .ch__next{display:flex;justify-content:space-between;align-items:flex-end;gap:4rem;padding-top:5.6rem;padding-bottom:5.6rem}
+  .ch__next h2{margin-top:1.6rem;font-size:5.6rem;line-height:1.05;font-weight:500;letter-spacing:-.035em}
+  .ch__next div p{margin-top:1.6rem;font-size:max(1.8rem,15px);color:var(--muted);max-width:90rem}
+  .ch__next>p{display:flex;gap:1.2rem;flex:none}
+  .ch__next .btn{height:6.4rem;padding:0 2.8rem;font-size:max(1.8rem,15px)}
+  @media (max-width:1023px){
+    .ch__tags{margin-top:16px;gap:6px}.ch__tags li{height:30px;padding:0 12px;font-size:13px}
+    .ch h1{margin-top:14px;font-size:34px;line-height:38px}
+    .ch :global(.ph__lead){margin-top:12px}.ch :global(.ph__cta){padding-top:20px}
+    .ch__facts{margin-top:8px}.ch__facts div{padding:14px 0 16px}.ch__facts dd{margin-top:6px;font-size:19px}.ch__aw{font-size:16px!important}
+    .ch__vis{padding:22px 16px}.ch__vis img{border-radius:12px}
+    .ch__two,.ch__res,.ch__like{grid-template-columns:1fr;gap:28px}
+    .ch__two p{margin-top:10px;font-size:17px;line-height:25px}
+    .ch__head{display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+    .ch__head h2,.ch__like h2{font-size:28px;line-height:32px}
+    .ch__done{margin-top:20px;grid-template-columns:1fr;gap:8px}
+    .ch__done li{border-radius:18px;padding:18px;min-height:0;grid-template-columns:36px 1fr}
+    .ch__how{margin-top:8px;border-radius:18px;padding:18px;grid-template-columns:1fr;gap:8px}
+    .ch__big b{margin-top:14px;font-size:64px}.ch__big b.long{font-size:30px}.ch__big small{margin-top:12px}
+    .ch__sum{font-size:18px;line-height:26px}
+    .ch__metrics{grid-template-columns:1fr;gap:8px}.ch__metrics li{border-radius:18px;padding:18px}.ch__metrics b{font-size:22px}
+    .ch__like>div>p{margin-top:12px}.ch__like li{padding:14px 0}.ch__like li b{font-size:19px}
+    .ch__next{flex-direction:column;align-items:stretch;gap:20px}
+    .ch__next h2{font-size:30px;margin-top:8px}
+    .ch__next>p{flex-direction:column;gap:8px}.ch__next .btn{height:54px}
+  }
+</style>

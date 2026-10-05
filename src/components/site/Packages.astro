@@ -3,6 +3,8 @@ import { packages as p, nb } from '../../i18n/ru';
 import Head from '../ui/Head.astro';
 import Ui from '../ui/Ui.astro';
 import Arrow from './Arrow.astro';
+import { calcHref } from '../../i18n/routes';
+const calc = calcHref(Astro.url.pathname);
 ---
 <section class="section pk" id="packages">
   <Head badge={p.badge} icon="task" intro={p.intro} title={p.title} />
@@ -19,7 +21,7 @@ import Arrow from './Arrow.astro';
         <div class="pk__bottom">
           <b class="pk__price">{nb(x.price)}</b>
           <p class="pk__term"><span>{x.term}</span><i> · </i><span class="pk__month">{nb(x.month)}</span></p>
-          <a class="btn pk__btn" href="#pricing" data-pack={x.key}>{p.btn}<Arrow /></a>
+          <a class="btn pk__btn" href={calc} data-pack={x.key}>{p.btn}<Arrow /></a>
         </div>
       </li>
     ))}
@@ -34,7 +36,7 @@ import Arrow from './Arrow.astro';
     <div class="pk__cr">
       <b class="pk__price">{nb(p.custom.price)}</b>
       <p>{p.custom.sub}</p>
-      <a class="btn btn--ink pk__cbtn" href="#pricing" data-go="calc">{p.custom.btn}<Arrow /></a>
+      <a class="btn btn--ink pk__cbtn" href={calc} data-go="calc">{p.custom.btn}<Arrow /></a>
     </div>
   </div>
   <p class="pk__note">{nb(p.note)}</p>

@@ -2,6 +2,7 @@
 // Шаблон текстовой страницы: политика и согласие.
 import Site from '../../layouts/Site.astro';
 import Header from './Header.astro';
+import Dock from './Dock.astro';
 import Footer from './Footer.astro';
 import Arrow from './Arrow.astro';
 import { pages, nb } from '../../i18n/ru';
@@ -41,6 +42,7 @@ const link = (t: string) => nb(esc(t)).replace(/https:\/\/southwood\.pw(\/[a-z]+
     </main>
     <Footer />
   </div>
+  <Dock label={crumb} />
 </Site>
 <script>
   // Подсветка текущего раздела в содержании

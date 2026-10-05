@@ -1,6 +1,7 @@
 ---
 import Site from '../layouts/Site.astro';
 import Header from '../components/site/Header.astro';
+import Dock from '../components/site/Dock.astro';
 import Footer from '../components/site/Footer.astro';
 import Arrow from '../components/site/Arrow.astro';
 import { pages } from '../i18n/ru';
@@ -15,12 +16,13 @@ const n = pages.notFound;
       <p class="nf__text">{n.text}</p>
       <div class="nf__actions">
         <a class="btn btn--white" href="/">{n.home}<Arrow /></a>
-        <a class="btn nf__ghost" href="/#pricing">{n.calc}<Arrow /></a>
+        <a class="btn nf__ghost" href="/ceny/#pricing">{n.calc}<Arrow /></a>
         <button class="btn nf__ghost" type="button" data-open="write">{n.write}<Arrow /></button>
       </div>
     </main>
     <Footer />
   </div>
+  <Dock label="Страница не найдена" />
 </Site>
 <style>
   .nf{background:var(--deep);color:#fff;padding:14rem 4rem 14rem;display:flex;flex-direction:column;align-items:center;text-align:center}

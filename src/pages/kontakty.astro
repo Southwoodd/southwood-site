@@ -1,0 +1,54 @@
+---
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/site/PageHero.astro';
+import Arrow from '../components/site/Arrow.astro';
+import { site, nb } from '../i18n/ru';
+const crumbs = [{ label: 'Контакты' }];
+const tiles = [
+  { k: 'Telegram', v: '@imsouthwood', n: 'Быстрее всего', href: site.telegram, hot: true },
+  { k: 'MAX', v: 'Написать в MAX', n: 'Если так удобнее', href: site.max },
+  { k: 'Почта', v: site.email, n: 'Для документов и ТЗ', href: `mailto:${site.email}` },
+  { k: 'TenChat', v: 'tenchat.ru/imsouthwood', n: 'Деловая сеть', href: site.tenchat },
+  { k: 'Behance', v: 'behance.net/imsouthwood', n: 'Кейсы с макетами', href: site.behance },
+  { k: 'VK', v: 'vk.com/imsouthwood', n: 'Сообщество', href: site.vk },
+];
+const ld = [{ '@type': 'ContactPage', url: 'https://southwood.pw/kontakty/', name: 'Контакты', about: { '@id': 'https://southwood.pw/#person' } }];
+---
+<Page title="Контакты: Telegram, MAX, почта | Сергей Воробьев" description="Напишите в Telegram @imsouthwood, MAX или на im@southwood.pw. Отвечаю сам, в течение часа. Живу в Краснодаре, работаю удаленно с компаниями по всей России." path="/kontakty/" label="Контакты" crumbs={crumbs} ld={ld}>
+  <PageHero crumbs={crumbs} title={['Контакты']} lead="Отвечаю сам, в течение часа, без менеджеров и анкет. Живу в Краснодаре, работаю удаленно с компаниями по всей России." />
+  <section class="section ct">
+    <ul>
+      {tiles.map((t, i) => (
+        <li data-reveal style={`--d:${(i % 3) * 70}ms`}>
+          <a class:list={{ hot: t.hot }} href={t.href} target={t.href.startsWith('http') ? '_blank' : undefined} rel="noopener">
+            <span><em>{t.k}</em><Arrow /></span><b>{t.v}</b><small>{t.n}</small>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+  <section class="section facts3" slot="after">
+    <div><span>Статус</span><b>{nb('Самозанятый. Договор на проект и чек на каждый платеж')}</b></div>
+    <div><span>Где работаю</span><b>{nb('Краснодар, удаленно по всей России')}</b></div>
+    <div><span>Оплата</span><b>{nb('Частями: 30% до старта, 40% в середине, 30% после сдачи')}</b></div>
+  </section>
+</Page>
+<style>
+  .ct{padding:4rem}
+  .ct ul{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
+  .ct a{min-height:20rem;background:var(--card);border-radius:2.4rem;padding:2.8rem;display:flex;flex-direction:column;transition:background-color .2s var(--ease)}
+  .ct a:hover{background:var(--mint)}
+  .ct span{display:flex;justify-content:space-between;align-items:flex-start}
+  .ct em{font-style:normal;font-size:max(1.5rem,13px);color:var(--muted)}
+  .ct :global(.arrow){width:2rem;height:2rem;transition:transform .25s var(--ease)}
+  .ct a:hover :global(.arrow){transform:translate(.2rem,-.2rem)}
+  .ct b{margin-top:2rem;font-size:3rem;line-height:1.15;font-weight:500;letter-spacing:-.03em;overflow-wrap:anywhere}
+  .ct small{margin-top:auto;padding-top:2rem;font-size:max(1.5rem,13px);color:var(--muted)}
+  .ct .hot{background:var(--deep);color:#fff}.ct .hot:hover{background:#35594a}
+  .ct .hot em,.ct .hot small{color:rgba(255,255,255,.75)}
+  @media (max-width:1023px){
+    .ct{padding:12px}.ct ul{grid-template-columns:1fr 1fr;gap:8px}
+    .ct a{min-height:0;border-radius:18px;padding:16px}.ct b{margin-top:10px;font-size:18px}.ct small{padding-top:12px}
+  }
+  @media (max-width:560px){.ct ul{grid-template-columns:1fr}}
+</style>

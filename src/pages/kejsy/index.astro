@@ -1,0 +1,12 @@
+---
+import Page from '../../layouts/Page.astro';
+import PageHero from '../../components/site/PageHero.astro';
+import Cases from '../../components/site/Cases.astro';
+import { CASES, CASES_N } from '../../i18n/routes';
+const crumbs = [{ label: 'Кейсы' }];
+const ld = [{ '@type': 'ItemList', name: 'Кейсы', itemListElement: CASES.map((c, n) => ({ '@type': 'ListItem', position: n + 1, url: 'https://southwood.pw' + c.href, name: c.name })) }];
+---
+<Page title="Кейсы: сайты, магазины, CRM, боты, приложения | Сергей Воробьев" description={`${CASES_N} работ: сайты, интернет-магазины, CRM, боты, автоматизация и приложения. У каждой страница с задачей, решением, сроком и живой ссылкой.`} path="/kejsy/" label="Кейсы" crumbs={crumbs} ld={ld}>
+  <PageHero crumbs={crumbs} title={['Кейсы']} lead={`${CASES_N} работ: сайты, магазины, CRM, боты, автоматизация и приложения. У каждой страница с задачей, решением и сроком, у большинства есть живая ссылка.`} />
+  <Cases full head={false} />
+</Page>
