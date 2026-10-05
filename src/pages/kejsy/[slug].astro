@@ -7,6 +7,7 @@ import Arrow from '../../components/site/Arrow.astro';
 import { nb, modal } from '../../i18n/ru';
 import { CASES, caseBy, serviceBy, serviceHref, R_ } from '../../i18n/routes';
 export function getStaticPaths() { return CASES.map((c) => ({ params: { slug: c.slug }, props: { c } })); }
+const isYearTerm = (t: string) => /\d{4}/.test(t);
 const { c } = Astro.props as { c: (typeof CASES)[number] };
 const srv = serviceBy[c.service];
 const next = caseBy[c.next];
@@ -17,7 +18,8 @@ const isYear = /^\d{4}$/.test(c.term);
 const termNote = isYear ? 'год проекта' : /недел|месяц|день|дня/.test(c.term) ? 'срок работы' : '';
 const task = `${modal.cases.leadTask} ${c.short}`;
 const live = (c.links as any[]).filter((l) => l.label !== 'Behance');
-const desc = `${c.lead} Срок: ${c.term}.`.replace(/\.\./g, '.');
+const dot = (t: string) => (/[.!?]$/.test(t) ? t : t + '.');
+const desc = `${dot(c.lead)} ${isYearTerm(c.term) ? '' : `Срок: ${c.term}. `}${dot(c.task)}`;
 const theme = c.card?.theme === 'black' ? 'black' : c.card?.theme === 'green' ? 'green' : 'mint';
 const ld = [{
   '@type': 'CreativeWork', '@id': `https://southwood.pw${c.href}#case`, name: c.name, headline: `${c.name}: ${c.lead}`, description: c.context, url: `https://southwood.pw${c.href}`,
@@ -25,7 +27,7 @@ const ld = [{
   ...(live[0] ? { sameAs: (c.links as any[]).map((l) => l.href) } : {}), ...(c.awards ? { award: c.awards.map((a: any) => a.label) } : {}),
 }];
 ---
-<Page title={`${c.name}: кейс | Сергей Воробьев`} description={desc} path={c.href} label="Кейсы" crumbs={crumbs} ld={ld}>
+<Page title={`${c.seo} | кейс`} description={desc} path={c.href} image={c.noimg ? undefined : `/og/${c.key}.jpg`} label="Кейсы" crumbs={crumbs} ld={ld}>
   <section class="section ph ch">
     <div class="ch__left">
       <Crumbs items={crumbs} />

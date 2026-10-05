@@ -223,28 +223,28 @@ export const serviceBy = Object.fromEntries(SERVICES.map((s) => [s.slug, s]));
 export const serviceHref = (slug: string) => `/uslugi/${slug}/`;
 
 // Кейсы: адрес, услуга, к которой относится, и строки каталога для ориентира по цене
-const CASE_META: Record<string, { slug: string; service: string; like: string[]; over?: Record<string, unknown> }> = {
-  alfa: { slug: 'alfa-elite', service: 'crm-bitrix24', like: ['corp', 'crmAuto', 'botAi', 'kp'] },
-  meetflow: { slug: 'meetflow', service: 'prilozheniya', like: [] },
-  mono: { slug: 'mono-coffee', service: 'prilozheniya', like: ['phoneapp', 'fin', 'legal'] },
-  caro: { slug: 'caro', service: 'internet-magazin', like: ['shop'] },
-  koposov: { slug: 'roman-koposov', service: 'razrabotka-sajtov', like: ['landing'] },
-  morozova: { slug: 'ksenija-morozova', service: 'razrabotka-sajtov', like: ['landing', 'seo'] },
-  promo: { slug: 'promokody-po-tovaram', service: 'avtomatizaciya', like: ['routine'] },
-  leads: { slug: 'priem-zayavok', service: 'avtomatizaciya', like: ['routine', 'crmLink'] },
-  bta: { slug: 'bta', service: 'razrabotka-sajtov', like: ['corp', 'logo'] },
-  evolutif: { slug: 'evolutif', service: 'redizajn-sajta', like: ['corp'], over: { redesign: true } },
-  belmare: { slug: 'belmare', service: 'redizajn-sajta', like: ['concept'] },
-  agrorus: { slug: 'agrorus', service: 'razrabotka-sajtov', like: ['landing', 'corp'] },
-  newhr: { slug: 'newhr', service: 'razrabotka-sajtov', like: ['landing'] },
-  refiori: { slug: 'refiori', service: 'redizajn-sajta', like: ['landing'], over: { redesign: true } },
+const CASE_META: Record<string, { seo: string; slug: string; service: string; like: string[]; over?: Record<string, unknown> }> = {
+  alfa: { seo: 'Alfa Elite: два сайта, Битрикс24 и AI-боты для консалтинга', slug: 'alfa-elite', service: 'crm-bitrix24', like: ['corp', 'crmAuto', 'botAi', 'kp'] },
+  meetflow: { seo: 'MeetFlow: AI-помощник для деловых созвонов', slug: 'meetflow', service: 'prilozheniya', like: [] },
+  mono: { seo: 'Mono Coffee: приложение кофейни с доставкой и подпиской', slug: 'mono-coffee', service: 'prilozheniya', like: ['phoneapp', 'fin', 'legal'] },
+  caro: { seo: 'Caro: интернет-магазин свечей на Тильде', slug: 'caro', service: 'internet-magazin', like: ['shop'] },
+  koposov: { seo: 'Роман Копосов: личный сайт руководителя на Tilda Zero', slug: 'roman-koposov', service: 'razrabotka-sajtov', like: ['landing'] },
+  morozova: { seo: 'Ксения Морозова: сайт юриста для бизнеса', slug: 'ksenija-morozova', service: 'razrabotka-sajtov', like: ['landing', 'seo'] },
+  promo: { seo: 'Промокоды по товарам на Тильде: автоматизация магазина', slug: 'promokody-po-tovaram', service: 'avtomatizaciya', like: ['routine'] },
+  leads: { seo: 'Прием заявок с сайта в Telegram и на почту', slug: 'priem-zayavok', service: 'avtomatizaciya', like: ['routine', 'crmLink'] },
+  bta: { seo: 'BTA: сайт и фирменный стиль промышленной компании', slug: 'bta', service: 'razrabotka-sajtov', like: ['corp', 'logo'] },
+  evolutif: { seo: 'Evolutif: редизайн сайта дистрибьютора SPA-косметики', slug: 'evolutif', service: 'redizajn-sajta', like: ['corp'], over: { redesign: true } },
+  belmare: { seo: 'Belmare: концепция редизайна сайта турагентства', slug: 'belmare', service: 'redizajn-sajta', like: ['concept'] },
+  agrorus: { seo: 'Agrorus: сайт агроэкспорта для рынков Персидского залива', slug: 'agrorus', service: 'razrabotka-sajtov', like: ['landing', 'corp'] },
+  newhr: { seo: 'NewHR: сайт под рекламное продвижение', slug: 'newhr', service: 'razrabotka-sajtov', like: ['landing'] },
+  refiori: { seo: 'Re: Fiori: редизайн сайта цветочной мастерской', slug: 'refiori', service: 'redizajn-sajta', like: ['landing'], over: { redesign: true } },
 };
 const cardText: Record<string, string> = Object.fromEntries([...casesText.list, ...casesText.more.list].map((c: any) => [c.key, c.text]));
 const cardMeta: Record<string, any> = Object.fromEntries([...casesText.list, ...casesText.more.list].map((c: any) => [c.key, c]));
 export const CASES = Object.entries(data.cases as Record<string, any>).map(([key, c]) => {
   const m = CASE_META[key];
   return {
-    key, ...c, slug: m.slug, href: `/kejsy/${m.slug}/`, service: m.service, lead: cardText[key] || c.context, card: cardMeta[key],
+    key, ...c, seo: m.seo, slug: m.slug, href: `/kejsy/${m.slug}/`, service: m.service, lead: cardText[key] || c.context, card: cardMeta[key],
     like: m.like.map((id) => ({ name: (m.over?.redesign && byId[id].excl === 'siteType' ? 'Редизайн: ' : '') + byId[id].name, price: show(id, m.over || {}) })),
   };
 });

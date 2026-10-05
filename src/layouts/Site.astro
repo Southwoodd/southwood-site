@@ -3,8 +3,17 @@ import '../styles/site.css';
 import '../styles/illus.css';
 import CookieBar from '../components/site/CookieBar.astro';
 import Modals from '../components/site/Modals.astro';
-interface Props { title: string; description: string; lang?: string; noindex?: boolean; path?: string }
-const { title, description, lang = 'ru', noindex = false, path = '/' } = Astro.props;
+interface Props { title: string; description: string; lang?: string; noindex?: boolean; path?: string; image?: string }
+const { title, description, lang = 'ru', noindex = false, path = '/', image = '/og-cover.png' } = Astro.props;
+// Описание для выдачи: целые предложения, пока укладываемся в 160 знаков
+const clip = (t: string) => {
+  if (t.length <= 160) return t;
+  const parts = t.match(/[^.!?]+[.!?]+/g) || [t]; let out = '';
+  for (const x of parts) { if ((out + x).trim().length > 160) break; out += x; }
+  out = out.trim();
+  return out.length >= 110 ? out : t.slice(0, 157).replace(/\s+\S*$/, '') + '…';
+};
+const desc = clip(description);
 const url = new URL(path, Astro.site).toString();
 ---
 <!doctype html>
@@ -13,7 +22,7 @@ const url = new URL(path, Astro.site).toString();
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
-    <meta name="description" content={description} />
+    <meta name="description" content={desc} />
     <link rel="canonical" href={url} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta name="theme-color" content="#f3f6f2" />
@@ -28,9 +37,9 @@ const url = new URL(path, Astro.site).toString();
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Сергей Воробьев" />
     <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
+    <meta property="og:description" content={desc} />
     <meta property="og:url" content={url} />
-    <meta property="og:image" content={new URL('/og-cover.png', Astro.site).toString()} />
+    <meta property="og:image" content={new URL(image, Astro.site).toString()} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />

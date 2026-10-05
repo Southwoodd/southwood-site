@@ -6,17 +6,20 @@ import Header from '../components/site/Header.astro';
 import Dock from '../components/site/Dock.astro';
 import Final from '../components/site/Final.astro';
 import Footer from '../components/site/Footer.astro';
+import { WEBSITE, PERSON } from '../i18n/schema';
 export type Crumb = { label: string; href?: string };
-interface Props { title: string; description: string; path: string; label: string; crumbs?: Crumb[]; final?: boolean; noindex?: boolean; ld?: object[] }
-const { title, description, path, label, crumbs = [], final = true, noindex = false, ld = [] } = Astro.props;
+interface Props { title: string; description: string; path: string; label: string; crumbs?: Crumb[]; final?: boolean; noindex?: boolean; ld?: object[]; image?: string }
+const { title, description, path, label, crumbs = [], final = true, noindex = false, ld = [], image } = Astro.props;
 const abs = (p: string) => new URL(p, Astro.site).toString();
 const trail = crumbs.length ? [{ label: 'Главная', href: '/' }, ...crumbs] : [];
 const graph = [
+  WEBSITE, PERSON,
+  { '@type': 'WebPage', '@id': abs(path) + '#page', url: abs(path), name: title, description, inLanguage: 'ru-RU', isPartOf: { '@id': WEBSITE['@id'] }, about: { '@id': PERSON['@id'] } },
   ...(trail.length ? [{ '@type': 'BreadcrumbList', itemListElement: trail.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.label, item: abs(c.href || path) })) }] : []),
   ...ld,
 ];
 ---
-<Site title={title} description={description} path={path} noindex={noindex}>
+<Site title={title} description={description} path={path} noindex={noindex} image={image}>
   <Fragment slot="head">
     {graph.length > 0 && <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@graph': graph })} />}
     <slot name="head" />
