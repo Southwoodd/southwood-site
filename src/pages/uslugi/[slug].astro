@@ -29,7 +29,7 @@ const ld = [
       <p class="ph__lead">{nb(s.lead)}</p>
       <ul class="ph__chips"><li>от {s.from} тыс. ₽</li>{s.chips.map((c) => <li>{c}</li>)}</ul>
       <div class="ph__cta">
-        <a class="btn btn--deep" href={R_.calc} data-go="calc">Рассчитать стоимость<Arrow /></a>
+        <a class="btn btn--deep" href={R_.calc} data-go="calc" data-goal="service_calc">Рассчитать стоимость<Arrow /></a>
         <button class="btn btn--grey" type="button" data-open="lead" data-chips={s.chipsForm} data-context={`service:${s.slug}`}>Бесплатная консультация<Arrow /></button>
       </div>
     </div>

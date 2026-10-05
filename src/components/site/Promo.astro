@@ -9,8 +9,8 @@ const tg = `${site.telegram}?text=${encodeURIComponent(`Здравствуйте
 {live && (
   <aside class="section pm" data-promo data-until={promo.until} aria-label="Акция">
     <p class="pm__main"><span class="pm__tag">{promo.label}</span><b>{promo.text}</b></p>
-    <p class="pm__how"><span>{promo.hint}</span><button type="button" class="pm__code" data-copy={promo.code} aria-label={`Скопировать промокод ${promo.code}`}><span data-code>{promo.code}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.500" y="8.500" width="11" height="11" rx="2.500"/><path d="M15.500 5.500v-.5a2 2 0 0 0-2-2H6.500a2.500 2.500 0 0 0-2.500 2.500V13a2 2 0 0 0 2 2h.5"/></svg></button></p>
-    <a class="btn btn--white pm__btn" href={tg} target="_blank" rel="noopener">Написать в Telegram<Arrow /></a>
+    <p class="pm__how"><span>{promo.hint}</span><button type="button" class="pm__code" data-goal="promo_copy" data-copy={promo.code} aria-label={`Скопировать промокод ${promo.code}`}><span data-code>{promo.code}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.500" y="8.500" width="11" height="11" rx="2.500"/><path d="M15.500 5.500v-.5a2 2 0 0 0-2-2H6.500a2.500 2.500 0 0 0-2.500 2.500V13a2 2 0 0 0 2 2h.5"/></svg></button></p>
+    <a class="btn btn--white pm__btn" data-goal="promo_telegram" href={tg} target="_blank" rel="noopener">Написать в Telegram<Arrow /></a>
   </aside>
   <script is:inline>
     (function () {

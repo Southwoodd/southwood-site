@@ -20,7 +20,7 @@ const ld = [{ '@type': 'ContactPage', url: 'https://southwood.pw/kontakty/', nam
     <ul>
       {tiles.map((t, i) => (
         <li data-reveal style={`--d:${(i % 3) * 70}ms`}>
-          <a class:list={{ hot: t.hot }} href={t.href} target={t.href.startsWith('http') ? '_blank' : undefined} rel="noopener">
+          <a class:list={{ hot: t.hot }} data-goal={`contact_${t.k.toLowerCase().replace(/[^a-z]/g, '') || 'mail'}`} href={t.href} target={t.href.startsWith('http') ? '_blank' : undefined} rel="noopener">
             <span><em>{t.k}</em><Arrow /></span><b>{t.v}</b><small>{t.n}</small>
           </a>
         </li>

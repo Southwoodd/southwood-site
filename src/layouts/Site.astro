@@ -96,6 +96,20 @@ const url = new URL(path, Astro.site).toString();
         (window as any).__pricingGo = detail; // остров заберет команду, если еще не загрузился
         window.dispatchEvent(new CustomEvent('pricing:go', { detail }));
       });
+      // Цели Метрики: клик по элементу с data-goal и дочитывание статьи
+      document.addEventListener('click', (e) => {
+        const g = (e.target as HTMLElement).closest<HTMLElement>('[data-goal]');
+        if (g) (window as any).swGoal?.(g.dataset.goal);
+      });
+      const endMark = document.querySelector('[data-read-end]');
+      if (endMark) {
+        const t0 = Date.now();
+        const ro = new IntersectionObserver((en) => {
+          if (!en[0].isIntersecting || Date.now() - t0 < 30000) return; // долистал до конца и провел на странице не меньше 30 секунд
+          (window as any).swGoal?.('article_read'); ro.disconnect();
+        });
+        ro.observe(endMark);
+      }
       // Плавный скролл только на десктопе с мышью
       const desktop = matchMedia('(min-width: 1024px) and (hover: hover) and (pointer: fine)').matches;
       const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;

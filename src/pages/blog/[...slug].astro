@@ -22,18 +22,18 @@ const others = post ? list.filter((p) => p.slug !== post.slug).slice(0, 3) : [];
 {post ? (
   <Page title={`${post.title} | Сергей Воробьев`} description={post.description} path={`/blog/${post.slug}/`} label="Блог" image={`/og/blog-${post.slug}.jpg`} crumbs={crumbs} ld={ld} noindex={!!post.draft}>
     <article class="section ar">
-      <a class="ar__back" href={R_.blog}><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M14 9H4M8.500 4.500 4 9l4.500 4.500" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Все статьи</a>
+      <a class="ar__back" href={R_.blog} data-goal="blog_back"><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M14 9H4M8.500 4.500 4 9l4.500 4.500" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Все статьи</a>
       <Crumbs items={crumbs} />
       {post.draft && <p class="ar__draft">Черновик. Страница закрыта от поиска и не показана в меню, пока текст не проверен.</p>}
       <header><span>{post.tag} · {post.minutes} минут чтения · {fmt(post.date)}</span><h1>{nb(post.title)}</h1><p>{nb(post.description)}</p></header>
       <div class="ar__body"><post.Content /></div>
-      <div class="sh" data-share data-title={post.title} data-url={`https://southwood.pw/blog/${post.slug}/`}>
-        <button class="btn btn--deep sh__main" type="button" data-share-native><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3.500M7.500 8 12 3.500 16.500 8M5 12.500v5A2.500 2.500 0 0 0 7.500 20h9a2.500 2.500 0 0 0 2.500-2.500v-5"/></svg>Поделиться</button>
-        <a class="sh__to" href={`https://t.me/share/url?url=${encodeURIComponent(`https://southwood.pw/blog/${post.slug}/`)}&text=${encodeURIComponent(post.title)}`} target="_blank" rel="noopener">Telegram</a>
-        <a class="sh__to" href={`https://vk.com/share.php?url=${encodeURIComponent(`https://southwood.pw/blog/${post.slug}/`)}&title=${encodeURIComponent(post.title)}`} target="_blank" rel="noopener">VK</a>
-        <button class="sh__to" type="button" data-share-copy>Скопировать ссылку</button>
+      <div class="sh" data-share data-read-end data-title={post.title} data-url={`https://southwood.pw/blog/${post.slug}/`}>
+        <button class="btn btn--deep sh__main" type="button" data-share-native data-goal="share_native"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3.500M7.500 8 12 3.500 16.500 8M5 12.500v5A2.500 2.500 0 0 0 7.500 20h9a2.500 2.500 0 0 0 2.500-2.500v-5"/></svg>Поделиться</button>
+        <a class="sh__to" href={`https://t.me/share/url?url=${encodeURIComponent(`https://southwood.pw/blog/${post.slug}/`)}&text=${encodeURIComponent(post.title)}`} target="_blank" rel="noopener" data-goal="share_telegram">Telegram</a>
+        <a class="sh__to" href={`https://vk.com/share.php?url=${encodeURIComponent(`https://southwood.pw/blog/${post.slug}/`)}&title=${encodeURIComponent(post.title)}`} target="_blank" rel="noopener" data-goal="share_vk">VK</a>
+        <button class="sh__to" type="button" data-share-copy data-goal="share_copy">Скопировать ссылку</button>
       </div>
-      <footer><a class="btn btn--deep" href={R_.calc} data-go="calc">Рассчитать стоимость<Arrow /></a><button class="btn btn--grey" type="button" data-open="write">Задать вопрос<Arrow /></button></footer>
+      <footer><a class="btn btn--deep" href={R_.calc} data-go="calc" data-goal="blog_calc">Рассчитать стоимость<Arrow /></a><button class="btn btn--grey" type="button" data-open="write">Задать вопрос<Arrow /></button></footer>
     </article>
     {others.length > 0 && <section class="section sec bl"><h2 class="bl__h">Читать дальше</h2><ul class="bl__grid">{others.map((p) => <li><a href={`/blog/${p.slug}/`}><i class={`bl__cov bl__cov--${p.theme || 'mint'}`}><em>{p.tag}</em><b class:list={{ long: (p.cover || p.tag).length > 14 }}>{p.cover || p.tag}</b>{p.coverNote && <small>{p.coverNote}</small>}</i><h3>{nb(p.title)}</h3><span>{p.minutes} минут чтения<Arrow /></span></a></li>)}</ul></section>}
   </Page>
