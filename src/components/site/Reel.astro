@@ -151,6 +151,16 @@ void CASES;
   .rl__cur{position:absolute;left:0;top:0;width:10.4rem;height:10.4rem;margin:-5.2rem 0 0 -5.2rem;border-radius:50%;background:#bee0cc;color:#0a0a0a;display:grid;place-items:center;text-align:center;line-height:1.15;padding:0 1.4rem;font-size:max(1.4rem,12px);font-weight:500;pointer-events:none;opacity:0;will-change:transform,opacity;z-index:3}
   .rl__plain{position:absolute;inset:0;display:grid;place-content:center;gap:1rem;font-size:2rem}
   .rl__g{position:absolute;inset:0;transform-style:preserve-3d}
+  .rl__net{display:flex;flex-direction:column;align-items:center;gap:16px;white-space:nowrap;pointer-events:none}
+  .rl__net b{display:flex;align-items:center;height:84px;padding:0 44px;border-radius:999px;background:#bee0cc;color:#0a0a0a;font-size:34px;font-weight:500;letter-spacing:-.02em}
+  .rl__net span{font-size:22px;color:rgba(255,255,255,.72)}
+  .rl--port .rl__net b{height:124px;padding:0 64px;font-size:52px}.rl--port .rl__net span{font-size:32px}
+  .rl__vline{display:inline-flex;align-items:center;height:56px;margin-top:28px;padding:0 26px;border-radius:999px;background:#bee0cc;color:#0a0a0a;font-size:21px;font-weight:500}
+  .rl--port .rl__vline{height:68px;font-size:26px}
+  .rl--film .rl__btns,.rl--film .rl__bar,.rl--film .rl__cur,.rl--film .rl__mgo,.rl--film .rl__mwant,.rl--film .rl__cta{display:none!important}
+  .rl--film{position:fixed!important;inset:0;width:100vw!important;height:100vh!important;max-height:none!important;aspect-ratio:auto!important;border-radius:0!important;z-index:99999}
+  .rl--film.rl--port .rl__who{top:44px;left:22px;font-size:15px}.rl--film.rl--port .rl__now{top:44px;right:22px;font-size:15px}
+  .rl--film .rl__who,.rl--film .rl__now{font-size:max(1.7rem,15px)}
   .rl__mgo{display:none}
   @media (max-width:1023px){
     .rl{aspect-ratio:4/5;border-radius:24px}
@@ -276,6 +286,8 @@ void main(){
     const nowEl = root.querySelector<HTMLElement>('[data-rl-now]')!;
     const bar = root.querySelector<HTMLElement>('[data-rl-bar]')!;
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Режим съемки ролика в файл (?video): без кнопок и полосы, в финале контакты вместо кнопки
+    const film = new URLSearchParams(location.search).has('video'); root.classList.toggle('rl--film', film);
     const port = root.clientWidth < 700; root.classList.toggle('rl--port', port);
     const mgo = root.querySelector<HTMLAnchorElement>('[data-rl-mgo]')!, mwant = root.querySelector<HTMLElement>('[data-rl-mwant]')!;
 
@@ -389,6 +401,7 @@ void main(){
       const veil = item(root2, h('div', 'rl__veil'));
       const T = text(root2, { key: 'all', kind: 'Портфолио', name: `Еще ${D.moreN} проектов`, line: 'Сайты, магазины, редизайны и сервисы для бизнеса', href: D.all, fact: '' }, 0);
       if (!port) { T.t.classList.add('rl__tx--mid'); T.sc.style.display = 'none'; }
+      if (film) T.go.insertAdjacentHTML('afterend', '<span class="rl__vline">southwood.pw/kejsy</span>');
       return (lt) => { const e = oExpo(sg(lt, 0, 1.6));
         tf(plane, port ? 0 : 40, port ? 330 : 60, mix(-1500, port ? -700 : -380, e), mix(64, 50, e), 0, -18 + lt * 0.9, 1, sg(lt, 0, 0.35));
         tiles.forEach(([a, ri, q]) => { const dir = ri % 2 ? -1 : 1; tf(a, (q - (per - 1) / 2) * step + dir * (lt * 70 - 150) + (ri % 2 ? step / 2 : 0), rows[ri] * 340, 0); });
@@ -436,8 +449,9 @@ void main(){
     // Финал
     add('outro', 'Обсудить проект', 5.6, '#0b2219', '#9fe0bd', (el) => {
       const end = item(el, h('div', 'rl__end', 'Соберу такую же систему для вас')); const ws = words(end);
+      const net = item(el, h('div', 'rl__net', '<b>southwood.pw</b><span>Telegram @imsouthwood</span>'));
       const cta = item(el, h('button', 'rl__cta', 'Обсудить проект →', { type: 'button', 'data-open': 'lead', 'data-goal': 'reel_cta' }));
-      return (lt) => { tf(end, 0, port ? 280 : 215, 0); rise(ws, lt, 0.5, 0.07); const k = oBack(sg(lt, 1.0, 1.6)); tf(cta, 0, port ? 520 : 330, 0, 0, 0, 0, 0.8 + 0.2 * k, sg(lt, 1.0, 1.3)); };
+      return (lt) => { tf(end, 0, port ? 280 : 215, 0); rise(ws, lt, 0.5, 0.07); const k = oBack(sg(lt, 1.0, 1.6)); tf(net, 0, port ? 540 : 345, 0, 0, 0, 0, 0.9 + 0.1 * k, film ? sg(lt, 1.0, 1.4) : 0); tf(cta, 0, port ? 520 : 330, 0, 0, 0, 0, 0.8 + 0.2 * k, sg(lt, 1.0, 1.3)); };
     }, (lt) => { const e = oExpo(sg(lt, 0, 1.6)); return { o: sg(lt, 0, 0.4), rot: [mix(-1.2, 0.3, e), mix(2.4, -0.5, e) + lt * 0.08, mix(-0.8, 0.06, e)], x: 0, y: 0.2, s: mix(0.16, 0.36, e) }; });
 
     let T = 0; scenes.forEach((s) => { s.start = T; T += s.dur; });
@@ -469,7 +483,8 @@ void main(){
     const draw = () => {
       const tt = ((t % T) + T) % T; let ci = 0; scenes.forEach((s, i) => { if (tt >= s.start) ci = i; });
       const s = scenes[ci], lt = tt - s.start, nx = scenes[(ci + 1) % scenes.length], pv = scenes[(ci + scenes.length - 1) % scenes.length];
-      const out = iCub(sg(lt, s.dur - 0.45, s.dur)), inn = sg(lt, 0, 0.5);
+      const hold = film && ci === scenes.length - 1; // в файле ролик заканчивается на финальном кадре, без ухода
+      const out = hold ? 0 : iCub(sg(lt, s.dur - 0.45, s.dur)), inn = sg(lt, 0, 0.5);
       scenes.forEach((x) => x.el.classList.toggle('is-on', x === s));
       arm(s); arm(nx);
       if (onNow !== s && started) { try { sessionStorage.setItem('reelAt', String(ci)); } catch (e) {}
@@ -482,7 +497,7 @@ void main(){
       s.el.style.opacity = (cl(inn * 3) * (1 - out)).toFixed(3);
       const bl = out * 14 + (1 - cl(inn * 2.2)) * 10; s.el.style.filter = bl > 0.3 ? `blur(${bl.toFixed(1)}px)` : '';
       // Самый первый кадр идет без вспышки: до старта блок стоит спокойным фоном
-      const fl = (t < 0.6 ? 0 : Math.exp(-Math.pow(lt / 0.16, 2))) + Math.exp(-Math.pow((s.dur - lt) / 0.14, 2));
+      const fl = (t < 0.6 ? 0 : Math.exp(-Math.pow(lt / 0.16, 2))) + (hold ? 0 : Math.exp(-Math.pow((s.dur - lt) / 0.14, 2)));
       flash.style.opacity = (fl * 0.5).toFixed(3);
       const k = oCub(sg(lt, 0, 0.6)), k2 = iCub(sg(lt, s.dur - 0.3, s.dur)) * 0.5;
       const A = s.a.map((v, i) => mix(mix(pv.a[i], v, 0.5 + 0.5 * k), nx.a[i], k2)), B = s.b.map((v, i) => mix(mix(pv.b[i], v, 0.5 + 0.5 * k), nx.b[i], k2));
