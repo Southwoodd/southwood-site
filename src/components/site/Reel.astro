@@ -2,7 +2,7 @@
 // Живой шоурил: сцена собирается в браузере, кейсы и карточки остаются ссылками.
 // Все движение считается от одного времени t, поэтому сцену можно замедлять, перематывать и снимать покадрово.
 import { CASES, caseBy, caseHref, serviceHref, R_ } from '../../i18n/routes';
-import { existsSync } from 'node:fs';
+import { readdirSync } from 'node:fs';
 const img = (k: string) => `/img/cases/${k}.webp`;
 const cases = [
   { key: 'meetflow', name: 'MeetFlow', kind: 'Свой SaaS', line: 'AI-помощник для деловых созвонов', a: '#12123a', b: '#8f8cff', lay: 'hero', side: 1 },
@@ -13,7 +13,11 @@ const cases = [
 ].map((c) => ({ ...c, href: caseHref(c.key), img: img(c.key), fact: (caseBy[c.key]?.card?.metric || caseBy[c.key]?.card?.tag || '') as string }));
 // Остальные кейсы идут одной сценой-стеной, чтобы ролик не растягивался
 const rest = CASES.filter((c) => !cases.some((x) => x.key === c.key));
-const more = rest.filter((c) => existsSync(`public/img/cases/${c.key}.webp`)).map((c) => ({ key: c.key, name: (c.card?.name || c.name) as string, href: c.href, img: img(c.key) }));
+// Экраны для стены лежат в public/reel/w как <ключ>-<номер>.webp. Раскладываем по кругу, чтобы один проект не шел подряд
+const shots = readdirSync('public/reel/w').filter((f) => f.endsWith('.webp')).sort();
+const per = rest.map((c) => ({ c, imgs: shots.filter((f) => f.startsWith(c.key + '-')) })).filter((x) => x.imgs.length);
+const more: { key: string; name: string; href: string; img: string }[] = [];
+for (let n = 0; n < 6; n++) per.forEach(({ c, imgs }) => { if (imgs[n]) more.push({ key: c.key, name: (c.card?.name || c.name) as string, href: c.href, img: `/reel/w/${imgs[n]}` }); });
 const data = {
   cases, more, moreN: rest.length, all: R_.cases,
   svc: { form: serviceHref('razrabotka-sajtov'), crm: serviceHref('crm-bitrix24'), bot: serviceHref('chat-boty'), pay: serviceHref('avtomatizaciya'), dash: serviceHref('avtomatizaciya') },
@@ -380,14 +384,14 @@ void main(){
       const plane = item(root2, h('div', '')); plane.style.transformStyle = 'preserve-3d';
       const N = D.more.length, rows = [-1.5, -0.5, 0.5, 1.5], per = 9, W = 560, step = W + 30;
       const tiles: [HTMLElement, number, number][] = [];
-      rows.forEach((r, ri) => { for (let q = 0; q < per; q++) { const m = D.more[(q + ri * 3) % N];
-        const a = item(plane, h('a', 'rl__scr rl__wt', `<i><b></b></i><img src="${m.img}" alt="" decoding="async"><em>${m.name}</em>`, { href: m.href, 'data-rl-link': 'Открыть кейс', 'aria-label': m.name, 'data-rl-ev': 'reel_open', 'data-rl-case': m.key }), W, 34 + Math.round(W / 2.53)); tiles.push([a, ri, q]); } });
+      rows.forEach((r, ri) => { for (let q = 0; q < per; q++) { const m = D.more[(q + ri * 6) % N];
+        const a = item(plane, h('a', 'rl__scr rl__wt', `<i><b></b></i><img src="${m.img}" alt="" decoding="async"><em>${m.name}</em>`, { href: m.href, 'data-rl-link': 'Открыть кейс', 'aria-label': m.name, 'data-rl-ev': 'reel_open', 'data-rl-case': m.key }), W, 34 + Math.round(W / 1.99)); tiles.push([a, ri, q]); } });
       const veil = item(root2, h('div', 'rl__veil'));
       const T = text(root2, { key: 'all', kind: 'Портфолио', name: `Еще ${D.moreN} проектов`, line: 'Сайты, магазины, редизайны и сервисы для бизнеса', href: D.all, fact: '' }, 0);
       if (!port) { T.t.classList.add('rl__tx--mid'); T.sc.style.display = 'none'; }
       return (lt) => { const e = oExpo(sg(lt, 0, 1.6));
         tf(plane, port ? 0 : 40, port ? 330 : 60, mix(-1500, port ? -700 : -380, e), mix(64, 50, e), 0, -18 + lt * 0.9, 1, sg(lt, 0, 0.35));
-        tiles.forEach(([a, ri, q]) => { const dir = ri % 2 ? -1 : 1; tf(a, (q - (per - 1) / 2) * step + dir * (lt * 70 - 150) + (ri % 2 ? step / 2 : 0), rows[ri] * 292, 0); });
+        tiles.forEach(([a, ri, q]) => { const dir = ri % 2 ? -1 : 1; tf(a, (q - (per - 1) / 2) * step + dir * (lt * 70 - 150) + (ri % 2 ? step / 2 : 0), rows[ri] * 340, 0); });
         tf(veil, 0, port ? -470 : 0, 40, 0, 0, 0, 1, sg(lt, 0.1, 0.7));
         textUp(T, lt, 0, port ? 0 : -8); };
     });
