@@ -1,0 +1,228 @@
+---
+// Живая схема связки для страницы автоматизации: один заказ проходит от канала до отчета.
+// На широком экране это схема с проводами, на телефоне те же шаги столбиком. Каждый второй проход показывает сбой и повтор.
+import Arrow from './Arrow.astro';
+const IC: Record<string, string> = {
+  site: '<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18"/>',
+  chat: '<path d="M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-7l-5 4v-4H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/>',
+  call: '<path d="M6 3h3l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v3a3 3 0 0 1-3 3A15 15 0 0 1 3 6a3 3 0 0 1 3-3z"/>',
+  till: '<rect x="4" y="10" width="16" height="10" rx="2"/><path d="M7 10V5h10v5M8 14h2M14 14h2"/>',
+  sync: '<path d="M20 8a8 8 0 0 0-14.5-2M4 16a8 8 0 0 0 14.5 2"/><path d="M5 2.5V6h3.5M19 21.5V18h-3.5"/>',
+  tag: '<path d="M3 12V4h8l10 10-8 8z"/><circle cx="8" cy="9" r="1.4"/>',
+  bill: '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',
+  pay: '<rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10.5h18M7 15h3"/>',
+  check: '<path d="M7 3h10v18l-2.5-1.5L12 21l-2.5-1.5L7 21z"/><path d="m9.5 11 2 2 3.5-4"/>',
+  box: '<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/>',
+  truck: '<path d="M3 6h11v10H3zM14 10h4l3 3v3h-7z"/><circle cx="7.5" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/>',
+  user: '<circle cx="12" cy="8" r="3.6"/><path d="M5 20a7 7 0 0 1 14 0"/>',
+  bell: '<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+};
+// Узлы схемы: координаты в px макета 1760×540, на странице переводятся в rem
+type N = { id: string; x: number; y: number; w: number; ic: string; t: string; s: string; step: number };
+const nodes: N[] = [
+  { id: 'bot', x: 0, y: 40, w: 250, ic: 'chat', t: 'Бот в мессенджере', s: 'принимает заказы', step: 0 },
+  { id: 'till', x: 0, y: 150, w: 250, ic: 'till', t: 'Касса', s: 'продажа в зале', step: 0 },
+  { id: 'call', x: 0, y: 260, w: 250, ic: 'call', t: 'Звонок', s: 'телефония', step: 0 },
+  { id: 'site', x: 0, y: 370, w: 250, ic: 'site', t: 'Сайт или магазин', s: 'корзина и формы', step: 0 },
+  { id: 'onec', x: 710, y: 150, w: 250, ic: 'sync', t: 'Заказ в 1С', s: 'создается сам', step: 2 },
+  { id: 'price', x: 710, y: 370, w: 250, ic: 'tag', t: 'Цены и остатки', s: 'из 1С на сайт', step: 2 },
+  { id: 'inv', x: 1010, y: 90, w: 250, ic: 'bill', t: 'Счет', s: 'по сумме заказа', step: 3 },
+  { id: 'pay', x: 1010, y: 200, w: 250, ic: 'pay', t: 'Оплата', s: 'карта и СБП', step: 3 },
+  { id: 'chk', x: 1010, y: 310, w: 250, ic: 'check', t: 'Чек', s: 'касса пробивает сама', step: 3 },
+  { id: 'stock', x: 1310, y: 90, w: 220, ic: 'box', t: 'Склад', s: 'остатки', step: 4 },
+  { id: 'ship', x: 1310, y: 200, w: 220, ic: 'truck', t: 'Отгрузка', s: 'документы из 1С', step: 4 },
+  { id: 'cl', x: 1570, y: 90, w: 190, ic: 'user', t: 'Клиенту', s: 'статус заказа', step: 5 },
+  { id: 'own', x: 1570, y: 200, w: 190, ic: 'bell', t: 'Владельцу', s: 'отчет вечером', step: 5 },
+];
+const steps = [
+  { t: 'Заказ приходит из любого канала', p: 'Сайт, бот, касса или звонок. Менеджер ничего не вводит руками.', n: ['Сайт', 'Бот', 'Касса', 'Звонок'] },
+  { t: 'Сделка появляется в CRM', p: 'Создается сама, ответственный сразу получает задачу.', n: ['CRM', 'Задача менеджеру'] },
+  { t: 'Заказ уходит в 1С', p: 'Документ появляется в учете, а цены и остатки из 1С возвращаются на сайт.', n: ['Заказ в 1С', 'Цены и остатки'] },
+  { t: 'Счет, оплата и чек', p: 'Счет выставляется по сумме заказа, оплата проходит картой или по СБП, касса пробивает чек.', n: ['Счет', 'Оплата', 'Чек'] },
+  { t: 'Склад и отгрузка', p: 'Товар резервируется, документы на отгрузку уже готовы.', n: ['Склад', 'Отгрузка'] },
+  { t: 'Все в курсе', p: 'Клиент получает статус, вы вечером получаете отчет. Каждая передача записана в журнал, о сбое узнаете сразу.', n: ['Клиенту', 'Владельцу', 'Журнал'] },
+];
+const r = (v: number) => `${v / 10}rem`;
+---
+<section class="section af" data-af aria-labelledby="af-h">
+  <div class="af__head">
+    <h2 id="af-h">Один заказ проходит всю цепочку сам</h2>
+    <p>Так выглядит связка, когда она работает. <span class="af__wide">Каждый второй проход на схеме случается сбой, и видно, что происходит, когда передача не прошла.</span></p>
+  </div>
+
+  <div class="af__canvas" aria-hidden="true">
+    <svg class="af__wires" viewBox="0 0 1760 540" fill="none" data-af-wires></svg>
+    {nodes.map((n) => (
+      <div class="af__n" data-n={n.id} data-step={n.step} style={`left:${r(n.x)};top:${r(n.y)};width:${r(n.w)}`}>
+        <i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={IC[n.ic]} /></i>
+        <b>{n.t}</b><span data-s data-d={n.s}>{n.s}</span>
+      </div>
+    ))}
+    <div class="af__card af__crm" data-n="crm" data-step="1" style={`left:${r(330)};top:${r(110)};width:${r(300)};height:${r(250)}`}>
+      <h3>CRM<em>воронка</em></h3>
+      <div class="af__cols"><div>Новые</div><div>В работе<s></s></div><div>Оплачено<s></s></div></div>
+      <div class="af__deal" data-af-deal>Заказ № 318<small>с сайта</small></div>
+    </div>
+    <div class="af__card af__log" data-n="log" data-step="5" style={`left:${r(1310)};top:${r(330)};width:${r(450)};height:${r(190)}`}>
+      <h3>Журнал передач<em data-af-logst>все прошло</em></h3>
+      <ul data-af-log></ul>
+    </div>
+    <div class="af__alert" data-af-alert style={`left:${r(1310)};top:${r(20)}`}>Вам пришло уведомление: склад не ответил, повторяю</div>
+  </div>
+
+  <ol class="af__steps" data-af-steps>
+    {steps.map((s, i) => (
+      <li data-i={i}>
+        <button type="button" aria-label={`Показать шаг ${i + 1}`}>
+          <span class="af__num">{String(i + 1).padStart(2, '0')}</span>
+          <b>{s.t}</b>
+          <p>{s.p}</p>
+          <span class="af__chips">{s.n.map((x) => <i>{x}</i>)}</span>
+        </button>
+      </li>
+    ))}
+  </ol>
+
+  <div class="af__foot">
+    <p>Это пример. Какие программы связать у вас и в каком порядке, разбираю на консультации и показываю прототип на ваших данных до основной оплаты.</p>
+    <button class="btn btn--white" type="button" data-open="lead" data-chips="link" data-context="service:avtomatizaciya:flow" data-goal="flow_cta">Разобрать мои программы<Arrow /></button>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-af]');
+  if (root) {
+    const q = <T extends Element>(s: string) => root.querySelector<T>(s)!;
+    const svg = q<SVGSVGElement>('[data-af-wires]'), deal = q<HTMLElement>('[data-af-deal]'), log = q<HTMLElement>('[data-af-log]'), logSt = q<HTMLElement>('[data-af-logst]'), alertEl = q<HTMLElement>('[data-af-alert]');
+    const N: Record<string, { el: HTMLElement; st: HTMLElement | null; x: number; y: number; w: number; h: number }> = {};
+    const remPx = () => parseFloat(getComputedStyle(document.documentElement).fontSize) || 10;
+    root.querySelectorAll<HTMLElement>('[data-n]').forEach((el) => { const k = 10; N[el.dataset.n!] = { el, st: el.querySelector<HTMLElement>('[data-s]'), x: parseFloat(el.style.left) * k, y: parseFloat(el.style.top) * k, w: parseFloat(el.style.width) * k, h: el.style.height ? parseFloat(el.style.height) * k : 68 }; });
+    void remPx;
+    // Провода: h — из правого края в левый, v — сверху вниз, b — обратно справа налево
+    const W: [string, string, 'h' | 'v' | 'b'][] = [['bot', 'crm', 'h'], ['till', 'crm', 'h'], ['call', 'crm', 'h'], ['site', 'crm', 'h'], ['crm', 'onec', 'h'], ['price', 'site', 'b'], ['onec', 'inv', 'h'], ['inv', 'pay', 'v'], ['pay', 'chk', 'v'], ['pay', 'stock', 'h'], ['stock', 'ship', 'v'], ['ship', 'cl', 'h'], ['ship', 'own', 'h']];
+    const P = W.map(([a, b, m]) => { const A = N[a], B = N[b]; let d = '';
+      if (m === 'v') { const x = A.x + A.w / 2; d = `M${x} ${A.y + A.h} L${x} ${B.y}`; }
+      else if (m === 'b') { const y = A.y + A.h / 2; d = `M${A.x} ${y} L${B.x + B.w} ${B.y + B.h / 2}`; }
+      else { const x1 = A.x + A.w, y1 = A.y + A.h / 2, x2 = B.x, y2 = B.y + Math.min(B.h / 2, 70), k = (x2 - x1) * 0.5; d = `M${x1} ${y1} C${x1 + k} ${y1} ${x2 - k} ${y2} ${x2} ${y2}`; }
+      svg.insertAdjacentHTML('beforeend', `<path class="af__wire" d="${d}"/><path class="af__pulse" d="${d}" pathLength="100" stroke-dasharray="14 200"/>`);
+      return { w: svg.lastElementChild!.previousElementSibling as SVGPathElement, p: svg.lastElementChild as SVGPathElement, a, b }; });
+    const wire = (a: string, b: string) => P.find((x) => x.a === a && x.b === b)!;
+    const sg = (t: number, a: number, b: number) => Math.max(0, Math.min(1, (t - a) / (b - a)));
+    const io = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+    const steps = [...root.querySelectorAll<HTMLElement>('[data-af-steps] li')];
+    const START = [0, 1.3, 2.5, 3.7, 5.2, 6.7]; // начало каждого шага в секундах
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Один кадр схемы в момент t. fail — проход со сбоем: склад отвечает со второй попытки
+    const frame = (t: number, fail: boolean) => {
+      const d = fail ? 1.6 : 0; // на сколько сбой сдвигает все, что после оплаты
+      const ev: [string, number, string?, string?][] = [
+        ['site', 0.0, 'новый заказ'], ['bot', 0.45, 'новый заказ'], ['till', 0.9, 'продажа'], ['crm', 1.3], ['onec', 2.5, '№ 318 создан'], ['price', 2.9, 'ушли на сайт'],
+        ['inv', 3.7, 'выставлен'], ['pay', 4.3, 'оплачено по СБП'], ['chk', 4.8, 'чек пробит'], ['stock', 5.2 + d, 'товар в резерве'], ['ship', 5.9 + d, 'накладная готова'], ['cl', 6.7 + d, 'статус отправлен'], ['own', 7.0 + d, 'попало в отчет'], ['log', 2.5],
+      ];
+      ev.forEach(([id, at, tx]) => { const n = N[id]; const on = t >= at; n.el.classList.toggle('is-on', on); n.el.classList.toggle('is-fire', on && t < at + 0.5); if (n.st) { const v = on && tx ? tx : n.st.dataset.d!; if (n.st.textContent !== v) n.st.textContent = v; } });
+      // сбой: склад не ответил, красный узел и уведомление, потом повтор
+      const bad = fail && t >= 5.2 && t < 5.2 + d; N.stock.el.classList.toggle('is-bad', bad); if (bad) N.stock.st!.textContent = 'нет ответа, повтор';
+      alertEl.classList.toggle('is-on', fail && t >= 5.45 && t < 5.2 + d + 0.9);
+      const run: [string, string, number, number, boolean?][] = [['site', 'crm', 0.1, 0.8], ['bot', 'crm', 0.55, 1.2], ['till', 'crm', 1.0, 1.6], ['crm', 'onec', 2.0, 2.5], ['price', 'site', 2.9, 3.5], ['onec', 'inv', 3.2, 3.7], ['inv', 'pay', 3.95, 4.3], ['pay', 'chk', 4.45, 4.8], ['pay', 'stock', 4.7, 5.2, fail], ['pay', 'stock', 4.7 + d, 5.2 + d], ['stock', 'ship', 5.5 + d, 5.9 + d], ['ship', 'cl', 6.2 + d, 6.7 + d], ['ship', 'own', 6.4 + d, 7.0 + d]];
+      P.forEach((x) => { x.p.style.opacity = '0'; x.p.classList.remove('is-bad'); x.w.classList.remove('is-done'); });
+      run.forEach(([a, b, t0, t1, isBad]) => { const x = wire(a, b), k = sg(t, t0, t1); if (k > 0 && k < 1) { x.p.style.opacity = '1'; x.p.style.strokeDashoffset = (14 - io(k) * 114).toFixed(1); x.p.classList.toggle('is-bad', !!isBad); } if (t >= t1 && !isBad) x.w.classList.add('is-done'); });
+      const m1 = io(sg(t, 2.0, 2.5)), m2 = io(sg(t, 4.3, 4.8));
+      deal.style.opacity = String(sg(t, 1.3, 1.5)); deal.style.transform = `translate(calc(${(m1 + m2).toFixed(3)} * 8.6rem), calc(${(m1 + m2).toFixed(3)} * 3.6rem)) scale(${(0.7 + 0.3 * sg(t, 1.3, 1.7)).toFixed(3)})`;
+      const lines: [number, string, boolean?][] = [[2.5, 'заказ → 1С'], [2.9, 'цены и остатки → сайт'], [4.3, 'оплата → 1С'], ...(fail ? [[5.2, 'склад не ответил, повтор через минуту', true] as [number, string, boolean]] : []), [5.2 + d, 'резерв на складе'], [6.7 + d, 'статус → клиенту']];
+      const shown = lines.filter((l) => t >= l[0]).slice(-4); const html = shown.map((l) => `<li class="${l[2] ? 'is-bad' : ''}"><i>${l[2] ? '!' : '✓'}</i>${l[1]}</li>`).join(''); if (log.dataset.h !== html) { log.dataset.h = html; log.innerHTML = html; }
+      const st = bad ? 'сбой, повторяю' : shown.length ? 'все прошло' : 'жду заказ'; if (logSt.textContent !== st) logSt.textContent = st; logSt.classList.toggle('is-bad', bad);
+      let cur = 0; START.forEach((s, i) => { if (t >= s + (i >= 4 ? d : 0)) cur = i; });
+      steps.forEach((li, i) => { li.classList.toggle('is-on', i === cur); li.classList.toggle('is-done', i < cur); });
+    };
+
+    let t = 0, loop = 0, last = 0, raf = 0, vis = false, started = false;
+    const len = () => (loop % 2 ? 11.4 : 9.8);
+    const tick = (now: number) => { raf = 0; const dt = Math.min(0.05, (now - last) / 1000 || 0); last = now; t += dt; if (t >= len()) { t = 0; loop++; } frame(t, loop % 2 === 1); if (vis) raf = requestAnimationFrame(tick); };
+    const play = () => { if (!raf && vis && !reduce) { last = performance.now(); raf = requestAnimationFrame(tick); } };
+    steps.forEach((li, i) => li.querySelector('button')!.addEventListener('click', () => { t = START[i] + (i >= 4 && loop % 2 ? 1.6 : 0) + 0.01; frame(t, loop % 2 === 1); (window as any).swGoal && (window as any).swGoal('flow_step'); }));
+    new IntersectionObserver((en) => { vis = en[0].isIntersecting; if (vis && !started) { started = true; t = 0; } play(); }, { threshold: 0.25 }).observe(root);
+    if (reduce) frame(9, false); else frame(0, false);
+  }
+</script>
+
+<style>
+  .af{background:#0a0f0d;color:#fff;padding:8rem 4rem 4rem;overflow:hidden;isolation:isolate}
+  .af::before{content:'';position:absolute;inset:0;z-index:-1;border-radius:inherit;background:radial-gradient(70rem 40rem at 78% 0,rgba(63,107,86,.55),transparent 70%),radial-gradient(60rem 36rem at 8% 100%,rgba(63,107,86,.35),transparent 70%)}
+  .af__head{display:grid;grid-template-columns:1fr 62rem;gap:4rem;align-items:end}
+  .af__head h2{font-size:5.6rem;line-height:1.02;font-weight:500;letter-spacing:-.035em;text-wrap:balance}
+  .af__head p{color:rgba(255,255,255,.66);font-size:max(1.8rem,15px);line-height:1.4}
+
+  .af__canvas{position:relative;width:176rem;height:54rem;margin:6rem auto 0}
+  .af__wires{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+  .af__wires :global(.af__wire){stroke:rgba(190,224,204,.28);stroke-width:2;stroke-dasharray:2 8;stroke-linecap:round;transition:stroke .4s}
+  .af__wires :global(.af__wire.is-done){stroke:rgba(190,224,204,.8)}
+  .af__wires :global(.af__pulse){stroke:#bee0cc;stroke-width:3.5;stroke-linecap:round;opacity:0;filter:drop-shadow(0 0 8px #9fe0bd)}
+  .af__wires :global(.af__pulse.is-bad){stroke:#ff7a7a;filter:drop-shadow(0 0 8px #ff5a5a)}
+  .af__n{position:absolute;height:6.8rem;display:grid;grid-template-columns:4rem 1fr;column-gap:1.3rem;align-content:center;padding:0 1.6rem 0 1.4rem;border-radius:1.8rem;background:linear-gradient(160deg,#1c2a23,#0e1512);box-shadow:0 0 0 1px rgba(190,224,204,.16),0 3rem 6rem -3rem rgba(0,0,0,.9);transition:box-shadow .35s}
+  .af__n i{grid-row:1/3;align-self:center;width:4rem;height:4rem;border-radius:1.3rem;background:rgba(190,224,204,.1);color:#bee0cc;display:grid;place-items:center;transition:background-color .35s,color .35s}
+  .af__n i svg{width:2rem;height:2rem}
+  .af__n b{font-size:1.7rem;line-height:1.2;font-weight:500;white-space:nowrap}
+  .af__n span{font-size:1.35rem;line-height:1.3;color:rgba(255,255,255,.5);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .35s}
+  .af__n.is-on{box-shadow:0 0 0 1px rgba(190,224,204,.55),0 3rem 6rem -3rem rgba(0,0,0,.9)}
+  .af__n.is-on i{background:#bee0cc;color:#0a0a0a}.af__n.is-on span{color:#bee0cc}
+  .af__n.is-fire{box-shadow:0 0 0 1px rgba(190,224,204,.95),0 0 5rem -.6rem rgba(159,224,189,.65),0 3rem 6rem -3rem rgba(0,0,0,.9)}
+  .af__n.is-bad{box-shadow:0 0 0 1px #ff7a7a,0 0 5rem -.6rem rgba(255,90,90,.6)}
+  .af__n.is-bad i{background:#ff7a7a;color:#0a0a0a}.af__n.is-bad span{color:#ff9d9d}
+  .af__card{position:absolute;border-radius:2.2rem;padding:1.8rem;background:linear-gradient(160deg,#1c2a23,#0e1512);box-shadow:0 0 0 1px rgba(190,224,204,.16),0 5rem 9rem -3rem rgba(0,0,0,.9);transition:box-shadow .35s}
+  .af__card.is-on{box-shadow:0 0 0 1px rgba(190,224,204,.5),0 5rem 9rem -3rem rgba(0,0,0,.9)}
+  .af__card.is-fire{box-shadow:0 0 0 1px rgba(190,224,204,.95),0 0 6rem -1rem rgba(159,224,189,.5)}
+  .af__card h3{display:flex;justify-content:space-between;align-items:center;font-size:1.35rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:1.3rem}
+  .af__card h3 em{font-style:normal;font-size:1.2rem;letter-spacing:0;text-transform:none;padding:.4rem 1rem;border-radius:99px;background:rgba(190,224,204,.14);color:#bee0cc;transition:background-color .3s,color .3s}
+  .af__card h3 em.is-bad{background:rgba(255,122,122,.18);color:#ff9d9d}
+  .af__cols{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;height:16.6rem}
+  .af__cols>div{border-radius:1.2rem;background:rgba(255,255,255,.045);padding:.9rem;font-size:1.15rem;color:rgba(255,255,255,.5)}
+  .af__cols s{display:block;text-decoration:none;height:3rem;border-radius:.8rem;background:rgba(255,255,255,.08);margin-top:.7rem}
+  .af__deal{position:absolute;left:2.6rem;top:9rem;width:8.6rem;border-radius:1rem;background:#bee0cc;color:#0a0a0a;font-size:1.15rem;font-weight:500;line-height:1.25;padding:.7rem .8rem;box-shadow:0 1.4rem 3rem -.8rem rgba(159,224,189,.6);opacity:0;transform-origin:0 0}
+  .af__deal{white-space:nowrap}.af__deal small{display:block;font-size:1rem;font-weight:400;opacity:.7}
+  .af__log ul{display:flex;flex-direction:column;gap:.7rem}
+  .af__log :global(li){display:flex;align-items:center;gap:1rem;font-size:1.45rem;color:rgba(255,255,255,.82);white-space:nowrap}
+  .af__log :global(li i){flex:none;width:2rem;height:2rem;border-radius:50%;background:rgba(190,224,204,.16);color:#bee0cc;font-style:normal;font-size:1.2rem;display:grid;place-items:center}
+  .af__log :global(li.is-bad){color:#ff9d9d}.af__log :global(li.is-bad i){background:rgba(255,122,122,.2);color:#ff9d9d}
+  .af__alert{position:absolute;height:4.6rem;padding:0 1.8rem;border-radius:99px;background:#ff7a7a;color:#0a0a0a;font-size:1.45rem;font-weight:500;display:flex;align-items:center;white-space:nowrap;opacity:0;transform:translateY(.8rem);transition:opacity .3s,transform .3s;pointer-events:none}
+  .af__alert.is-on{opacity:1;transform:none}
+
+  .af__steps{margin-top:5rem;display:grid;grid-template-columns:repeat(6,1fr);gap:1.2rem;counter-reset:s}
+  .af__steps button{display:flex;flex-direction:column;align-items:flex-start;text-align:left;width:100%;height:100%;padding:2rem;border-radius:2rem;background:rgba(255,255,255,.05);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);transition:background-color .35s,box-shadow .35s}
+  .af__steps button:hover{background:rgba(255,255,255,.09)}
+  .af__num{font-size:1.4rem;color:rgba(255,255,255,.45);font-variant-numeric:tabular-nums;transition:color .35s}
+  .af__steps b{margin-top:1.2rem;font-size:2rem;line-height:1.15;font-weight:500;letter-spacing:-.02em}
+  .af__steps p{margin-top:.8rem;font-size:max(1.5rem,13px);line-height:1.35;color:rgba(255,255,255,.6)}
+  .af__chips{display:none}
+  .af__steps li.is-on button{background:#bee0cc;color:#0a0a0a;box-shadow:none}
+  .af__steps li.is-on .af__num{color:rgba(10,10,10,.55)}.af__steps li.is-on p{color:rgba(10,10,10,.72)}
+  .af__steps li.is-done .af__num{color:#bee0cc}
+
+  .af__foot{margin-top:4rem;display:flex;align-items:center;justify-content:space-between;gap:4rem;padding-top:3rem;border-top:1px solid rgba(255,255,255,.12)}
+  .af__foot p{max-width:86rem;color:rgba(255,255,255,.66);font-size:max(1.7rem,14px);line-height:1.4}
+  .af__foot .btn{height:7rem;padding:0 2.8rem;font-size:max(2rem,16px);gap:2rem;flex:none}
+  .af__foot :global(.arrow){width:2rem;height:2rem}
+
+  /* телефон и планшет: схема не помещается, те же шаги идут столбиком и загораются по очереди */
+  @media (max-width:1023px){
+    .af{padding:40px 16px 16px}
+    .af__head{grid-template-columns:1fr;gap:12px}
+    .af__head h2{font-size:30px;line-height:1.08}
+    .af__head p{font-size:15px}
+    .af__canvas{display:none}
+    .af__wide{display:none}
+    .af__steps{margin-top:24px;grid-template-columns:1fr;gap:8px;position:relative}
+    .af__steps button{padding:16px;border-radius:18px;display:grid;grid-template-columns:30px 1fr;column-gap:8px}
+    .af__num{font-size:13px;padding-top:3px}
+    .af__steps b{margin-top:0;font-size:18px}
+    .af__steps p{grid-column:2;margin-top:6px;font-size:14px}
+    .af__chips{grid-column:2;display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+    .af__chips i{font-style:normal;font-size:12px;line-height:1;padding:7px 10px;border-radius:99px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.8);transition:background-color .35s,color .35s}
+    .af__steps li.is-on .af__chips i{background:rgba(10,10,10,.12);color:#0a0a0a}
+    .af__steps li.is-done .af__chips i{background:rgba(190,224,204,.16);color:#bee0cc}
+    .af__foot{margin-top:20px;padding-top:20px;flex-direction:column;align-items:stretch;gap:16px}
+    .af__foot p{font-size:14px}
+    .af__foot .btn{height:56px;font-size:16px;justify-content:space-between;padding:0 20px}
+    .af__foot :global(.arrow){width:18px;height:18px}
+  }
+</style>

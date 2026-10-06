@@ -20,6 +20,7 @@ const ld = [
     offers: { '@type': 'AggregateOffer', priceCurrency: 'RUB', lowPrice: s.from * 1000, offerCount: s.kinds.length } },
   { '@type': 'FAQPage', mainEntity: s.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
 ];
+import AutoFlow from '../../components/site/AutoFlow.astro';
 ---
 <Page title={s.seoTitle} description={s.seoDesc} path={path} label={s.menu} crumbs={crumbs} ld={ld}>
   <section class="section ph ph--svc">
@@ -46,6 +47,8 @@ const ld = [
       </div>
     )}
   </section>
+
+  {s.slug === 'avtomatizaciya' && <AutoFlow />}
 
   <section class="section sec" id="prices">
     <Head badge="Prices" icon="shield" intro={s.kindsIntro} title={s.kindsTitle} />
