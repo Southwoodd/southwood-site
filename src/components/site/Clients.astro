@@ -8,7 +8,7 @@ import { clients, nb } from '../../i18n/ru';
   </div>
   <ul class="cl__grid">
     {clients.logos.map((l, i) => (
-      <li data-reveal style={`--d:${i * 40}ms`}><img src={`/img/clients/${l.file}.svg`} alt={l.name} width={l.w} height={l.h} loading="lazy" style={`--w:${l.w / 10}rem;--mw:${Math.round(l.w * 0.72)}px`} class:list={{ full: l.file === 'rivgauche' }} /></li>
+      <li data-reveal style={`--d:${i * 40}ms`} tabindex="0"><img src={`/img/clients/${l.file}.svg`} alt={l.name} width={l.w} height={l.h} loading="lazy" style={`--w:${l.w / 10}rem;--mw:${Math.round(l.w * 0.72)}px`} class:list={{ full: l.file === 'rivgauche' }} /><span class="cl__did"><b>{l.name}</b>{l.did}</span></li>
     ))}
   </ul>
 </section>
@@ -17,8 +17,14 @@ import { clients, nb } from '../../i18n/ru';
   .cl h2{font-size:3rem;line-height:3.6rem;font-weight:500;letter-spacing:-.03em}
   .cl p{margin-top:1.4rem;color:var(--muted);font-size:max(1.6rem,14px);line-height:1.45}
   .cl__grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1.2rem}
-  .cl__grid li{height:11rem;border-radius:2rem;background:var(--card);display:grid;place-items:center;transition:background-color .25s var(--ease)}
-  .cl__grid li:hover{background:var(--mint)}
+  .cl__grid li{position:relative;height:11rem;border-radius:2rem;background:var(--card);display:grid;place-items:center;overflow:hidden;cursor:default;outline:0;transition:background-color .25s var(--ease)}
+  .cl__grid li:hover,.cl__grid li:focus{background:var(--mint)}
+  .cl__grid img{transition:opacity .25s var(--ease),transform .35s var(--ease)}
+  /* По наведению или нажатию вместо логотипа видно, что делал для компании */
+  .cl__did{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:.4rem;padding:0 1.6rem;text-align:center;font-size:max(1.4rem,12px);line-height:1.25;color:var(--deep);opacity:0;transform:translateY(.8rem);transition:opacity .25s var(--ease),transform .35s var(--ease)}
+  .cl__did b{font-size:max(1.5rem,12.5px);font-weight:500;color:var(--ink)}
+  .cl__grid li:hover img,.cl__grid li:focus img{opacity:0;transform:translateY(-.8rem)}
+  .cl__grid li:hover .cl__did,.cl__grid li:focus .cl__did{opacity:1;transform:none}
   .cl__grid img{width:var(--w);height:auto}
   .cl__grid img.full{width:27rem}
   @media (max-width:1023px){
@@ -26,6 +32,7 @@ import { clients, nb } from '../../i18n/ru';
     .cl h2{font-size:24px;line-height:28px}.cl p{margin-top:12px;font-size:15px;line-height:21px}
     .cl__grid{grid-template-columns:repeat(2,1fr);gap:8px;width:100%}
     .cl__grid li{height:72px;border-radius:16px}
+    .cl__did{padding:0 10px;gap:2px;font-size:12px}.cl__did b{font-size:12.5px}
     .cl__grid img{width:var(--mw)}.cl__grid img.full{width:194px}
   }
   @media (min-width:600px) and (max-width:1023px){.cl__grid{grid-template-columns:repeat(4,1fr)}}

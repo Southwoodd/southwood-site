@@ -37,10 +37,10 @@ export const header = {
 export const hero = {
   badge: '9+ лет опыта · Full-Stack Product Designer',
   badgeShort: '9+ лет опыта · Product Designer',
-  title: 'Сайт, CRM и боты под ключ без цены агентства',
+  title: 'Сайт, CRM и боты под ключ за 2–3 недели',
   sub: [
     'Сайты, CRM, боты, автоматизация, дашборды и приложения для бизнеса и учреждений.',
-    'Собираю в одну систему и веду после запуска.',
+    'Собираю в одну систему, где ни одна заявка не теряется, и веду после запуска.',
     'Цену видите сразу, сумму фиксирую в договоре, можно в рассрочку без банка.',
   ],
   primary: 'Рассчитать и сравнить цены',
@@ -52,18 +52,18 @@ export const ticker = ['CRM', 'ERP', 'Mobile App iOS/Android', 'Bitrix', 'Mini A
 
 export const clients = {
   title: 'Работал над проектами для этих компаний',
-  sub: 'За 9 лет в продуктовом дизайне и разработке. Тот же уровень делаю для компаний любого размера: от предпринимателя до завода.',
+  sub: 'Начинал с графического дизайна для крупных брендов, потом перешел в продукт и разработку. Что именно делал для каждой компании, видно по наведению или нажатию на логотип.',
   logos: [
-    { file: 'gazprom', name: 'Газпром', w: 107, h: 52 },
-    { file: 'severstal', name: 'Северсталь', w: 134, h: 42 },
-    { file: 'tinkoff', name: 'Тинькофф', w: 100, h: 56 },
-    { file: 'invitro', name: 'Invitro', w: 176, h: 32 },
-    { file: 'rivgauche', name: 'Рив Гош', w: 270, h: 110 },
-    { file: 'booking', name: 'Booking.com', w: 180, h: 31 },
-    { file: 'jnj', name: 'Johnson & Johnson', w: 169, h: 33 },
-    { file: 'esteelauder', name: 'Estee Lauder', w: 180, h: 23 },
-    { file: 'michelin', name: 'Michelin', w: 70, h: 70 },
-    { file: 'natgeo', name: 'National Geographic', w: 137, h: 41 },
+    { file: 'gazprom', did: 'Коммуникационный дизайн', name: 'Газпром', w: 107, h: 52 },
+    { file: 'severstal', did: 'Интерактивные видео для обучения', name: 'Северсталь', w: 134, h: 42 },
+    { file: 'tinkoff', did: 'Коммуникационный дизайн', name: 'Тинькофф', w: 100, h: 56 },
+    { file: 'invitro', did: 'Коммуникационный дизайн, баннеры', name: 'Invitro', w: 176, h: 32 },
+    { file: 'rivgauche', did: 'Коммуникационный дизайн, баннеры', name: 'Рив Гош', w: 270, h: 110 },
+    { file: 'booking', did: 'Совместный иллюстративный проект', name: 'Booking.com', w: 180, h: 31 },
+    { file: 'jnj', did: 'Коммуникационный дизайн', name: 'Johnson & Johnson', w: 169, h: 33 },
+    { file: 'esteelauder', did: 'Рекламные баннеры', name: 'Estee Lauder', w: 180, h: 23 },
+    { file: 'michelin', did: 'Коммуникационный дизайн', name: 'Michelin', w: 70, h: 70 },
+    { file: 'natgeo', did: 'Две презентации', name: 'National Geographic', w: 137, h: 41 },
   ],
 };
 
