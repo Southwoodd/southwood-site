@@ -95,7 +95,7 @@ const on = (href: string) => (path === href || (href !== '/' && path.startsWith(
       }
       dock.classList.toggle('dock--light', dark * 2 > n);
     };
-    const ask = () => { if (!tick) { tick = true; requestAnimationFrame(tone); } };
+    const ask = () => { if (!tick) { tick = true; setTimeout(() => requestAnimationFrame(tone), 150); } };
     addEventListener('scroll', ask, { passive: true }); addEventListener('resize', () => { fit(); ask(); });
     fit(); tone(); document.fonts?.ready.then(() => { fit(); tone(); });
   }

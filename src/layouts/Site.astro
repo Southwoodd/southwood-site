@@ -131,7 +131,7 @@ const url = new URL(path, Astro.site).toString();
       });
       if (desktop && !calm) {
         import('lenis').then(({ default: Lenis }) => {
-          const lenis = new Lenis({ duration: 0.9, smoothWheel: true, anchors: { offset: -30 } });
+          const lenis = new Lenis({ lerp: 0.1, smoothWheel: true, wheelMultiplier: 0.9, anchors: { offset: -30, duration: 1.1 } });
           (window as any).__lenis = lenis;
           const raf = (t: number) => { lenis.raf(t); requestAnimationFrame(raf); };
           requestAnimationFrame(raf);

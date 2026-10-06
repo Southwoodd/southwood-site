@@ -19,16 +19,29 @@ const { size = 40, class: className = '' } = Astro.props;
   aria-hidden="true"
   focusable="false"
 >
-  <path
-    fill="currentColor"
-    d="M117.65 66.37A58 58 0 0 1 66.37 117.65L63.57 92.28A32.48 32.48 0 0 0 92.28 63.57ZM53.63 117.65A58 58 0 0 1 2.35 66.37L27.72 63.57A32.48 32.48 0 0 0 56.43 92.28ZM2.35 53.63A58 58 0 0 1 53.63 2.35L56.43 27.72A32.48 32.48 0 0 0 27.72 56.43Z"
-  ></path>
-  <circle fill="var(--logo-dot, #7dab90)" cx="91.99" cy="28.01" r="14"></circle>
+  <g class="logo__ring">
+    <path
+      fill="currentColor"
+      d="M117.65 66.37A58 58 0 0 1 66.37 117.65L63.57 92.28A32.48 32.48 0 0 0 92.28 63.57ZM53.63 117.65A58 58 0 0 1 2.35 66.37L27.72 63.57A32.48 32.48 0 0 0 56.43 92.28ZM2.35 53.63A58 58 0 0 1 53.63 2.35L56.43 27.72A32.48 32.48 0 0 0 27.72 56.43Z"
+    ></path>
+  </g>
+  <g class="logo__orbit"><circle class="logo__dot" fill="var(--logo-dot, #7dab90)" cx="91.99" cy="28.01" r="14"></circle></g>
 </svg>
 
 <style>
-  .logo {
-    display: block;
-    flex: none;
+  /* Знак оживает три раза: при загрузке собирается, в покое точка изредка пульсирует, при наведении кольцо и точка делают оборот навстречу друг другу */
+  .logo { display: block; flex: none; overflow: visible; }
+  .logo__ring, .logo__orbit { transform-box: view-box; transform-origin: 60px 60px; }
+  .logo__dot { transform-box: fill-box; transform-origin: center; }
+  @media (prefers-reduced-motion: no-preference) {
+    .logo__ring { animation: logo-in 1s cubic-bezier(.2, .8, .2, 1) both; transition: transform 1s cubic-bezier(.5, 0, .2, 1); }
+    .logo__orbit { animation: logo-orbit-in 1.1s cubic-bezier(.2, .8, .2, 1) both; transition: transform 1s cubic-bezier(.5, 0, .2, 1); }
+    .logo__dot { animation: logo-pop .6s cubic-bezier(.3, 1.6, .5, 1) .55s both, logo-pulse 6s ease-in-out 3s infinite; }
+    :global(a:hover) > .logo .logo__ring, :global(a:focus-visible) > .logo .logo__ring { transform: rotate(360deg); }
+    :global(a:hover) > .logo .logo__orbit, :global(a:focus-visible) > .logo .logo__orbit { transform: rotate(-360deg); }
   }
+  @keyframes logo-in { from { transform: rotate(-200deg) scale(.6); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes logo-orbit-in { from { transform: rotate(270deg); } to { transform: none; } }
+  @keyframes logo-pop { from { transform: scale(0); } to { transform: scale(1); } }
+  @keyframes logo-pulse { 0%, 82%, 100% { transform: scale(1); } 88% { transform: scale(1.28); } 94% { transform: scale(.94); } }
 </style>
