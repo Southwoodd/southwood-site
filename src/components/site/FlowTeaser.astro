@@ -1,0 +1,82 @@
+---
+// Короткое превью схемы автоматизации для главной: шесть узлов, по которым бежит заказ. Весь блок ведет на страницу услуги.
+import Arrow from './Arrow.astro';
+import { serviceHref } from '../../i18n/routes';
+const IC: Record<string, string> = {
+  site: '<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18"/>',
+  crm: '<rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="9.5" y="4" width="5" height="11" rx="1.5"/><rect x="16" y="4" width="5" height="7" rx="1.5"/>',
+  sync: '<path d="M20 8a8 8 0 0 0-14.5-2M4 16a8 8 0 0 0 14.5 2"/><path d="M5 2.5V6h3.5M19 21.5V18h-3.5"/>',
+  pay: '<rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10.5h18M7 15h3"/>',
+  box: '<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/>',
+  bell: '<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+};
+const nodes = [
+  { ic: 'site', t: 'Заказ', s: 'сайт, бот, касса' },
+  { ic: 'crm', t: 'CRM', s: 'сделка и задача' },
+  { ic: 'sync', t: '1С', s: 'документ в учете' },
+  { ic: 'pay', t: 'Оплата', s: 'счет и чек' },
+  { ic: 'box', t: 'Склад', s: 'резерв и отгрузка' },
+  { ic: 'bell', t: 'Отчет', s: 'вам вечером' },
+];
+---
+<section class="section flt">
+  <a class="flt__a" href={serviceHref('avtomatizaciya')} data-goal="flow_teaser">
+    <div class="flt__txt">
+      <h2>Заказ доходит до склада и отчета без ручного ввода</h2>
+      <p>Связываю сайт, CRM, 1С, кассу и склад в одну цепочку. На странице услуги живая схема, там же видно, что происходит при сбое передачи.</p>
+      <span class="flt__btn">Смотреть схему<Arrow /></span>
+    </div>
+    <ol class="flt__chain" aria-hidden="true">
+      {nodes.map((n, i) => (
+        <li style={`--i:${i}`}>
+          <i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={IC[n.ic]} /></i>
+          <b>{n.t}</b><span>{n.s}</span>
+        </li>
+      ))}
+    </ol>
+  </a>
+</section>
+<style>
+  .flt{padding:0;background:#0a0f0d;color:#fff;overflow:hidden;isolation:isolate}
+  .flt::before{content:'';position:absolute;inset:0;z-index:-1;background:radial-gradient(70rem 36rem at 80% 0,rgba(63,107,86,.55),transparent 70%),radial-gradient(50rem 30rem at 0 100%,rgba(63,107,86,.3),transparent 70%)}
+  .flt__a{display:grid;grid-template-columns:62rem 1fr;gap:8rem;align-items:center;padding:6rem 4rem}
+  .flt h2{font-size:4.4rem;line-height:1.05;font-weight:500;letter-spacing:-.03em;text-wrap:balance}
+  .flt p{margin-top:2rem;color:rgba(255,255,255,.66);font-size:max(1.8rem,15px);line-height:1.4}
+  .flt__btn{margin-top:3.2rem;display:inline-flex;align-items:center;gap:1.6rem;height:6rem;padding:0 2.4rem;border-radius:999px;background:#fff;color:#0a0a0a;font-size:max(1.8rem,15px);font-weight:500;transition:background-color .25s}
+  .flt__a:hover .flt__btn{background:#bee0cc}
+  .flt__btn :global(.arrow){width:1.8rem;height:1.8rem;transition:transform .25s}
+  .flt__a:hover .flt__btn :global(.arrow){transform:translate(.2rem,-.2rem)}
+
+  .flt__chain{display:grid;grid-template-columns:repeat(6,1fr);position:relative}
+  .flt__chain li{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center}
+  /* провод к следующему узлу и бегущий по нему импульс */
+  .flt__chain li:not(:last-child)::before{content:'';position:absolute;top:3.6rem;left:calc(50% + 4.4rem);right:calc(-50% + 4.4rem);border-top:2px dotted rgba(190,224,204,.3)}
+  .flt__chain li:not(:last-child)::after{content:'';position:absolute;top:calc(3.6rem - 2px);left:calc(50% + 4.4rem);width:2.4rem;height:5px;border-radius:9px;background:#bee0cc;box-shadow:0 0 12px #9fe0bd;opacity:0;animation:fltRun 6s linear infinite;animation-delay:calc(var(--i) * .8s + .25s)}
+  .flt__chain i{width:7.2rem;height:7.2rem;border-radius:2.2rem;display:grid;place-items:center;color:#bee0cc;background:linear-gradient(160deg,#1c2a23,#0e1512);box-shadow:0 0 0 1px rgba(190,224,204,.18);animation:fltOn 6s linear infinite;animation-delay:calc(var(--i) * .8s)}
+  .flt__chain i svg{width:2.8rem;height:2.8rem}
+  .flt__chain b{margin-top:1.6rem;font-size:2rem;font-weight:500}
+  .flt__chain span{margin-top:.4rem;font-size:max(1.4rem,12px);color:rgba(255,255,255,.5);line-height:1.25}
+  @keyframes fltOn{0%{background:linear-gradient(160deg,#1c2a23,#0e1512);color:#bee0cc;box-shadow:0 0 0 1px rgba(190,224,204,.18)}3%,9%{background:#bee0cc;color:#0a0a0a;box-shadow:0 0 0 1px #bee0cc,0 0 4rem -.4rem rgba(159,224,189,.7)}14%,62%{background:#bee0cc;color:#0a0a0a;box-shadow:0 0 0 1px #bee0cc,0 0 0 0 transparent}70%,100%{background:linear-gradient(160deg,#1c2a23,#0e1512);color:#bee0cc;box-shadow:0 0 0 1px rgba(190,224,204,.18)}}
+  @keyframes fltRun{0%{opacity:0;transform:translateX(0)}1%{opacity:1}8.5%{opacity:1}9.2%{opacity:0;transform:translateX(var(--run))}100%{opacity:0;transform:translateX(var(--run))}}
+  .flt__chain{--run:calc((100rem - 8rem) / 6 - 11.2rem)}
+  @media (prefers-reduced-motion:reduce){.flt__chain i,.flt__chain li::after{animation:none}}
+
+  @media (max-width:1023px){
+    .flt__a{grid-template-columns:1fr;gap:28px;padding:32px 16px 20px}
+    .flt h2{font-size:26px;line-height:1.1}
+    .flt p{margin-top:12px;font-size:15px}
+    .flt__btn{display:flex;justify-content:space-between;margin-top:0;height:56px;padding:0 20px;font-size:16px}
+    .flt__btn :global(.arrow){width:18px;height:18px}
+    .flt__txt{display:contents}
+    .flt__txt h2,.flt__txt p{grid-column:1}
+    .flt__a{row-gap:0}
+    .flt__chain{order:0;margin:24px 0}
+    .flt__btn{order:1}
+    .flt__chain li:not(:last-child)::before{top:22px;left:calc(50% + 26px);right:calc(-50% + 26px)}
+    .flt__chain li:not(:last-child)::after{display:none}
+    .flt__chain i{width:44px;height:44px;border-radius:14px}
+    .flt__chain i svg{width:20px;height:20px}
+    .flt__chain b{margin-top:8px;font-size:12px}
+    .flt__chain span{display:none}
+  }
+</style>
