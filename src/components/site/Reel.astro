@@ -8,7 +8,7 @@ const cases = [
   { key: 'mono', name: 'Mono Coffee', kind: 'Приложение и три панели', line: 'Гость, бариста, курьер и владелец в одной системе', a: '#2b0d1c', b: '#ff6b93', lay: 'roles', side: -1 },
   { key: 'alfa', name: 'Alfa Elite', kind: 'Сайты, CRM, боты', line: 'Два сайта и Битрикс24 с AI-ботами', a: '#2a0812', b: '#d43d63', lay: 'iso', side: 1 },
   { key: 'caro', name: 'Caro', kind: 'Интернет-магазин', line: 'Магазин свечей с оплатой и доставкой', a: '#22241a', b: '#d3d98f', lay: 'trip', side: -1 },
-  { key: 'bta', name: 'BTA', kind: 'Сайт и стиль', line: 'Сайт промышленной компании', a: '#0e1114', b: '#cfd8e3', lay: 'tunnel', side: 1 },
+  { key: 'bta', name: 'BTA', kind: 'Сайт и стиль', line: 'Сайт промышленной компании', a: '#0d1410', b: '#74d04e', lay: 'tunnel', side: 1 },
 ].map((c) => ({ ...c, href: caseHref(c.key), img: img(c.key) }));
 const data = {
   cases,
@@ -304,12 +304,13 @@ void main(){
             textUp(T, lt, sd * -520); };
         }
         // Колода экранов: стопка раскрывается в глубину, верхний экран выходит вперед
-        const pos = ['0 0', '100% 0', '50% 100%', '100% 100%', '0 100%'];
-        const deck = pos.map((p, k) => { const sc = screen(el, c, 820, 446, p); if (k < 4) sc.classList.add('is-dim'); return sc; });
+        const deck = ['bta-5', 'bta-3', 'bta-4', 'bta-2', 'bta-long'].map((n, k) => { const sc = screen(el, c, 820, 0, '0 0', `/reel/${n}.webp`); if (k < 4) sc.classList.add('is-dim'); return sc; });
+        const roll = deck[4].querySelector('img')!;
         const T = text(el, c, i + 1);
         return (lt) => { const e = oExpo(sg(lt, 0, 1.5)), sp = oExpo(sg(lt, 0.25, 1.8));
           deck.forEach((sc, k) => { const d = 4 - k, top = k === 4;
             tf(sc, sd * (300 + d * 78 * sp - lt * 9), 50 - d * 62 * sp + (1 - e) * 200, mix(-1100, top ? 60 : 0, e) - d * 170 * sp + lt * 12, mix(30, 9, e), sd * (mix(-50, -22, e) + lt * 1.4), 0, 1, sg(lt, k * 0.04, k * 0.04 + 0.3) * (top ? 1 : 0.92 - d * 0.1)); });
+          roll.style.objectPosition = `0 ${(ioCub(sg(lt, 0.9, 3.2)) * 42).toFixed(2)}%`;
           textUp(T, lt, sd * -470); };
       });
     });
