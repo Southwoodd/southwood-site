@@ -79,11 +79,17 @@ void CASES;
   .rl__want:hover{background:#fff}
   .rl__fact{display:inline-flex;align-items:center;gap:12px;margin-top:22px;padding:11px 18px 11px 14px;border-radius:14px;background:rgba(255,255,255,.07);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);font-size:19px;font-weight:500;line-height:1.2;white-space:nowrap}
   .rl__fact::before{content:'';flex:none;width:22px;height:22px;border-radius:50%;background:var(--b) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22' fill='none'%3E%3Cpath d='M6.5 11.3l3 3 6-6.4' stroke='%230a0a0a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain}
-  .rl__tile{display:block;border-radius:16px;overflow:hidden;background:#0d1210;box-shadow:0 0 0 1px rgba(255,255,255,.12),0 40px 80px -30px rgba(0,0,0,.8);cursor:none;transition:box-shadow .3s}
-  .rl__tile img{display:block;width:100%;height:calc(100% - 46px);object-fit:cover;object-position:0 0;max-width:none}
-  .rl__tile span{display:flex;align-items:center;justify-content:space-between;height:46px;padding:0 16px;font-size:16px;font-weight:500;white-space:nowrap}
-  .rl__tile span::after{content:'→';opacity:.5}
-  .rl__tile:hover{box-shadow:0 0 0 1px rgba(190,224,204,.7),0 0 50px -10px rgba(159,224,189,.4),0 40px 80px -30px rgba(0,0,0,.8)}
+  .rl__wt img{filter:brightness(.62) saturate(.85);transition:filter .3s}
+  .rl__wt:hover img{filter:none}
+  .rl__wt em{position:absolute;left:12px;bottom:12px;height:30px;padding:0 12px;border-radius:999px;background:rgba(8,12,10,.78);box-shadow:0 0 0 1px rgba(255,255,255,.14);display:flex;align-items:center;font-style:normal;font-size:14px;font-weight:500;white-space:nowrap;opacity:.0;transform:translateY(6px);transition:opacity .25s,transform .25s}
+  .rl__wt:hover em{opacity:1;transform:none}
+  .rl__veil{width:1700px;height:1000px;pointer-events:none;background:radial-gradient(42% 52% at 50% 50%,rgba(8,14,11,.96) 0,rgba(8,14,11,.88) 42%,rgba(8,14,11,0) 100%)}
+  .rl--port .rl__veil{width:1000px;height:760px;background:linear-gradient(rgba(8,14,11,.96) 62%,rgba(8,14,11,0))}
+  .rl__tx--mid{width:1000px;text-align:center}
+  .rl__tx--mid .rl__name{--fs:124px!important}
+  .rl__tx--mid .rl__line{max-width:none}
+  .rl__tx--mid .rl__btns{justify-content:center}
+  .rl__tx--mid .rl__go{height:60px;padding:0 30px;font-size:19px;background:#bee0cc;color:#0a0a0a;border-color:transparent}
   .rl__w{display:inline-block;overflow:hidden;vertical-align:top;padding:.08em .1em .14em .02em;margin:-.08em -.1em -.14em -.02em}
   .rl__w>span{display:inline-block;will-change:transform}
 
@@ -146,7 +152,7 @@ void CASES;
     .rl{aspect-ratio:4/5;border-radius:24px}
     .rl__who{left:16px;top:16px}.rl__now{right:16px;top:16px}.rl__bar{left:16px;right:16px;bottom:12px}
     .rl__cur{display:none}
-    .rl__scr,.rl__ph,.rl__tab,.rl__c,.rl__go,.rl__tile{cursor:pointer}
+    .rl__scr,.rl__ph,.rl__tab,.rl__c,.rl__go{cursor:pointer}
   }
   /* Телефон: формат сторис. Полоса сцен сверху, тап листает, удержание ставит на паузу, кнопка кейса внизу */
   .rl--port{aspect-ratio:9/16;max-height:calc(100svh - 96px);width:100%;touch-action:pan-y;-webkit-tap-highlight-color:transparent}
@@ -369,19 +375,21 @@ void main(){
       });
     });
 
-    // Остальные кейсы одной стеной: три колонки плывут навстречу друг другу, каждая плитка ведет на свой кейс
-    if (D.more.length) add('more', 'Еще проекты', 3.8, '#0f1513', '#bee0cc', (root2) => {
-      const sd = -1, el = h('div', 'rl__g'); root2.appendChild(el);
-      if (port) el.style.transform = 'translate3d(330px,230px,0) scale(0.98)';
-      const plane = item(el, h('div', '')); plane.style.transformStyle = 'preserve-3d';
-      const cols = [0, 1, 2].map((k) => D.more.filter((_: V, q: number) => q % 3 === k));
+    // Остальные кейсы: стена экранов во весь кадр, ряды едут навстречу друг другу, заголовок по центру
+    if (D.more.length) add('more', 'Еще проекты', 4.2, '#0c1512', '#bee0cc', (root2) => {
+      const plane = item(root2, h('div', '')); plane.style.transformStyle = 'preserve-3d';
+      const N = D.more.length, rows = [-1.5, -0.5, 0.5, 1.5], per = 9, W = 560, step = W + 30;
       const tiles: [HTMLElement, number, number][] = [];
-      cols.forEach((col: V[], k: number) => col.forEach((m: V, q: number) => { const a = item(plane, h('a', 'rl__tile', `<img src="${m.img}" alt="" decoding="async"><span>${m.name}</span>`, { href: m.href, 'data-rl-link': 'Открыть кейс', 'data-rl-ev': 'reel_open', 'data-rl-case': m.key }), 270, 216); tiles.push([a, k, q - (col.length - 1) / 2]); }));
+      rows.forEach((r, ri) => { for (let q = 0; q < per; q++) { const m = D.more[(q + ri * 3) % N];
+        const a = item(plane, h('a', 'rl__scr rl__wt', `<i><b></b></i><img src="${m.img}" alt="" decoding="async"><em>${m.name}</em>`, { href: m.href, 'data-rl-link': 'Открыть кейс', 'aria-label': m.name, 'data-rl-ev': 'reel_open', 'data-rl-case': m.key }), W, 34 + Math.round(W / 2.53)); tiles.push([a, ri, q]); } });
+      const veil = item(root2, h('div', 'rl__veil'));
       const T = text(root2, { key: 'all', kind: 'Портфолио', name: `Еще ${D.moreN} проектов`, line: 'Сайты, магазины, редизайны и сервисы для бизнеса', href: D.all, fact: '' }, 0);
-      return (lt) => { const e = oExpo(sg(lt, 0, 1.4));
-        tf(plane, sd * 330, 20, mix(-700, -40, e), mix(26, 8, e), sd * (-20 + lt * 1.3), 0, 1, sg(lt, 0, 0.3));
-        tiles.forEach(([a, k, q], n) => { const en = oExpo(sg(lt, n * 0.05, 1.1 + n * 0.05)); tf(a, (k - 1) * 292, q * 240 + (k === 1 ? -1 : 1) * (lt * 14 - 20) + (1 - en) * (k === 1 ? -420 : 420), 0, 0, 0, 0, 1, sg(lt, n * 0.05, n * 0.05 + 0.3)); });
-        textUp(T, lt, sd * -480); };
+      if (!port) { T.t.classList.add('rl__tx--mid'); T.sc.style.display = 'none'; }
+      return (lt) => { const e = oExpo(sg(lt, 0, 1.6));
+        tf(plane, port ? 0 : 40, port ? 330 : 60, mix(-1500, port ? -700 : -380, e), mix(64, 50, e), 0, -18 + lt * 0.9, 1, sg(lt, 0, 0.35));
+        tiles.forEach(([a, ri, q]) => { const dir = ri % 2 ? -1 : 1; tf(a, (q - (per - 1) / 2) * step + dir * (lt * 70 - 150) + (ri % 2 ? step / 2 : 0), rows[ri] * 292, 0); });
+        tf(veil, 0, port ? -470 : 0, 40, 0, 0, 0, 1, sg(lt, 0.1, 0.7));
+        textUp(T, lt, 0, port ? 0 : -8); };
     });
 
     // Система: заявка проходит по связанным карточкам
