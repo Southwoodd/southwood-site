@@ -25,6 +25,7 @@ void CASES;
     <span class="rl__who">Сергей Воробьев<i>Reel 2026</i></span>
     <span class="rl__now" data-rl-now></span>
     <div class="rl__bar" data-rl-bar></div>
+    <a class="rl__mgo" data-rl-mgo hidden></a>
   </div>
   <span class="rl__cur" aria-hidden="true"><b data-rl-cur>Открыть</b></span>
   <noscript>
@@ -123,12 +124,34 @@ void CASES;
   .rl__bar button:hover span{opacity:1;transform:none}
   .rl__cur{position:absolute;left:0;top:0;width:10.4rem;height:10.4rem;margin:-5.2rem 0 0 -5.2rem;border-radius:50%;background:#bee0cc;color:#0a0a0a;display:grid;place-items:center;text-align:center;line-height:1.15;padding:0 1.4rem;font-size:max(1.4rem,12px);font-weight:500;pointer-events:none;opacity:0;will-change:transform,opacity;z-index:3}
   .rl__plain{position:absolute;inset:0;display:grid;place-content:center;gap:1rem;font-size:2rem}
+  .rl__g{position:absolute;inset:0;transform-style:preserve-3d}
+  .rl__mgo{display:none}
   @media (max-width:1023px){
     .rl{aspect-ratio:4/5;border-radius:24px}
     .rl__who{left:16px;top:16px}.rl__now{right:16px;top:16px}.rl__bar{left:16px;right:16px;bottom:12px}
     .rl__cur{display:none}
     .rl__scr,.rl__ph,.rl__tab,.rl__c,.rl__go{cursor:pointer}
   }
+  /* Телефон: формат сторис. Полоса сцен сверху, тап листает, удержание ставит на паузу, кнопка кейса внизу */
+  .rl--port{aspect-ratio:9/16;max-height:calc(100svh - 96px);width:100%;touch-action:pan-y;-webkit-tap-highlight-color:transparent}
+  .rl--port .rl__stage{pointer-events:none}
+  .rl--port .rl__cta{pointer-events:auto}
+  .rl--port .rl__go,.rl--port .rl__scrim{display:none}
+  .rl--port .rl__bar{top:10px;bottom:auto;left:12px;right:12px;gap:4px;pointer-events:none}
+  .rl--port .rl__bar button{height:10px}
+  .rl--port .rl__bar button::before,.rl--port .rl__bar button i{height:3px;margin-top:-1.5px}
+  .rl--port .rl__bar button span{display:none}
+  .rl--port .rl__who{left:14px;top:28px;font-size:12px}.rl--port .rl__who i{display:none}
+  .rl--port .rl__now{right:14px;top:28px;font-size:12px}
+  .rl--port .rl__mgo{position:absolute;left:14px;right:14px;bottom:14px;height:54px;border-radius:999px;background:#fff;color:#0a0a0a;display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:500;letter-spacing:-.01em;pointer-events:auto;transition:opacity .25s,transform .25s}
+  .rl--port .rl__mgo[hidden]{display:flex;opacity:0;transform:translateY(8px);pointer-events:none}
+  .rl--port .rl__end{white-space:normal;width:800px;font-size:92px;line-height:1.02}
+  .rl--port .rl__big{font-size:170px}.rl--port .rl__sub{font-size:26px}
+  .rl--port .rl__cap{font-size:60px;white-space:normal;width:800px;text-align:center}
+  .rl--port .rl__cta{height:118px;padding:0 60px;font-size:36px}
+  .rl--port .rl__c h4{font-size:18px}.rl--port .rl__c h4 b{font-size:15px}
+  .rl--port .rl__f,.rl--port .rl__msg{font-size:19px}.rl--port .rl__cols>div{font-size:15px}.rl--port .rl__deal{font-size:15px}.rl--port .rl__st{font-size:17px}
+  .rl--port .rl__role{height:44px;font-size:19px;padding:0 18px}
 </style>
 
 <script>
@@ -222,6 +245,8 @@ void main(){
     const nowEl = root.querySelector<HTMLElement>('[data-rl-now]')!;
     const bar = root.querySelector<HTMLElement>('[data-rl-bar]')!;
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const port = root.clientWidth < 700; root.classList.toggle('rl--port', port);
+    const mgo = root.querySelector<HTMLAnchorElement>('[data-rl-mgo]')!;
 
     type Sc = { vids?: HTMLVideoElement[]; id: string; label: string; dur: number; start: number; el: HTMLElement; a: number[]; b: number[]; up: (lt: number, s: Sc) => void; ring?: (lt: number, s: Sc) => { o: number; rot: number[]; x: number; y: number; s: number } };
     const scenes: Sc[] = [];
@@ -246,7 +271,8 @@ void main(){
       return { t, sc, name: words(t.querySelector('.rl__name')!), line: words(t.querySelector('.rl__line')!), kind: t.querySelector<HTMLElement>('.rl__kind')!, go: t.querySelector<HTMLElement>('.rl__go')! };
     };
     const textUp = (T: ReturnType<typeof text>, lt: number, x: number, y = -20) => {
-      tf(T.sc, x * 1.25, y + 10, 30, 0, 0, 0, 1, sg(lt, 0, 0.5)); tf(T.t, x, y, 60); rise(T.name, lt, 0.15, 0.09); rise(T.line, lt, 0.4, 0.035, 0.8);
+      if (port) tf(T.t, 0, -440, 60, 0, 0, 0, 1.45); else { tf(T.sc, x * 1.25, y + 10, 30, 0, 0, 0, 1, sg(lt, 0, 0.5)); tf(T.t, x, y, 60); }
+      rise(T.name, lt, 0.15, 0.09); rise(T.line, lt, 0.4, 0.035, 0.8);
       T.kind.style.opacity = sg(lt, 0.1, 0.5).toFixed(2); T.go.style.opacity = sg(lt, 0.7, 1.1).toFixed(2); T.go.style.transform = `translateY(${((1 - oExpo(sg(lt, 0.7, 1.5))) * 16).toFixed(1)}px)`;
     };
 
@@ -255,17 +281,19 @@ void main(){
       const sub = item(el, h('div', 'rl__sub', 'Сайты · CRM · боты · приложения'));
       const big = item(el, h('div', 'rl__big', 'Reel <em>2026</em>'));
       const ws = words(big);
-      return (lt) => { tf(big, 0, 250, 0, 0, 0, 0, mix(0.96, 1.03, lt / 3.4)); rise(ws, lt, 0.9, 0.12, 1); tf(sub, 0, 360, 0, 0, 0, 0, 1, sg(lt, 1.5, 2.1)); };
+      return (lt) => { tf(big, 0, port ? 300 : 250, 0, 0, 0, 0, mix(0.96, 1.03, lt / 3.4)); rise(ws, lt, 0.9, 0.12, 1); tf(sub, 0, port ? 430 : 360, 0, 0, 0, 0, 1, sg(lt, 1.5, 2.1)); };
     }, (lt) => { const e = oExpo(sg(lt, 0, 1.8)); return { o: sg(lt, 0, 0.5), rot: [mix(1.25, 0.32, e) + Math.sin(lt * 0.8) * 0.04, mix(-2.2, -0.42, e) + lt * 0.07, mix(1.4, 0.1, e)], x: 0, y: 0.16, s: mix(0.2, 0.44, e) + iCub(sg(lt, 2.95, 3.4)) * 2.2 }; });
 
     // Кейсы
     D.cases.forEach((c: V, i: number) => {
       const sd = c.side;
-      add(c.key, c.name, 3.3, c.a, c.b, (el) => {
+      add(c.key, c.name, 3.3, c.a, c.b, (root2) => {
+        const el = h('div', 'rl__g'); root2.appendChild(el);
+        if (port) el.style.transform = `translate3d(${-sd * (c.lay === 'iso' ? 420 : c.lay === 'roles' ? 285 : 320)}px,${c.lay === 'roles' ? 230 : 210}px,0) scale(${c.lay === 'iso' ? 0.95 : c.lay === 'roles' ? 1 : 0.94})`;
         if (c.lay === 'hero') {
           const back = screen(el, c, 780, 0, '0 0', '/reel/mf-cab.webp'); back.classList.add('is-dim');
           const main = screen(el, c, 940, 0, '0 0', 'v:mf-site');
-          const T = text(el, c, i + 1);
+          const T = text(root2, c, i + 1);
           return (lt) => { const e = oExpo(sg(lt, 0, 1.3)), d = lt * 1.0;
             tf(back, sd * (500 - d * 6), -190, -520 + e * 60, 8, sd * (-30 + d), 0, 1, sg(lt, 0.15, 0.6) * 0.9);
             tf(main, sd * (300 - d * 10), 50 + (1 - e) * 120, mix(-700, 0, e), mix(22, 6, e), sd * (mix(-46, -20, e) + d * 1.6), sd * mix(-6, 0, e), 1, sg(lt, 0, 0.3));
@@ -275,7 +303,7 @@ void main(){
           // Три рабочих места одной системы: владелец, бариста, гость
           const adm = screen(el, c, 800, 0, '0 0', 'v:mono-admin'), tab = tablet(el, c, 'v:mono-bar'), ph = phone(el, c, 'v:mono-guest');
           const tags = [role(el, 'Владелец'), role(el, 'Бариста'), role(el, 'Гость')];
-          const T = text(el, c, i + 1);
+          const T = text(root2, c, i + 1);
           const P = [[adm, 60, -150, -320, -236], [tab, 215, 70, -20, 286], [ph, -160, 75, 160, 316]] as [HTMLElement, number, number, number, number][];
           return (lt) => { P.forEach(([d, dx, dy, dz, th], k) => { const e = oExpo(sg(lt, k * 0.14, 1.3 + k * 0.14)), o = sg(lt, k * 0.14, k * 0.14 + 0.3);
             const x = sd * 330 - sd * dx * -1 - lt * (4 + k * 4) * -sd, y = dy + (1 - e) * (300 + k * 160) - lt * (3 + k * 3), z = dz + (1 - e) * -500, rx = mix(26, 5, e), ry = sd * (-22 + lt * 1.4);
@@ -288,7 +316,7 @@ void main(){
           const tiles: HTMLElement[] = []; let n = 0;
           for (let r = -1; r <= 1; r++) for (let q = -1; q <= 1; q++) { const hot = !r && !q, sc = screen(plane, c, 600, 0, '0 0', hot ? 'v:alfa' : `/reel/alfa-${(n++ % 6) + 1}.webp`); (sc as V)._r = r; (sc as V)._q = q; if (!hot) sc.classList.add('is-dim'); tiles.push(sc); }
           const mob = phone(el, c, '/reel/alfa-m.webp');
-          const T = text(el, c, i + 1);
+          const T = text(root2, c, i + 1);
           return (lt) => { const e = oExpo(sg(lt, 0, 1.4)), pm = oExpo(sg(lt, 0.7, 1.9));
             tf(mob, sd * (120 - lt * 6), 130 + (1 - pm) * 520 - lt * 5, 240, mix(24, 4, pm), sd * (-20 + lt * 1.4), sd * 3 * pm, 0.86, sg(lt, 0.7, 1.0));
             tf(plane, sd * 420, 30, mix(-900, -260, e), 56, 0, sd * (-34 + lt * 1.2), 1, sg(lt, 0, 0.35));
@@ -299,7 +327,7 @@ void main(){
         if (c.lay === 'trip') {
           const L = screen(el, c, 640, 0, '0 0', '/reel/caro-1.webp'), Rr = screen(el, c, 640, 0, '0 0', '/reel/caro-2.webp'); L.classList.add('is-dim'); Rr.classList.add('is-dim');
           const M = screen(el, c, 860, 0, '0 0', 'v:caro');
-          const T = text(el, c, i + 1);
+          const T = text(root2, c, i + 1);
           return (lt) => { const e = oExpo(sg(lt, 0, 1.3)), cx = sd * 335;
             tf(L, cx - 410 * e, -10, -520, 0, 58, 0, 1, sg(lt, 0.2, 0.7) * 0.9); tf(Rr, cx + 410 * e, -10, -520, 0, -58, 0, 1, sg(lt, 0.2, 0.7) * 0.9);
             tf(M, cx, 20, mix(-600, 40, e) + lt * 12, mix(-14, 0, e), sd * mix(24, 6, e), 0, 1, sg(lt, 0, 0.3));
@@ -309,7 +337,7 @@ void main(){
         const deck = ['bta-5', 'bta-3', 'bta-4', 'bta-2', 'bta-long'].map((n, k) => { const sc = screen(el, c, 820, 0, '0 0', `/reel/${n}.webp`); if (k < 4) sc.classList.add('is-dim'); return sc; });
         const roll = deck[4].querySelector('img')!;
         const mob = phone(el, c, '/reel/bta-m.webp'), mroll = mob.querySelector('img')!; mroll.style.objectPosition = '0 0';
-        const T = text(el, c, i + 1);
+        const T = text(root2, c, i + 1);
         return (lt) => { const e = oExpo(sg(lt, 0, 1.5)), sp = oExpo(sg(lt, 0.25, 1.8));
           deck.forEach((sc, k) => { const d = 4 - k, top = k === 4;
             tf(sc, sd * (300 + d * 78 * sp - lt * 9), 50 - d * 62 * sp + (1 - e) * 200, mix(-1100, top ? 60 : 0, e) - d * 170 * sp + lt * 12, mix(30, 9, e), sd * (mix(-50, -22, e) + lt * 1.4), 0, 1, sg(lt, k * 0.04, k * 0.04 + 0.3) * (top ? 1 : 0.92 - d * 0.1)); });
@@ -322,24 +350,27 @@ void main(){
 
     // Система: заявка проходит по связанным карточкам
     add('sys', 'Система', 5.2, '#0b2219', '#9fe0bd', (el) => {
-      const board = item(el, h('div', 'rl__board'));
+      const board = item(el, h('div', 'rl__board')); if (port) { board.style.width = '820px'; board.style.height = '1140px'; }
       const S = D.svc; const L = 'data-rl-link';
       const mk = (cls: string, href: string, tip: string, x: number, y: number, w: number, hh: number, html: string) => { const c = h('a', 'rl__c ' + cls, html, { href, [L]: tip }); Object.assign(c.style, { left: x + 'px', top: y + 'px', width: w + 'px', height: hh + 'px' }); board.appendChild(c); return c; };
-      board.insertAdjacentHTML('beforeend', '<svg viewBox="0 0 1380 760"></svg>');
+      board.insertAdjacentHTML('beforeend', `<svg viewBox="0 0 ${port ? '820 1140' : '1380 760'}"></svg>`);
+      const XY = port ? [[10, 0], [350, 70], [10, 440], [500, 500], [195, 810]] : [[0, 250], [400, 40], [400, 420], [930, 440], [950, 20]];
       const svg = board.querySelector('svg')!;
-      const form = mk('', S.form, 'Сайты', 0, 250, 270, 262, '<h4>Сайт<b>заявка</b></h4><div class="rl__f">Анна</div><div class="rl__f">Нужен сайт и CRM</div><div class="rl__f rl__f--btn">Отправить</div>');
-      const crm = mk('', S.crm, 'CRM', 400, 40, 440, 290, '<h4>CRM<b>воронка</b></h4><div class="rl__cols"><div>Новые</div><div>В работе<s></s></div><div>Оплата<s></s><s></s></div></div><div class="rl__deal">Анна<small>сайт и CRM</small></div>');
-      const bot = mk('', S.bot, 'Чат-боты', 400, 420, 400, 280, '<h4>Бот<b>отвечает сам</b></h4><div class="rl__msg rl__msg--me">Нужен сайт и CRM</div><span class="rl__dots"><u></u><u></u><u></u></span><div class="rl__msg" data-m>Здравствуйте, Анна. Заявку получили, расчет пришлю в течение часа.</div>');
-      const pay = mk('', S.pay, 'Автоматизация', 930, 440, 290, 230, '<h4>Счет<b>№ 214</b></h4><div class="rl__sum">120 000 ₽</div><span class="rl__st" data-st>Выставлен</span>');
-      const dash = mk('', S.dash, 'Автоматизация', 950, 20, 430, 330, '<h4>Дашборд<b>за неделю</b></h4><div class="rl__num"><span data-n>128</span><small>заявок</small></div><div class="rl__bars">' + [0.42, 0.55, 0.38, 0.66, 0.6, 0.74, 0.86].map((v) => `<u style="height:${v * 100}%"></u>`).join('') + '</div>');
+      const form = mk('', S.form, 'Сайты', XY[0][0], XY[0][1], 270, 262, '<h4>Сайт<b>заявка</b></h4><div class="rl__f">Анна</div><div class="rl__f">Нужен сайт и CRM</div><div class="rl__f rl__f--btn">Отправить</div>');
+      const crm = mk('', S.crm, 'CRM', XY[1][0], XY[1][1], 440, 290, '<h4>CRM<b>воронка</b></h4><div class="rl__cols"><div>Новые</div><div>В работе<s></s></div><div>Оплата<s></s><s></s></div></div><div class="rl__deal">Анна<small>сайт и CRM</small></div>');
+      const bot = mk('', S.bot, 'Чат-боты', XY[2][0], XY[2][1], 400, 280, '<h4>Бот<b>отвечает сам</b></h4><div class="rl__msg rl__msg--me">Нужен сайт и CRM</div><span class="rl__dots"><u></u><u></u><u></u></span><div class="rl__msg" data-m>Здравствуйте, Анна. Заявку получили, расчет пришлю в течение часа.</div>');
+      const pay = mk('', S.pay, 'Автоматизация', XY[3][0], XY[3][1], 290, 230, '<h4>Счет<b>№ 214</b></h4><div class="rl__sum">120 000 ₽</div><span class="rl__st" data-st>Выставлен</span>');
+      const dash = mk('', S.dash, 'Автоматизация', XY[4][0], XY[4][1], 430, 330, '<h4>Дашборд<b>за неделю</b></h4><div class="rl__num"><span data-n>128</span><small>заявок</small></div><div class="rl__bars">' + [0.42, 0.55, 0.38, 0.66, 0.6, 0.74, 0.86].map((v) => `<u style="height:${v * 100}%"></u>`).join('') + '</div>');
       const cards = [form, crm, bot, pay, dash];
-      const wires = [['M270 350 C340 350 330 190 400 190', 0.9, 1.5], ['M270 420 C340 420 330 560 400 560', 0.9, 1.5], ['M800 560 C870 560 860 555 930 555', 2.5, 3.0], ['M840 185 C900 185 890 185 950 185', 3.2, 3.7], ['M1075 440 C1075 400 1160 400 1160 350', 3.3, 3.8]] as [string, number, number][];
+      const wd = port ? ['M280 130 C320 130 310 215 350 215', 'M145 262 C145 350 210 350 210 440', 'M410 590 C450 590 460 615 500 615', 'M470 360 C470 560 455 660 430 810', 'M645 730 C645 780 560 760 540 810'] : ['M270 350 C340 350 330 190 400 190', 'M270 420 C340 420 330 560 400 560', 'M800 560 C870 560 860 555 930 555', 'M840 185 C900 185 890 185 950 185', 'M1075 440 C1075 400 1160 400 1160 350'];
+      const wires = wd.map((d, k) => [d, [0.9, 0.9, 2.5, 3.2, 3.3][k], [1.5, 1.5, 3.0, 3.7, 3.8][k]]) as [string, number, number][];
       const pulses = wires.map(([d]) => { svg.insertAdjacentHTML('beforeend', `<path class="rl__wire" d="${d}"/><path class="rl__pulse" d="${d}" pathLength="100" stroke-dasharray="14 200"/>`); return svg.lastElementChild as SVGPathElement; });
       const deal = crm.querySelector<HTMLElement>('.rl__deal')!, dots = bot.querySelector<HTMLElement>('.rl__dots')!, msg = bot.querySelector<HTMLElement>('[data-m]')!, st = pay.querySelector<HTMLElement>('[data-st]')!, num = dash.querySelector<HTMLElement>('[data-n]')!, last = dash.querySelector<HTMLElement>('.rl__bars u:last-child')!, btn = form.querySelector<HTMLElement>('.rl__f--btn')!;
       const cap = item(el, h('div', 'rl__cap', 'Сайт, CRM и боты <em>в одной системе</em>')); const cw = words(cap);
       const fire = (c: HTMLElement, lt: number, a: number) => c.classList.toggle('is-fire', lt > a && lt < a + 0.5);
       return (lt) => { const e = oExpo(sg(lt, 0, 1.6));
-        tf(board, 40, -70 - lt * 3, mix(-800, 90, e) + lt * 12, mix(34, 12, e) - lt * 0.6, mix(-22, -7, e) + lt * 1.7, 0, 1, sg(lt, 0, 0.3));
+        if (port) tf(board, 0, -150 - lt * 3, mix(-800, 0, e) + lt * 6, mix(26, 7, e) - lt * 0.4, mix(-16, -4, e) + lt * 1.1, 0, 0.86, sg(lt, 0, 0.3));
+        else tf(board, 40, -70 - lt * 3, mix(-800, 90, e) + lt * 12, mix(34, 12, e) - lt * 0.6, mix(-22, -7, e) + lt * 1.7, 0, 1, sg(lt, 0, 0.3));
         cards.forEach((c, k) => { const a = oBack(sg(lt, 0.1 + k * 0.09, 0.9 + k * 0.09)); c.style.transform = `translateZ(${((1 - a) * -260 + (k % 2 ? 36 : 14)).toFixed(1)}px)`; c.style.opacity = sg(lt, 0.1 + k * 0.09, 0.45 + k * 0.09).toFixed(2); });
         pulses.forEach((p, k) => { const [, a, b] = wires[k], x = sg(lt, a, b); p.style.strokeDashoffset = (14 - ioCub(x) * 114).toFixed(1); p.style.opacity = x > 0 && x < 1 ? '1' : '0'; });
         btn.style.transform = `scale(${(1 - 0.06 * Math.sin(sg(lt, 0.7, 0.95) * Math.PI)).toFixed(3)})`;
@@ -351,14 +382,14 @@ void main(){
         const ok = lt > 3.05; st.classList.toggle('is-ok', ok); st.textContent = ok ? '✓ Оплачен' : 'Выставлен';
         num.textContent = lt > 3.75 ? '129' : '128'; last.style.transform = `scaleY(${(0.88 + 0.12 * oBack(sg(lt, 3.75, 4.3))).toFixed(3)})`;
         fire(crm, lt, 1.5); fire(bot, lt, 1.5); fire(pay, lt, 3.0); fire(dash, lt, 3.75);
-        tf(cap, 0, 340, 60); rise(cw, lt, 1.0, 0.07); };
+        tf(cap, 0, port ? 395 : 340, 60); rise(cw, lt, 1.0, 0.07); };
     });
 
     // Финал
     add('outro', 'Обсудить проект', 5.6, '#0b2219', '#9fe0bd', (el) => {
       const end = item(el, h('div', 'rl__end', 'Соберу такую же систему для вас')); const ws = words(end);
       const cta = item(el, h('button', 'rl__cta', 'Обсудить проект →', { type: 'button', 'data-open': 'lead', 'data-goal': 'reel_cta' }));
-      return (lt) => { tf(end, 0, 215, 0); rise(ws, lt, 0.5, 0.07); const k = oBack(sg(lt, 1.0, 1.6)); tf(cta, 0, 330, 0, 0, 0, 0, 0.8 + 0.2 * k, sg(lt, 1.0, 1.3)); };
+      return (lt) => { tf(end, 0, port ? 280 : 215, 0); rise(ws, lt, 0.5, 0.07); const k = oBack(sg(lt, 1.0, 1.6)); tf(cta, 0, port ? 520 : 330, 0, 0, 0, 0, 0.8 + 0.2 * k, sg(lt, 1.0, 1.3)); };
     }, (lt) => { const e = oExpo(sg(lt, 0, 1.6)); return { o: sg(lt, 0, 0.4), rot: [mix(-1.2, 0.3, e), mix(2.4, -0.5, e) + lt * 0.08, mix(-0.8, 0.06, e)], x: 0, y: 0.2, s: mix(0.16, 0.36, e) }; });
 
     let T = 0; scenes.forEach((s) => { s.start = T; T += s.dur; });
@@ -377,7 +408,7 @@ void main(){
       ['uRes', 'uT', 'uFlash', 'uRing', 'uA', 'uB', 'uRP', 'uRot'].forEach((n) => (U[n] = gl.getUniformLocation(pr, n)));
     } else cv.style.background = 'radial-gradient(80% 90% at 60% 110%,#1d4a39,#060a08 70%)';
     let W = 0, H = 0, q = 1;
-    const size = () => { const r = root.getBoundingClientRect(); W = r.width; H = r.height; stage.style.setProperty('--rlk', String(Math.max(W / 1600, H / 900) * (W < H ? 0.62 : 1)));
+    const size = () => { const r = root.getBoundingClientRect(); W = r.width; H = r.height; stage.style.setProperty('--rlk', String(port ? W / 900 : Math.max(W / 1600, H / 900) * (W < H ? 0.62 : 1)));
       q = Math.min(devicePixelRatio || 1, 1.5) * (W > 1400 ? 0.75 : 1); cv.width = Math.round(W * q); cv.height = Math.round(H * q); gl && gl.viewport(0, 0, cv.width, cv.height); };
     size(); new ResizeObserver(size).observe(root);
     const rotM = (a: number[]) => { const [x, y, z] = a, cx = Math.cos(x), sx = Math.sin(x), cy = Math.cos(y), sy = Math.sin(y), cz = Math.cos(z), sz = Math.sin(z);
@@ -407,9 +438,10 @@ void main(){
       root.style.setProperty('--fl', `rgb(${B.map((v) => Math.round(v * 255)).join(',')})`);
       if (gl) { const rg = s.ring ? s.ring(lt, s) : null;
         gl.uniform2f(U.uRes, cv.width, cv.height); gl.uniform1f(U.uT, t); gl.uniform1f(U.uFlash, fl); gl.uniform3fv(U.uA, A); gl.uniform3fv(U.uB, B);
-        gl.uniform1f(U.uRing, rg ? rg.o * (1 - out) : 0); gl.uniform3f(U.uRP, rg ? rg.x : 0, rg ? rg.y : 0, rg ? rg.s : 1); gl.uniformMatrix3fv(U.uRot, false, rotM(rg ? rg.rot : [0, 0, 0]));
+        gl.uniform1f(U.uRing, rg ? rg.o * (1 - out) : 0); gl.uniform3f(U.uRP, rg ? rg.x : 0, rg ? rg.y * (port ? 0.7 : 1) : 0, rg ? rg.s * (port ? 0.5 : 1) : 1); gl.uniformMatrix3fv(U.uRot, false, rotM(rg ? rg.rot : [0, 0, 0]));
         gl.drawArrays(gl.TRIANGLES, 0, 3); }
       const n = D.cases.findIndex((c: V) => c.key === s.id);
+      if (port) { const lab = n >= 0 ? 'Смотреть кейс →' : s.id === 'sys' ? 'Все услуги →' : ''; if (mgo.dataset.s !== s.id) { mgo.dataset.s = s.id; mgo.hidden = !lab; if (lab) { mgo.textContent = lab; mgo.href = n >= 0 ? D.cases[n].href : '/uslugi/'; } } }
       nowEl.textContent = n >= 0 ? `0${n + 1} / 0${D.cases.length}  ${s.label}` : s.label;
       segs.forEach((b, i) => b.style.setProperty('--p', String(i < ci ? 1 : i > ci ? 0 : lt / s.dur)));
       s.el.classList.toggle('is-hot', !!hot && s.el.contains(hot));
@@ -423,11 +455,20 @@ void main(){
     const api = { T, manual: false, scenes: scenes.map((s) => ({ id: s.id, start: s.start, dur: s.dur })), seek(v: number) { t = v; draw(); }, hold(v: boolean) { api.manual = v; if (!v) play(); } };
     (window as V).__reel = api;
 
-    root.addEventListener('pointermove', (e) => { const r = root.getBoundingClientRect(); mX = e.clientX - r.left; mY = e.clientY - r.top;
+    if (!port) root.addEventListener('pointermove', (e) => { const r = root.getBoundingClientRect(); mX = e.clientX - r.left; mY = e.clientY - r.top;
       const l = (e.target as HTMLElement).closest<HTMLElement>('[data-rl-link]'); if (l !== hot) { hot = l; if (l) curTx.textContent = l.getAttribute('data-rl-link'); }
       want = reduce ? 0 : l || (e.target as HTMLElement).closest('.rl__cta,.rl__bar') ? 0.06 : 1; });
-    root.addEventListener('pointerleave', () => { hot = null; want = reduce ? 0 : 1; });
+    if (!port) root.addEventListener('pointerleave', () => { hot = null; want = reduce ? 0 : 1; });
     bar.addEventListener('click', (e) => { const b = (e.target as HTMLElement).closest<HTMLElement>('button'); if (!b) return; t = scenes[+b.dataset.i!].start + (reduce ? 1.8 : 0.02); draw(); (window as V).swGoal && (window as V).swGoal('reel_seek'); });
+    if (port) { let dn = 0, dx = 0, dy = 0, hold = 0;
+      const free = (e: Event) => !(e.target as HTMLElement).closest('.rl__mgo,.rl__cta');
+      const go = (d: number) => { const tt = ((t % T) + T) % T; let ci = 0; scenes.forEach((x, k) => { if (tt >= x.start) ci = k; });
+        const k = d > 0 ? (ci + 1) % scenes.length : tt - scenes[ci].start > 1.2 ? ci : (ci + scenes.length - 1) % scenes.length; t = scenes[k].start + 0.02; draw(); (window as V).swGoal && (window as V).swGoal('reel_seek'); };
+      root.addEventListener('pointerdown', (e) => { if (!free(e)) return; dn = performance.now(); dx = e.clientX; dy = e.clientY; hold = window.setTimeout(() => { want = 0; }, 220); });
+      const up = (e: PointerEvent, tap: boolean) => { clearTimeout(hold); if (!dn) return; const quick = performance.now() - dn < 260 && Math.abs(e.clientX - dx) < 12 && Math.abs(e.clientY - dy) < 12; dn = 0; want = reduce ? 0 : 1;
+        if (tap && quick && started) { const r = root.getBoundingClientRect(); go(e.clientX - r.left < r.width * 0.3 ? -1 : 1); } };
+      root.addEventListener('pointerup', (e) => up(e, true)); root.addEventListener('pointercancel', (e) => up(e, false));
+      mgo.addEventListener('click', () => { (window as V).swGoal && (window as V).swGoal('reel_open'); }); }
     stage.addEventListener('click', (e) => { const l = (e.target as HTMLElement).closest('a[data-rl-link]'); if (l) (window as V).swGoal && (window as V).swGoal('reel_open'); });
     // Ролик стартует с начала, когда блок наполовину вошел в экран, и встает на паузу, когда ушел
     let started = false;

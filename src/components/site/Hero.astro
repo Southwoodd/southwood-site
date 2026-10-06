@@ -29,12 +29,6 @@ const icons: [string, number, number, number, number][] = [
   </div>
 </section>
 <div class="hero-reel"><Reel /></div>
-<div class="mock" aria-hidden="true" data-reveal>
-  <svg class="mock__swirl" viewBox="0 0 1987 754" fill="none" preserveAspectRatio="none"><path opacity=".5" d="M20.4 712.9C9.2 615.6 220.6-7.1 529.9 20.9c386.7 35.1 515.4 523.1 363 653-152.4 130-351.2 20.1-384-59C328.9 180.3 1176.8 108.5 1176.8 108.5c354.6-28.1 698.6 114.7 790.6 129.9" stroke="#D5E0D8" stroke-width="40" stroke-linecap="round"/></svg>
-  <img class="mock__p1" src="/img/hero/phone-a.webp" width="417" height="873" alt="" loading="lazy" />
-  <img class="mock__p2" src="/img/hero/phone-b.webp" width="425" height="872" alt="" loading="lazy" />
-  <img class="mock__d" src="/img/hero/desktop.webp" srcset="/img/hero/desktop-900.webp 900w, /img/hero/desktop.webp 1885w" sizes="(max-width:1023px) 70vw, 62vw" width="1885" height="1278" alt="" loading="lazy" />
-</div>
 
 <script>
   // Иконки фона неспешно дрейфуют в случайные стороны. Только десктоп, вне экрана стоят.
@@ -70,10 +64,10 @@ const icons: [string, number, number, number, number][] = [
   .hero__btn{height:9rem;padding:0 3rem;font-size:max(2.2rem,16px);border-radius:5rem;gap:3rem}
   .hero__btn :global(.arrow){width:2.4rem;height:2.4rem}
   .hero__proof{margin-top:2rem;color:var(--muted);font-size:max(1.6rem,13px)}
-  /* На широком экране под заголовком идет живой шоурил, на телефоне пока остается статичный макет */
+  /* Под заголовком идет живой шоурил: на широком экране горизонтальный, на телефоне в формате сторис */
   .hero-reel{position:relative;z-index:1;margin-top:-14.5rem}
-  @media (max-width:1023px){.hero-reel{display:none}}
-  @media (min-width:1024px){.mock{display:none}}
+  @media (max-width:1023px){.hero-reel{margin-top:0}}
+  .mock{display:none!important}
   .mock{position:relative;z-index:1;height:68rem;margin-top:-14.5rem;border-radius:3.2rem;background:var(--deep);overflow:hidden}
   .mock__swirl{position:absolute;left:-4.1rem;top:-.2rem;width:194.7rem;height:71.4rem}
   .mock img{position:absolute;border-radius:2rem;height:auto}
