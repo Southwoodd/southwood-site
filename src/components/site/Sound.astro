@@ -1,11 +1,12 @@
 ---
 // Звуки интерфейса на всем сайте: короткие синтезированные сигналы на нажатия, наведение, окна и отправку форм.
-// Файлов нет, все считается в браузере. Включены по умолчанию, выключаются кнопкой [data-snd-toggle], выбор запоминается.
+// Файлов нет, все считается в браузере. На десктопе включены по умолчанию, на телефоне выключены, переключаются кнопкой [data-snd-toggle], выбор запоминается.
 ---
 <script>
   type O = { type?: OscillatorType; at?: number; to?: number };
   const KEY = 'swSnd';
-  let on = true; try { on = localStorage.getItem(KEY) !== '0'; } catch {}
+  // На телефонах и планшетах звуки по умолчанию выключены, включаются в меню
+  let on = !matchMedia('(hover: none)').matches; try { const v = localStorage.getItem(KEY); if (v) on = v === '1'; } catch {}
   let ac: AudioContext | null = null, out: GainNode, nb: AudioBuffer;
   // Контекст создается только по живому нажатию, иначе браузер его не запустит
   const boot = () => { if (ac) return ac; const AC = window.AudioContext || (window as any).webkitAudioContext; if (!AC) return null;
