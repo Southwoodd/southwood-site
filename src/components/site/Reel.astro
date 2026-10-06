@@ -18,8 +18,14 @@ const shots = readdirSync('public/reel/w').filter((f) => f.endsWith('.webp')).so
 const per = rest.map((c) => ({ c, imgs: shots.filter((f) => f.startsWith(c.key + '-')) })).filter((x) => x.imgs.length);
 const more: { key: string; name: string; href: string; img: string }[] = [];
 for (let n = 0; n < 6; n++) per.forEach(({ c, imgs }) => { if (imgs[n]) more.push({ key: c.key, name: (c.card?.name || c.name) as string, href: c.href, img: `/reel/w/${imgs[n]}` }); });
+// Панель кейса поверх ролика: короткая выжимка, чтобы человек не уходил со страницы
+const cut = (t: string) => { const i = t.indexOf(':'); return i > 0 && t.length > 64 ? t.slice(0, i) : t; };
+const panel = Object.fromEntries(CASES.map((c: any) => [c.key, {
+  name: c.name, tags: c.tags || [], lead: c.summary || c.lead || '', task: c.task || '', done: (c.done || []).slice(0, 5).map(cut), term: c.term || '',
+  metrics: (c.metrics || []).slice(0, 3).map((m: any) => ({ v: m.value, l: m.label })), href: c.href,
+}]));
 const data = {
-  cases, more, moreN: rest.length, all: R_.cases,
+  cases, more, moreN: rest.length, all: R_.cases, panel,
   svc: { form: serviceHref('razrabotka-sajtov'), crm: serviceHref('crm-bitrix24'), bot: serviceHref('chat-boty'), pay: serviceHref('avtomatizaciya'), dash: serviceHref('avtomatizaciya') },
 };
 void CASES;
@@ -35,6 +41,16 @@ void CASES;
     <div class="rl__bar" data-rl-bar></div>
     <a class="rl__mgo" data-rl-mgo hidden></a>
     <button class="rl__mwant" type="button" data-rl-mwant data-open="lead" hidden>Хочу так же</button>
+    <button class="rl__snd" type="button" data-rl-snd aria-pressed="false" aria-label="Звук ролика" title="Звук">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3l5-4v13l-5-4H4z"/><path class="rl__snd-on" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="rl__snd-off" d="m16 9.5 5 5m0-5-5 5"/></svg>
+    </button>
+  </div>
+  <div class="rl__chips is-off" data-rl-chips role="group" aria-label="Тип бизнеса"></div>
+  <div class="rl__pn" data-rl-pn hidden>
+    <div class="rl__pnb" role="dialog" aria-label="Кейс" tabindex="-1">
+      <button class="rl__pnx" type="button" data-rl-pnx aria-label="Закрыть"></button>
+      <div class="rl__pnc" data-rl-pnc></div>
+    </div>
   </div>
   <span class="rl__cur" aria-hidden="true"><b data-rl-cur>Открыть</b></span>
   <noscript>
@@ -172,11 +188,67 @@ void CASES;
   .rl--film.rl--port .rl__who{top:44px;left:22px;font-size:15px}.rl--film.rl--port .rl__now{top:44px;right:22px;font-size:15px}
   .rl--film .rl__who,.rl--film .rl__now{font-size:max(1.7rem,15px)}
   .rl__mgo{display:none}
+  /* Звук */
+  .rl__now{right:calc(3.2rem + max(3.6rem,30px) + 1.4rem)}
+  .rl__snd{position:absolute;right:3.2rem;top:calc(2.8rem - max(.9rem,6px));width:max(3.6rem,30px);height:max(3.6rem,30px);border-radius:50%;display:grid;place-items:center;color:rgba(255,255,255,.75);background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);pointer-events:auto;cursor:pointer;transition:background-color .25s,color .25s}
+  .rl__snd:hover{background:rgba(255,255,255,.16);color:#fff}
+  .rl__snd svg{width:55%;height:55%}
+  .rl__snd-on{display:none}
+  .rl__snd[aria-pressed=true]{background:#bee0cc;color:#0a0a0a}
+  .rl__snd[aria-pressed=true] .rl__snd-on{display:block}.rl__snd[aria-pressed=true] .rl__snd-off{display:none}
+  /* Тип бизнеса в сцене системы */
+  .rl__chips{position:absolute;left:50%;top:2rem;z-index:2;display:flex;gap:max(.4rem,3px);padding:max(.5rem,4px);border-radius:999px;background:rgba(8,14,11,.62);box-shadow:0 0 0 1px rgba(255,255,255,.12);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transform:translateX(-50%);transition:opacity .35s,transform .35s}
+  .rl__chips.is-off{opacity:0;transform:translate(-50%,-.8rem);pointer-events:none}
+  .rl__chips button{height:max(3.4rem,28px);padding:0 max(1.6rem,11px);border-radius:999px;font-size:max(1.4rem,12px);font-weight:500;color:rgba(255,255,255,.72);white-space:nowrap;cursor:pointer;transition:background-color .25s,color .25s}
+  .rl__chips button:hover{color:#fff;background:rgba(255,255,255,.1)}
+  .rl__chips button[aria-pressed=true]{background:#bee0cc;color:#0a0a0a}
+  /* Панель кейса */
+  .rl__pn{position:absolute;inset:0;z-index:4;background:linear-gradient(90deg,rgba(6,10,8,.25),rgba(6,10,8,.72) 55%);opacity:0;transition:opacity .3s;user-select:text;-webkit-user-select:text}
+  .rl__pn[hidden]{display:none}
+  .rl__pn.is-open{opacity:1}
+  .rl__pnb{position:absolute;top:1.6rem;right:1.6rem;bottom:1.6rem;width:max(50rem,380px);max-width:calc(100% - 3.2rem);display:flex;flex-direction:column;border-radius:max(2.4rem,18px);background:rgba(12,18,15,.9);box-shadow:0 0 0 1px rgba(255,255,255,.12),0 4rem 10rem rgba(0,0,0,.6);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);transform:translateX(3rem);transition:transform .45s cubic-bezier(.2,.8,.2,1);outline:0;overflow:hidden}
+  .rl__pn.is-open .rl__pnb{transform:none}
+  .rl__pnx{position:absolute;right:max(1.6rem,12px);top:max(1.6rem,12px);z-index:1;width:max(3.6rem,32px);height:max(3.6rem,32px);border-radius:50%;background:rgba(255,255,255,.1) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Cpath d='m13.5 13.5 9 9m0-9-9 9' stroke='%23fff' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") center/contain;cursor:pointer;transition:background-color .2s}
+  .rl__pnx:hover{background-color:rgba(255,255,255,.22)}
+  .rl__pnc{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:max(3.2rem,22px) max(3.2rem,20px) max(2rem,16px);scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.25) transparent;letter-spacing:-.01em}
+  .rl__pnt{display:flex;flex-wrap:wrap;gap:max(.6rem,5px);padding-right:max(4.4rem,36px)}
+  .rl__pnt i{font-style:normal;height:max(2.8rem,24px);padding:0 max(1.2rem,10px);border-radius:999px;background:rgba(255,255,255,.1);display:flex;align-items:center;font-size:max(1.3rem,12px);font-weight:500}
+  .rl__pnc h3{margin-top:max(1.6rem,12px);font-size:max(4rem,28px);line-height:1.02;font-weight:500;letter-spacing:-.035em}
+  .rl__pnl{margin-top:max(1.2rem,10px);font-size:max(1.8rem,15px);line-height:1.4;color:rgba(255,255,255,.82)}
+  .rl__pnm{margin-top:max(2rem,16px);display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:max(.8rem,6px)}
+  .rl__pnm li{border-radius:max(1.4rem,12px);background:rgba(255,255,255,.07);padding:max(1.4rem,11px)}
+  .rl__pnm b{display:block;font-size:max(2rem,16px);line-height:1.1;font-weight:500;color:var(--pb,#bee0cc)}
+  .rl__pnm span{display:block;margin-top:.5rem;font-size:max(1.25rem,11.5px);line-height:1.25;color:rgba(255,255,255,.6)}
+  .rl__pnc h4{margin-top:max(2.4rem,18px);font-size:max(1.3rem,12px);font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+  .rl__pnc h4+p{margin-top:max(.8rem,6px);font-size:max(1.6rem,14px);line-height:1.45;color:rgba(255,255,255,.86)}
+  .rl__pnd{margin-top:max(1rem,8px);display:grid;gap:max(.9rem,7px)}
+  .rl__pnd li{position:relative;padding-left:max(2.6rem,22px);font-size:max(1.6rem,14px);line-height:1.35;color:rgba(255,255,255,.86)}
+  .rl__pnd li::before{content:'';position:absolute;left:0;top:.2em;width:max(1.6rem,14px);height:max(1.6rem,14px);border-radius:50%;background:var(--pb,#bee0cc) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22' fill='none'%3E%3Cpath d='M6.5 11.3l3 3 6-6.4' stroke='%230a0a0a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain}
+  .rl__pnterm{margin-top:max(2rem,16px);display:inline-flex;gap:.8em;align-items:center;height:max(3.4rem,28px);padding:0 max(1.4rem,11px);border-radius:999px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18);font-size:max(1.4rem,12.5px)}
+  .rl__pnterm u{text-decoration:none;color:rgba(255,255,255,.5)}
+  .rl__pnf{flex:none;display:grid;grid-template-columns:1fr 1fr;gap:max(.8rem,8px);padding:max(1.6rem,12px) max(3.2rem,20px) max(2.4rem,16px);border-top:1px solid rgba(255,255,255,.1)}
+  .rl__pnf>*{height:max(5.2rem,46px);border-radius:999px;display:flex;align-items:center;justify-content:center;font-size:max(1.6rem,14.5px);font-weight:500;white-space:nowrap;cursor:pointer;transition:background-color .25s,color .25s}
+  .rl__pngo{background:#fff;color:#0a0a0a}
+  @media (hover:hover){.rl__pngo:hover{background:#bee0cc}}
+  .rl__pnw{background:var(--pb,#bee0cc);color:#0a0a0a}.rl__pnw:hover{background:#fff}
+  .rl--film .rl__snd,.rl--film .rl__chips,.rl--film .rl__pn{display:none!important}
   @media (max-width:1023px){
     .rl{aspect-ratio:4/5;border-radius:24px}
     .rl__who{left:16px;top:16px}.rl__now{right:16px;top:16px}.rl__bar{left:16px;right:16px;bottom:12px}
     .rl__cur{display:none}
     .rl__scr,.rl__ph,.rl__tab,.rl__c,.rl__go{cursor:pointer}
+    .rl__snd{right:16px;top:9px}.rl__now{right:56px}.rl__chips{top:48px}
+    .rl__snd{width:30px;height:30px}
+    .rl__chips{gap:2px;padding:3px}.rl__chips button{height:30px;padding:0 11px;font-size:12.5px}
+    .rl__pnx{width:32px;height:32px;right:12px;top:12px}
+    .rl__pnc{padding:20px 18px 14px}
+    .rl__pnt{gap:5px;padding-right:38px}.rl__pnt i{height:24px;padding:0 10px;font-size:12px}
+    .rl__pnc h3{margin-top:12px;font-size:28px}.rl__pnl{margin-top:8px;font-size:15px}
+    .rl__pnm{margin-top:14px;gap:6px}.rl__pnm li{border-radius:12px;padding:10px}.rl__pnm b{font-size:16px}.rl__pnm span{font-size:11.5px}
+    .rl__pnc h4{margin-top:16px;font-size:12px}.rl__pnc h4+p{margin-top:6px;font-size:14px}
+    .rl__pnd{margin-top:8px;gap:7px}.rl__pnd li{padding-left:22px;font-size:14px}.rl__pnd li::before{width:14px;height:14px}
+    .rl__pnterm{margin-top:14px;height:28px;padding:0 11px;font-size:12.5px}
+    .rl__pnf{gap:8px;padding:12px 18px 14px}.rl__pnf>*{height:48px;font-size:15px}
   }
   /* Телефон: формат сторис. Полоса сцен сверху, тап листает, удержание ставит на паузу, кнопка кейса внизу */
   .rl--port{aspect-ratio:9/16;max-height:calc(100svh - 96px);width:100%;touch-action:pan-y;-webkit-tap-highlight-color:transparent}
@@ -193,7 +265,12 @@ void CASES;
   .rl--port .rl__bar button::before,.rl--port .rl__bar button i{height:3px;margin-top:-1.5px}
   .rl--port .rl__bar button span{display:none}
   .rl--port .rl__who{left:14px;top:28px;font-size:12px}.rl--port .rl__who i{display:none}
-  .rl--port .rl__now{right:14px;top:28px;font-size:12px}
+  .rl--port .rl__now{right:50px;top:28px;font-size:12px}
+  .rl--port .rl__snd{right:12px;top:21px;width:30px;height:30px}
+  .rl--port .rl__chips{top:60px}
+  .rl--port .rl__pn{background:linear-gradient(rgba(6,10,8,.3),rgba(6,10,8,.8) 45%)}
+  .rl--port .rl__pnb{top:auto;left:8px;right:8px;bottom:8px;width:auto;max-width:none;max-height:82%;border-radius:22px;transform:translateY(24px)}
+  .rl--port .rl__pn.is-open .rl__pnb{transform:none}
   .rl--port .rl__mgo{position:absolute;left:14px;right:14px;bottom:14px;height:54px;border-radius:999px;background:#fff;color:#0a0a0a;display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:500;letter-spacing:-.01em;pointer-events:auto;transition:opacity .25s,transform .25s}
   .rl--port .rl__mgo[hidden]{display:flex;opacity:0;transform:translateY(8px);pointer-events:none}
   .rl--port .rl__end{white-space:normal;width:800px;font-size:92px;line-height:1.02}
@@ -300,6 +377,21 @@ void main(){
     const film = new URLSearchParams(location.search).has('video'); root.classList.toggle('rl--film', film);
     const port = root.clientWidth < 700; root.classList.toggle('rl--port', port);
     const mgo = root.querySelector<HTMLAnchorElement>('[data-rl-mgo]')!, mwant = root.querySelector<HTMLElement>('[data-rl-mwant]')!;
+    const chips = root.querySelector<HTMLElement>('[data-rl-chips]')!, sndBtn = root.querySelector<HTMLElement>('[data-rl-snd]')!;
+    const pn = root.querySelector<HTMLElement>('[data-rl-pn]')!, pnBox = pn.querySelector<HTMLElement>('.rl__pnb')!, pnC = root.querySelector<HTMLElement>('[data-rl-pnc]')!;
+    let lock = false; // открыта панель кейса: ролик стоит
+    // Варианты сцены системы под тип бизнеса: меняются подписи узлов, схема та же
+    let applyVar = (_i: number) => {}, sfxTick = (_i: number) => {};
+    const VARS: V[] = [
+      { id: 'services', name: 'Услуги', cap: 'От заявки до оплаты <em>в одной системе</em>', ai: 'заявка', kv: [['Кто', 'Анна'], ['Что нужно', 'сайт и CRM'], ['Срочность', 'высокая'], ['Кому', 'менеджеру']], cols: ['Новые', 'В работе', 'Оплачено'], deal: ['Анна', 'сайт и CRM'], kp: ['шаблон с расчетом', 'собираю PDF', 'отправлено клиенту'],
+        n: { site: ['Сайт', 'форма и калькулятор', 'заявка от Анны'], tg: ['Бот в Telegram', 'отвечает сам', 'новый диалог'], call: ['Звонок', 'телефония', 'пропущенный, перезвонить'], mail: ['Почта', 'входящие письма', 'новое письмо'], max: ['Бот в MAX', 'отвечает сам', 'новый диалог'], kp: ['КП в PDF'], task: ['Задача менеджеру', 'ставится сама', 'позвонить до 15:00'], rem: ['Напоминание', 'если клиент молчит', 'напомню через 2 дня'], inv: ['Счет', 'по сумме из КП', '№ 214 выставлен'], pay: ['Оплата', 'карта и СБП', 'оплачено по СБП'], onec: ['1С', 'обмен без рук', 'проводка создана'], stock: ['Склад', 'остатки', 'товар в резерве'], rep: ['Отчет владельцу', 'каждый вечер', 'отправлен в Telegram'] } },
+      { id: 'shop', name: 'Магазин', cap: 'От заказа до отгрузки <em>в одной системе</em>', ai: 'заказ', kv: [['Кто', 'Анна'], ['Что в заказе', '3 товара'], ['Доставка', 'курьером'], ['Кому', 'на сборку']], cols: ['Новые', 'В работе', 'Оплачено'], deal: ['Анна', '3 товара'], kp: ['создается сам', 'передаю в 1С', 'создан в 1С'],
+        n: { site: ['Интернет-магазин', 'корзина и оплата', 'заказ от Анны'], tg: ['Бот в Telegram', 'принимает заказы', 'новый заказ'], call: ['Звонок', 'телефония', 'пропущенный, перезвонить'], mail: ['Почта', 'входящие письма', 'новое письмо'], max: ['Бот в MAX', 'принимает заказы', 'новый заказ'], kp: ['Заказ в 1С'], task: ['Задача на сборку', 'ставится сама', 'собрать до 15:00'], rem: ['Брошенная корзина', 'если заказ не оплачен', 'напомню через час'], inv: ['Счет', 'по сумме заказа', '№ 214 выставлен'], pay: ['Оплата', 'карта и СБП', 'оплачено по СБП'], onec: ['1С', 'обмен без рук', 'проводка создана'], stock: ['Склад', 'остатки', 'товар в резерве'], rep: ['Отчет владельцу', 'каждый вечер', 'отправлен в Telegram'] } },
+      { id: 'food', name: 'Общепит', cap: 'От заказа до кухни и отчета <em>в одной системе</em>', ai: 'заказ', kv: [['Кто', 'Анна'], ['Что в заказе', '2 блюда'], ['Когда', 'к 19:30'], ['Кому', 'на кухню']], cols: ['Новые', 'Готовят', 'Оплачено'], deal: ['Анна', 'доставка'], kp: ['очередь заказов', 'передаю на кухню', 'принят на кухне'],
+        n: { site: ['Сайт с меню', 'заказ и бронь', 'заказ от Анны'], tg: ['Бот в Telegram', 'принимает заказы', 'новый заказ'], call: ['Звонок', 'телефония', 'бронь стола на вечер'], mail: ['Почта', 'входящие письма', 'новое письмо'], max: ['Бот в MAX', 'принимает заказы', 'новый заказ'], kp: ['Экран кухни'], task: ['Задача курьеру', 'ставится сама', 'забрать в 19:10'], rem: ['Отзыв после заказа', 'если гость молчит', 'спрошу через час'], inv: ['Счет гостю', 'ссылка на оплату', 'ссылка отправлена'], pay: ['Оплата', 'карта и СБП', 'оплачено по СБП'], onec: ['Касса и учет', 'обмен без рук', 'продажа записана'], stock: ['Склад', 'продукты по техкартам', 'списано по техкартам'], rep: ['Отчет владельцу', 'каждый вечер', 'отправлен в Telegram'] } },
+      { id: 'clinic', name: 'Клиника', cap: 'От записи до оплаты <em>в одной системе</em>', ai: 'запись', kv: [['Кто', 'Анна'], ['Что нужно', 'прием у врача'], ['Когда', 'завтра утром'], ['Кому', 'администратору']], cols: ['Новые', 'Записаны', 'Оплачено'], deal: ['Анна', 'прием'], kp: ['свободные окна', 'сверяю расписание', 'записана на 10:30'],
+        n: { site: ['Сайт клиники', 'онлайн-запись', 'запись от Анны'], tg: ['Бот в Telegram', 'отвечает на вопросы', 'вопрос о цене'], call: ['Звонок', 'телефония', 'пропущенный, перезвонить'], mail: ['Почта', 'входящие письма', 'новое письмо'], max: ['Бот в MAX', 'отвечает на вопросы', 'новый диалог'], kp: ['Расписание'], task: ['Задача администратору', 'ставится сама', 'подтвердить запись'], rem: ['Напоминание пациенту', 'перед приемом', 'напомню за день'], inv: ['Счет', 'по прайсу услуги', '№ 214 выставлен'], pay: ['Оплата', 'карта и СБП', 'оплачено по СБП'], onec: ['1С', 'обмен без рук', 'проводка создана'], stock: ['Склад', 'расходники', 'расходники списаны'], rep: ['Отчет владельцу', 'каждый вечер', 'отправлен в Telegram'] } },
+    ];
 
     type Sc = { vids?: HTMLVideoElement[]; id: string; label: string; dur: number; start: number; el: HTMLElement; a: number[]; b: number[]; up: (lt: number, s: Sc) => void; ring?: (lt: number, s: Sc) => { o: number; rot: number[]; x: number; y: number; s: number } };
     const scenes: Sc[] = [];
@@ -457,7 +549,15 @@ void main(){
         else { const x1 = A.x + A.w, y1 = A.y + A.h / 2, x2 = B.x, y2 = B.y + Math.min(B.h / 2, 60), k = (x2 - x1) * 0.5; d = `M${x1} ${y1} C${x1 + k} ${y1} ${x2 - k} ${y2} ${x2} ${y2}`; }
         svg.insertAdjacentHTML('beforeend', `<path class="rl__wire" d="${d}"/><path class="rl__pulse" d="${d}" pathLength="100" stroke-dasharray="16 200"/>`); return [svg.lastElementChild!.previousElementSibling as SVGPathElement, svg.lastElementChild as SVGPathElement] as const; });
       const all = Object.values(N);
-      const cap = item(el, h('div', 'rl__cap', 'От заявки до оплаты <em>в одной системе</em>')); const cw = words(cap);
+      const cap = item(el, h('div', 'rl__cap', 'От заявки до оплаты <em>в одной системе</em>')); let cw = words(cap);
+      let KP = VARS[0].kp as string[];
+      const aiTag = ai.querySelector<HTMLElement>('h4 b')!, kvRows = [...ai.querySelectorAll<HTMLElement>('.rl__kv')], colEls = [...crm.querySelectorAll<HTMLElement>('.rl__cols>div')];
+      applyVar = (i) => { const v = VARS[i]; KP = v.kp;
+        Object.entries(v.n as Record<string, string[]>).forEach(([id, a]) => { const n = N[id]; n.el.querySelector('b')!.textContent = a[0]; if (a[1] && n.st) { n.st.dataset.d = a[1]; n.st.textContent = a[1]; } if (a[2] && n.txt) n.txt[0][1] = a[2]; });
+        aiTag.textContent = v.ai; kvRows.forEach((r, q) => { r.querySelector('u')!.textContent = v.kv[q][0]; r.querySelector('span')!.textContent = v.kv[q][1]; });
+        colEls.forEach((c, q) => { c.firstChild!.textContent = v.cols[q]; }); deal.innerHTML = `${v.deal[0]}<small>${v.deal[1]}</small>`;
+        cap.innerHTML = v.cap; cw = words(cap); };
+      let prevLt = 0;
       // Куда смотрит камера: время, точка на схеме, масштаб
       const full = port ? 0.37 : 0.64, near = port ? 1.7 : 1.22;
       const CAM = port
@@ -466,11 +566,12 @@ void main(){
       return (lt) => { let k = 0; while (k < CAM.length - 2 && lt >= CAM[k + 1][0]) k++; const a = CAM[k], b = CAM[k + 1], e = ioCub(sg(lt, a[0], b[0]));
         const fx = mix(a[1], b[1], e), fy = mix(a[2], b[2], e), sc = mix(a[3], b[3], e), en = oExpo(sg(lt, 0, 1.2));
         tf(board, -(fx - BW / 2) * sc, -(fy - BH / 2) * sc - (port ? 120 : 30), (1 - en) * -700, mix(26, 7, en), mix(-18, -5, en) + lt * 0.9, 0, sc, sg(lt, 0, 0.3));
-        all.forEach((n, q) => { const on = lt >= n.at; n.el.classList.toggle('is-on', on); n.el.classList.toggle('is-fire', on && lt < n.at + 0.5); n.el.style.opacity = sg(lt, 0.05 + q * 0.035, 0.4 + q * 0.035).toFixed(2);
+        const fwd = lt > prevLt && lt - prevLt < 0.2; prevLt = lt;
+        all.forEach((n, q) => { const on = lt >= n.at; if (on && fwd && !n.el.classList.contains('is-on')) sfxTick(q); n.el.classList.toggle('is-on', on); n.el.classList.toggle('is-fire', on && lt < n.at + 0.5); n.el.style.opacity = sg(lt, 0.05 + q * 0.035, 0.4 + q * 0.035).toFixed(2);
           if (n.txt && n.st) { let t0 = n.st.dataset.d || (n.st.dataset.d = n.st.textContent || ''); n.txt.forEach(([at, tx]) => { if (lt >= at) t0 = tx; }); if (n.st.textContent !== t0) n.st.textContent = t0; } });
         pulses.forEach(([w, p], q) => { const x = sg(lt, W[q][3], W[q][4]); p.style.strokeDashoffset = (16 - ioCub(x) * 116).toFixed(1); p.style.opacity = x > 0 && x < 1 ? '1' : '0'; w.style.stroke = lt >= W[q][4] ? 'rgba(190,224,204,.75)' : ''; });
         kv.forEach((s2, q) => { s2.style.opacity = sg(lt, 1.8 + q * 0.12, 2.0 + q * 0.12).toFixed(2); });
-        const kpS = N.kp.st!; const kpT = lt < 3.4 ? 'шаблон с расчетом' : lt < 3.9 ? `собираю PDF ${Math.round(sg(lt, 3.4, 3.9) * 100)}%` : 'отправлено клиенту'; if (kpS.textContent !== kpT) kpS.textContent = kpT;
+        const kpS = N.kp.st!; const kpT = lt < 3.4 ? KP[0] : lt < 3.9 ? `${KP[1]} ${Math.round(sg(lt, 3.4, 3.9) * 100)}%` : KP[2]; if (kpS.textContent !== kpT) kpS.textContent = kpT;
         const dk = oBack(sg(lt, 2.5, 3.0)), m1 = ioCub(sg(lt, 3.0, 3.5)), m2 = ioCub(sg(lt, 4.75, 5.2));
         deal.style.opacity = sg(lt, 2.5, 2.7).toFixed(2); deal.style.transform = `translate(${(m1 * 143 + m2 * 144).toFixed(1)}px,${(m1 * 42 + m2 * 42).toFixed(1)}px) scale(${(0.6 + 0.4 * dk).toFixed(3)})`;
         num.textContent = lt >= 6.9 ? '131' : lt >= 5.3 ? '129' : '128'; lastBar.style.transform = `scaleY(${(0.82 + 0.18 * oBack(sg(lt, 5.3, 5.9))).toFixed(3)})`;
@@ -511,17 +612,58 @@ void main(){
     let onNow: Sc | null = null, doneSent = false;
     const goal = (name: string, key?: string) => { const g = (window as V).swGoal; g && g(name, key ? { case: key } : undefined); };
     let t = 0, speed = 1, want = 1, hot: HTMLElement | null = null, vis = false, last = 0, raf = 0, curX = 0, curY = 0, mX = 0, mY = 0, curO = 0;
+    // Звук синтезируется в браузере, файлов нет. По умолчанию выключен, включается кнопкой
+    let sndOn = false, sfx: V | null = null;
+    const mkSfx = () => { const AC = window.AudioContext || (window as V).webkitAudioContext; if (!AC) return null;
+      const ac: AudioContext = new AC(), out = ac.createGain(), comp = ac.createDynamicsCompressor(); out.gain.value = 0; out.connect(comp); comp.connect(ac.destination);
+      const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 520; lp.Q.value = 0.6; const pg = ac.createGain(); pg.gain.value = 0.42; lp.connect(pg); pg.connect(out);
+      [55, 110, 164.81, 220.7].forEach((f, i) => { const o = ac.createOscillator(), g = ac.createGain(); o.type = i < 2 ? 'sine' : 'triangle'; o.frequency.value = f; g.gain.value = [0.5, 0.34, 0.13, 0.09][i]; o.connect(g); g.connect(lp); o.start(); });
+      const lfo = ac.createOscillator(), lg = ac.createGain(); lfo.frequency.value = 0.07; lg.gain.value = 190; lfo.connect(lg); lg.connect(lp.frequency); lfo.start();
+      const nb = ac.createBuffer(1, ac.sampleRate, ac.sampleRate), ch = nb.getChannelData(0); for (let i = 0; i < ch.length; i++) ch[i] = Math.random() * 2 - 1;
+      const PENT = [0, 3, 5, 7, 10, 12, 15, 17], nt = (base: number, i: number) => base * Math.pow(2, PENT[i % PENT.length] / 12);
+      const tone = (f: number, dur: number, vol: number, type: OscillatorType = 'sine', at = 0) => { const o = ac.createOscillator(), g = ac.createGain(), t0 = ac.currentTime + at; o.type = type; o.frequency.value = f;
+        g.gain.setValueAtTime(0.0001, t0); g.gain.linearRampToValueAtTime(vol, t0 + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur); o.connect(g); g.connect(out); o.start(t0); o.stop(t0 + dur + 0.05); };
+      return { set(v: boolean) { if (v) ac.resume(); out.gain.setTargetAtTime(v ? 0.5 : 0, ac.currentTime, v ? 0.35 : 0.12); },
+        live(v: boolean) { if (v && sndOn) ac.resume(); else if (!v) ac.suspend(); },
+        whoosh(i: number) { const src = ac.createBufferSource(), bp = ac.createBiquadFilter(), g = ac.createGain(), t0 = ac.currentTime; src.buffer = nb; bp.type = 'bandpass'; bp.Q.value = 0.9;
+          bp.frequency.setValueAtTime(320, t0); bp.frequency.exponentialRampToValueAtTime(2600, t0 + 0.5); g.gain.setValueAtTime(0.0001, t0); g.gain.linearRampToValueAtTime(0.13, t0 + 0.22); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.62);
+          src.connect(bp); bp.connect(g); g.connect(out); src.start(t0); src.stop(t0 + 0.7); tone(nt(220, i), 1.5, 0.09); tone(nt(330, i), 1.2, 0.04, 'sine', 0.05); },
+        tick(i: number) { tone(nt(660, i), 0.24, 0.05); },
+        pop() { tone(520, 0.2, 0.07, 'triangle'); tone(780, 0.3, 0.045, 'sine', 0.06); } }; };
+    sfxTick = (i) => { if (sndOn && sfx && !api.manual) sfx.tick(i); };
+    sndBtn.addEventListener('click', () => { if (!sfx) sfx = mkSfx(); if (!sfx) { sndBtn.hidden = true; return; } sndOn = !sndOn; sfx.set(sndOn); sndBtn.setAttribute('aria-pressed', String(sndOn)); if (sndOn) { sfx.pop(); goal('reel_sound'); } });
+    // Панель кейса
+    const esc = (x: string) => String(x).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
+    let pnBack: HTMLElement | null = null;
+    const openPn = (key: string) => { const c = D.panel[key]; if (!c) return false; const cc = D.cases.find((x: V) => x.key === key);
+      pnBox.style.setProperty('--pb', cc ? cc.b : '#bee0cc'); pnBox.setAttribute('aria-label', 'Кейс ' + c.name);
+      pnC.innerHTML = `<div class="rl__pnt">${c.tags.map((x: string) => `<i>${esc(x)}</i>`).join('')}</div><h3>${esc(c.name)}</h3><p class="rl__pnl">${esc(c.lead)}</p>`
+        + (c.metrics.length ? `<ul class="rl__pnm">${c.metrics.map((m: V) => `<li><b>${esc(m.v)}</b><span>${esc(m.l)}</span></li>`).join('')}</ul>` : '')
+        + (c.task ? `<h4>Задача</h4><p>${esc(c.task)}</p>` : '') + (c.done.length ? `<h4>Что сделано</h4><ul class="rl__pnd">${c.done.map((x: string) => `<li>${esc(x)}</li>`).join('')}</ul>` : '')
+        + (c.term ? `<p class="rl__pnterm"><u>Срок</u>${esc(c.term)}</p>` : '');
+      pnBox.querySelector('.rl__pnf')?.remove();
+      pnBox.insertAdjacentHTML('beforeend', `<div class="rl__pnf"><a class="rl__pngo" href="${c.href}" data-rl-ev="reel_full" data-rl-case="${key}">Кейс целиком →</a><button class="rl__pnw" type="button" data-open="lead" data-sub="Хочу проект как ${esc(c.name)}" data-context="reel:${key}:panel" data-rl-ev="reel_want" data-rl-case="${key}">Хочу так же</button></div>`);
+      pnC.scrollTop = 0; pnBack = document.activeElement as HTMLElement | null; lock = true; hot = null; pn.hidden = false; void pn.offsetWidth; pn.classList.add('is-open'); pnBox.focus({ preventScroll: true });
+      onNow && onNow.vids!.forEach((v) => v.pause()); if (sndOn && sfx) sfx.pop(); return true; };
+    const closePn = () => { if (!lock) return; lock = false; pn.classList.remove('is-open'); setTimeout(() => { if (!lock) pn.hidden = true; }, 320); pnBack && pnBack.isConnected && pnBack.focus({ preventScroll: true }); play(); };
+    // Тип бизнеса: сам меняется на каждом круге, пока человек не выбрал свой
+    chips.innerHTML = VARS.map((v, i) => `<button type="button" data-v="${i}" aria-pressed="${!i}">${v.name}</button>`).join('');
+    const chipEls = [...chips.querySelectorAll<HTMLElement>('button')]; let pick = -1, curVar = 0;
+    const setVar = (i: number) => { if (i === curVar) return; curVar = i; applyVar(i); chipEls.forEach((b, k) => b.setAttribute('aria-pressed', String(k === i))); };
     const draw = () => {
       const tt = ((t % T) + T) % T; let ci = 0; scenes.forEach((s, i) => { if (tt >= s.start) ci = i; });
       const s = scenes[ci], lt = tt - s.start, nx = scenes[(ci + 1) % scenes.length], pv = scenes[(ci + scenes.length - 1) % scenes.length];
+      setVar(film || reduce ? Math.max(pick, 0) : pick >= 0 ? pick : Math.max(0, Math.floor(t / T)) % VARS.length); chips.classList.toggle('is-off', s.id !== 'sys' || lock);
       const hold = film && ci === scenes.length - 1; // в файле ролик заканчивается на финальном кадре, без ухода
       const out = hold ? 0 : iCub(sg(lt, s.dur - 0.45, s.dur)), inn = sg(lt, 0, 0.5);
       scenes.forEach((x) => x.el.classList.toggle('is-on', x === s));
       arm(s); arm(nx);
       if (onNow !== s && started) { try { sessionStorage.setItem('reelAt', String(ci)); } catch (e) {}
         if (s.id === 'outro' && !doneSent) { doneSent = true; goal('reel_done'); } }
+      if (onNow !== s && started && sndOn && sfx && !api.manual) sfx.whoosh(ci);
       if (onNow !== s) { onNow && onNow.vids!.forEach((v) => v.pause()); s.vids!.forEach((v) => { try { v.currentTime = 0; } catch (e) {} }); onNow = s; }
       s.vids!.forEach((v) => { if (api.manual) { if (v.readyState > 0 && v.duration) v.currentTime = Math.min(lt, v.duration - 0.05); }
+        else if (lock) { if (!v.paused) v.pause(); }
         else { v.playbackRate = Math.max(0.1, Math.min(1, speed)); if (v.paused && vis) v.play().catch(() => {}); } });
       s.up(lt, s);
       s.el.style.transform = `translateZ(${(out * 900 - (1 - oExpo(inn)) * 500).toFixed(1)}px)`;
@@ -547,7 +689,7 @@ void main(){
       s.el.classList.toggle('is-hot', !!hot && s.el.contains(hot));
     };
     const loop = (now: number) => { raf = 0; const dt = Math.min(0.05, (now - last) / 1000 || 0); last = now;
-      speed += (want - speed) * Math.min(1, dt * 7); t += dt * speed;
+      speed += ((lock ? 0 : want) - speed) * Math.min(1, dt * (lock ? 12 : 7)); t += dt * (speed < 0.01 ? 0 : speed);
       curX += (mX - curX) * 0.22; curY += (mY - curY) * 0.22; curO += ((hot ? 1 : 0) - curO) * 0.2;
       cur.style.transform = `translate(${curX.toFixed(1)}px,${curY.toFixed(1)}px) scale(${(0.4 + 0.6 * curO).toFixed(3)})`; cur.style.opacity = curO.toFixed(2);
       draw(); if (vis && !api.manual) raf = requestAnimationFrame(loop); };
@@ -557,14 +699,14 @@ void main(){
 
     if (!port) root.addEventListener('pointermove', (e) => { const r = root.getBoundingClientRect(); mX = e.clientX - r.left; mY = e.clientY - r.top;
       const l = (e.target as HTMLElement).closest<HTMLElement>('[data-rl-link]'); if (l !== hot) { hot = l; if (l) curTx.textContent = l.getAttribute('data-rl-link'); }
-      want = reduce ? 0 : l || (e.target as HTMLElement).closest('.rl__cta,.rl__bar') ? 0.06 : 1; });
+      want = reduce ? 0 : l || (e.target as HTMLElement).closest('.rl__cta,.rl__bar,.rl__chips') ? 0.06 : 1; });
     if (!port) root.addEventListener('pointerleave', () => { hot = null; want = reduce ? 0 : 1; });
     bar.addEventListener('click', (e) => { const b = (e.target as HTMLElement).closest<HTMLElement>('button'); if (!b) return; t = scenes[+b.dataset.i!].start + (reduce ? 1.8 : 0.02); draw(); goal('reel_seek'); });
     // Листание: тап и свайп на телефоне, стрелки на клавиатуре
     const go = (d: number) => { const tt = ((t % T) + T) % T; let ci = 0; scenes.forEach((x, k) => { if (tt >= x.start) ci = k; });
       const k = d > 0 ? (ci + 1) % scenes.length : tt - scenes[ci].start > 1.2 ? ci : (ci + scenes.length - 1) % scenes.length; t = scenes[k].start + 0.02; draw(); goal('reel_seek'); };
     if (port) { let dn = 0, dx = 0, dy = 0, hold = 0;
-      const free = (e: Event) => !(e.target as HTMLElement).closest('.rl__mgo,.rl__mwant,.rl__cta');
+      const free = (e: Event) => !lock && !(e.target as HTMLElement).closest('.rl__mgo,.rl__mwant,.rl__cta,.rl__pn,.rl__chips,.rl__snd');
       root.addEventListener('pointerdown', (e) => { if (!free(e)) return; dn = performance.now(); dx = e.clientX; dy = e.clientY; hold = window.setTimeout(() => { want = 0; }, 220); });
       const up = (e: PointerEvent, tap: boolean) => { clearTimeout(hold); if (!dn) return; const mx = e.clientX - dx, my = e.clientY - dy, quick = performance.now() - dn < 260 && Math.abs(mx) < 12 && Math.abs(my) < 12; dn = 0; want = reduce ? 0 : 1;
         if (!started) return;
@@ -572,15 +714,21 @@ void main(){
         else if (tap && quick) { const r = root.getBoundingClientRect(); go(e.clientX - r.left < r.width * 0.3 ? -1 : 1); } };
       root.addEventListener('pointerup', (e) => up(e, true)); root.addEventListener('pointercancel', (e) => up(e, false)); }
     else document.addEventListener('keydown', (e) => { if (!vis || !started || e.altKey || e.ctrlKey || e.metaKey || (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft')) return;
-      const a = document.activeElement as HTMLElement | null; if (a && (/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable) || document.querySelector('dialog[open]')) return;
+      const a = document.activeElement as HTMLElement | null; if (a && (/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable) || document.querySelector('dialog[open]') || lock) return;
       go(e.key === 'ArrowRight' ? 1 : -1); });
-    root.addEventListener('click', (e) => { const l = (e.target as HTMLElement).closest<HTMLElement>('[data-rl-ev]'); if (l) goal(l.dataset.rlEv!, l.dataset.rlCase); });
+    root.addEventListener('click', (e) => { const tg = e.target as HTMLElement, l = tg.closest<HTMLElement>('[data-rl-ev]'); if (l) goal(l.dataset.rlEv!, l.dataset.rlCase);
+      // Клик по кейсу открывает панель поверх ролика. С Ctrl или Cmd ссылка открывается как обычно
+      if (l && l.dataset.rlEv === 'reel_open' && !film && !e.metaKey && !e.ctrlKey && !e.shiftKey && openPn(l.dataset.rlCase!)) { e.preventDefault(); return; }
+      if (tg === pn || tg.closest('[data-rl-pnx]')) closePn();
+      const ch = tg.closest<HTMLElement>('.rl__chips button'); if (ch) { pick = +ch.dataset.v!; const sy = scenes.find((x) => x.id === 'sys')!; t = Math.max(0, Math.floor(t / T)) * T + sy.start + 0.02; draw(); goal('reel_sys', VARS[pick].id); } });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lock && !document.querySelector('dialog[open]')) closePn(); });
     // Ролик стартует с начала, когда блок наполовину вошел в экран, и встает на паузу, когда ушел
     let started = false;
     new IntersectionObserver((en) => { const r = en[0].intersectionRatio;
       if (r >= 0.5) { vis = true; if (!started) { started = true; goal('reel_start'); if (!reduce) { t = 0; try { const k = +(sessionStorage.getItem('reelAt') || -1); if (k >= 1 && k < scenes.length - 1) t = scenes[k + 1].start + 0.6; } catch (e) {} } } play(); }
-      else if (r < 0.05) { vis = false; onNow && onNow.vids!.forEach((v) => v.pause()); } }, { threshold: [0, 0.05, 0.5] }).observe(root);
-    document.addEventListener('visibilitychange', () => { if (document.hidden) { vis = false; onNow && onNow.vids!.forEach((v) => v.pause()); } else if (started) { const b = root.getBoundingClientRect(); vis = b.bottom > 0 && b.top < innerHeight; play(); } });
+      else if (r < 0.05) { vis = false; onNow && onNow.vids!.forEach((v) => v.pause()); }
+      sfx && sfx.live(vis); }, { threshold: [0, 0.05, 0.5] }).observe(root);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) { vis = false; onNow && onNow.vids!.forEach((v) => v.pause()); } else if (started) { const b = root.getBoundingClientRect(); vis = b.bottom > 0 && b.top < innerHeight; play(); } sfx && sfx.live(vis); });
     if (reduce) { want = 0; speed = 0; t = scenes[1].start + 1.8; }
     draw(); play();
   }
