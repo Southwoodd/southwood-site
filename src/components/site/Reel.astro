@@ -355,7 +355,7 @@ void main(){
     });
 
     // Финал
-    add('outro', 'Обсудить проект', 3.0, '#0b2219', '#9fe0bd', (el) => {
+    add('outro', 'Обсудить проект', 5.6, '#0b2219', '#9fe0bd', (el) => {
       const end = item(el, h('div', 'rl__end', 'Соберу такую же систему для вас')); const ws = words(end);
       const cta = item(el, h('button', 'rl__cta', 'Обсудить проект →', { type: 'button', 'data-open': 'lead', 'data-goal': 'reel_cta' }));
       return (lt) => { tf(end, 0, 215, 0); rise(ws, lt, 0.5, 0.07); const k = oBack(sg(lt, 1.0, 1.6)); tf(cta, 0, 330, 0, 0, 0, 0, 0.8 + 0.2 * k, sg(lt, 1.0, 1.3)); };
@@ -385,7 +385,7 @@ void main(){
 
     const arm = (sc: Sc) => sc.vids!.forEach((v) => { if (v.dataset.on) return; v.dataset.on = '1'; const n = v.dataset.v; v.innerHTML = `<source src="/reel/${n}.mp4" type="video/mp4"><source src="/reel/${n}.webm" type="video/webm">`; v.load(); });
     let onNow: Sc | null = null;
-    let t = 0, speed = 1, want = 1, hot: HTMLElement | null = null, vis = true, last = 0, raf = 0, curX = 0, curY = 0, mX = 0, mY = 0, curO = 0;
+    let t = 0, speed = 1, want = 1, hot: HTMLElement | null = null, vis = false, last = 0, raf = 0, curX = 0, curY = 0, mX = 0, mY = 0, curO = 0;
     const draw = () => {
       const tt = ((t % T) + T) % T; let ci = 0; scenes.forEach((s, i) => { if (tt >= s.start) ci = i; });
       const s = scenes[ci], lt = tt - s.start, nx = scenes[(ci + 1) % scenes.length], pv = scenes[(ci + scenes.length - 1) % scenes.length];
@@ -399,7 +399,8 @@ void main(){
       s.el.style.transform = `translateZ(${(out * 900 - (1 - oExpo(inn)) * 500).toFixed(1)}px)`;
       s.el.style.opacity = (cl(inn * 3) * (1 - out)).toFixed(3);
       const bl = out * 14 + (1 - cl(inn * 2.2)) * 10; s.el.style.filter = bl > 0.3 ? `blur(${bl.toFixed(1)}px)` : '';
-      const fl = Math.exp(-Math.pow(lt / 0.16, 2)) + Math.exp(-Math.pow((s.dur - lt) / 0.14, 2));
+      // Самый первый кадр идет без вспышки: до старта блок стоит спокойным фоном
+      const fl = (t < 0.6 ? 0 : Math.exp(-Math.pow(lt / 0.16, 2))) + Math.exp(-Math.pow((s.dur - lt) / 0.14, 2));
       flash.style.opacity = (fl * 0.5).toFixed(3);
       const k = oCub(sg(lt, 0, 0.6)), k2 = iCub(sg(lt, s.dur - 0.3, s.dur)) * 0.5;
       const A = s.a.map((v, i) => mix(mix(pv.a[i], v, 0.5 + 0.5 * k), nx.a[i], k2)), B = s.b.map((v, i) => mix(mix(pv.b[i], v, 0.5 + 0.5 * k), nx.b[i], k2));
@@ -428,10 +429,18 @@ void main(){
     root.addEventListener('pointerleave', () => { hot = null; want = reduce ? 0 : 1; });
     bar.addEventListener('click', (e) => { const b = (e.target as HTMLElement).closest<HTMLElement>('button'); if (!b) return; t = scenes[+b.dataset.i!].start + (reduce ? 1.8 : 0.02); draw(); (window as V).swGoal && (window as V).swGoal('reel_seek'); });
     stage.addEventListener('click', (e) => { const l = (e.target as HTMLElement).closest('a[data-rl-link]'); if (l) (window as V).swGoal && (window as V).swGoal('reel_open'); });
-    new IntersectionObserver((en) => { vis = en[0].isIntersecting; vis ? play() : onNow && onNow.vids!.forEach((v) => v.pause()); }, { threshold: 0.05 }).observe(root);
-    document.addEventListener('visibilitychange', () => { vis = !document.hidden; play(); });
+    // Ролик стартует с начала, когда блок наполовину вошел в экран, и встает на паузу, когда ушел
+    let started = false;
+    new IntersectionObserver((en) => { const r = en[0].intersectionRatio;
+      if (r >= 0.5) { vis = true; if (!started) { started = true; if (!reduce) t = 0; } play(); }
+      else if (r < 0.05) { vis = false; onNow && onNow.vids!.forEach((v) => v.pause()); } }, { threshold: [0, 0.05, 0.5] }).observe(root);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) { vis = false; onNow && onNow.vids!.forEach((v) => v.pause()); } else if (started) { const b = root.getBoundingClientRect(); vis = b.bottom > 0 && b.top < innerHeight; play(); } });
     if (reduce) { want = 0; speed = 0; t = scenes[1].start + 1.8; }
     draw(); play();
   }
-  document.querySelectorAll<HTMLElement>('[data-reel]').forEach(boot);
+  // Скрытый блок (телефон) не запускаем и ничего для него не грузим; если он появится, запустим
+  document.querySelectorAll<HTMLElement>('[data-reel]').forEach((r) => {
+    if (r.offsetWidth) return boot(r);
+    const ro = new ResizeObserver(() => { if (r.offsetWidth) { ro.disconnect(); boot(r); } }); ro.observe(r);
+  });
 </script>
