@@ -16,7 +16,7 @@ import { cookies as c, METRIKA_ID } from '../../i18n/ru';
       window.ym(METRIKA_ID, 'init', { webvisor: true, clickmap: true, referrer: document.referrer, url: location.href, accurateTrackBounce: true, trackLinks: true });
     }
     // Цели: пока согласия нет, вызовы просто пропускаются
-    window.swGoal = function (name) { if (window.ym) window.ym(METRIKA_ID, 'reachGoal', name); };
+    window.swGoal = function (name, params) { if (window.ym) window.ym(METRIKA_ID, 'reachGoal', name, params); };
     window.swCookies = function () { bar.hidden = false; };
     var choice = read();
     if (choice === 'all') metrika(); else if (!choice) bar.hidden = false;

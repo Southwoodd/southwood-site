@@ -23,7 +23,7 @@ const cur = (href: string) => (!href.includes('#') && path.startsWith(href) ? 'p
 <div class="menu" id="menu" hidden>
   <nav class="menu__grid" aria-label="Разделы">
     {nav.map((n) => (
-      <a class:list={['tile', { 'tile--accent': n.accent, 'is-active': cur(n.href) }]} href={n.href} aria-current={cur(n.href)} data-menu-link>
+      <a class:list={['tile', { 'tile--accent': n.accent, 'is-active': cur(n.href) }]} style={`--i:${nav.indexOf(n)}`} href={n.href} aria-current={cur(n.href)} data-menu-link>
         <span class="tile__top"><i class="tile__dot"><MenuIcon n={n.icon} /></i><Arrow /></span>
         <span class="tile__text"><b>{n.label}</b><small>{nb(n.hint)}</small></span>
       </a>
@@ -48,12 +48,16 @@ const cur = (href: string) => (!href.includes('#') && path.startsWith(href) ? 'p
       menu.style.setProperty('--ms', `${Math.round(r.left)}px`);
       menu.scrollTop = 0;
     }
-    menu.hidden = !open; hdr.classList.toggle('is-open', open);
     openBtn.setAttribute('aria-expanded', String(open));
     openBtn.setAttribute('aria-label', open ? 'Закрыть меню' : 'Меню');
-    document.documentElement.style.overflow = open ? 'hidden' : '';
+    clearTimeout(closing); menu.classList.remove('is-closing');
+    // Открытие: меню выезжает сверху, плитки подтягиваются следом. Закрытие: уезжает обратно и только потом прячется
+    const done = () => { menu.hidden = !open; hdr.classList.toggle('is-open', open); document.documentElement.style.overflow = open ? 'hidden' : ''; menu.classList.remove('is-closing'); };
+    if (open || menu.hidden || matchMedia('(prefers-reduced-motion: reduce)').matches) return done();
+    menu.classList.add('is-closing'); closing = window.setTimeout(done, 240);
   };
-  openBtn.addEventListener('click', () => set(menu.hidden));
+  let closing = 0;
+  openBtn.addEventListener('click', () => set(menu.hidden || menu.classList.contains('is-closing')));
   menu.querySelectorAll('[data-menu-link]').forEach((a) => a.addEventListener('click', () => set(false)));
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) set(false); });
   const onScroll = () => hdr.classList.toggle('is-stuck', scrollY > 24);
@@ -90,7 +94,14 @@ const cur = (href: string) => (!href.includes('#') && path.startsWith(href) ? 'p
     .hdr__burger[aria-expanded=true] i:last-child{transform:rotate(-45deg)}
     .hdr.is-open{z-index:110;box-shadow:none}
     .hdr.is-open .hdr__cta{visibility:hidden}
-    .menu{position:fixed;inset:0;z-index:100;background:var(--bg);padding:var(--mt,76px) var(--ms,8px) 12px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;animation:menuIn .28s var(--ease)}
+    .menu{position:fixed;inset:0;z-index:100;background:var(--bg);padding:var(--mt,76px) var(--ms,8px) 12px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;animation:menuIn .46s cubic-bezier(.2,.8,.2,1) both}
+    .menu>*{animation:menuItem .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:.14s}
+    .menu__grid{animation:none}
+    .menu__grid>*{animation:menuItem .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(.05s + var(--i,0)*.035s)}
+    .menu__qatar{animation-delay:.3s}.menu__contact{animation-delay:.36s}
+    .menu.is-closing{animation:menuOut .24s cubic-bezier(.5,0,.8,.3) both}
+    .menu.is-closing>*,.menu.is-closing .menu__grid>*{animation:none}
+    @media (prefers-reduced-motion:reduce){.menu,.menu>*,.menu__grid>*{animation:none}}
     .menu[hidden]{display:none}
     .menu::before{content:'';position:fixed;z-index:1;left:0;right:0;top:0;height:var(--mt,76px);background:var(--bg)}
     .menu__grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -116,5 +127,7 @@ const cur = (href: string) => (!href.includes('#') && path.startsWith(href) ? 'p
     .menu__links a{height:46px;border-radius:999px;background:rgba(255,255,255,.1);display:grid;place-items:center;font-size:15px;font-weight:500}
   }
   @media (max-height:700px) and (max-width:1023px){.tile{min-height:100px}}
-  @keyframes menuIn{from{opacity:0}to{opacity:1}}
+  @keyframes menuIn{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+  @keyframes menuOut{from{clip-path:inset(0 0 0 0)}to{clip-path:inset(0 0 100% 0)}}
+  @keyframes menuItem{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:none}}
 </style>
