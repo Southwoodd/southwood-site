@@ -226,7 +226,7 @@ export const serviceHref = (slug: string) => `/uslugi/${slug}/`;
 const CASE_META: Record<string, { seo: string; slug: string; service: string; like: string[]; over?: Record<string, unknown> }> = {
   alfa: { seo: 'Alfa Elite: два сайта, Битрикс24 и AI-боты для консалтинга', slug: 'alfa-elite', service: 'crm-bitrix24', like: ['corp', 'crmAuto', 'botAi', 'kp'] },
   meetflow: { seo: 'MeetFlow: AI-помощник для деловых созвонов', slug: 'meetflow', service: 'prilozheniya', like: [] },
-  mono: { seo: 'Mono Coffee: приложение кофейни с доставкой и подпиской', slug: 'mono-coffee', service: 'prilozheniya', like: ['phoneapp', 'fin', 'legal'] },
+  mono: { seo: 'Mono Coffee: приложение кофейни, панели персонала и админка', slug: 'mono-coffee', service: 'prilozheniya', like: ['phoneapp', 'fin', 'legal'] },
   caro: { seo: 'Caro: интернет-магазин свечей на Тильде', slug: 'caro', service: 'internet-magazin', like: ['shop'] },
   koposov: { seo: 'Роман Копосов: личный сайт руководителя на Tilda Zero', slug: 'roman-koposov', service: 'razrabotka-sajtov', like: ['landing'] },
   morozova: { seo: 'Ксения Морозова: сайт юриста для бизнеса', slug: 'ksenija-morozova', service: 'razrabotka-sajtov', like: ['landing', 'seo'] },

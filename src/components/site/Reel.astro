@@ -5,7 +5,7 @@ import { CASES, caseHref, serviceHref } from '../../i18n/routes';
 const img = (k: string) => `/img/cases/${k}.webp`;
 const cases = [
   { key: 'meetflow', name: 'MeetFlow', kind: 'Свой SaaS', line: 'AI-помощник для деловых созвонов', a: '#12123a', b: '#8f8cff', lay: 'hero', side: 1 },
-  { key: 'mono', name: 'Mono Coffee', kind: 'Приложение', line: 'Кофе до двери по подписке', a: '#2b0d1c', b: '#ff6b93', lay: 'phones', side: -1 },
+  { key: 'mono', name: 'Mono Coffee', kind: 'Приложение и три панели', line: 'Гость, бариста, курьер и владелец в одной системе', a: '#2b0d1c', b: '#ff6b93', lay: 'roles', side: -1 },
   { key: 'alfa', name: 'Alfa Elite', kind: 'Сайты, CRM, боты', line: 'Два сайта и Битрикс24 с AI-ботами', a: '#2a0812', b: '#d43d63', lay: 'iso', side: 1 },
   { key: 'caro', name: 'Caro', kind: 'Интернет-магазин', line: 'Магазин свечей с оплатой и доставкой', a: '#22241a', b: '#d3d98f', lay: 'trip', side: -1 },
   { key: 'bta', name: 'BTA', kind: 'Сайт и стиль', line: 'Сайт промышленной компании', a: '#0e1114', b: '#cfd8e3', lay: 'tunnel', side: 1 },
@@ -47,11 +47,15 @@ void CASES;
   .rl__scr{display:block;border-radius:18px;overflow:hidden;background:#0d1210;box-shadow:0 0 0 1px rgba(255,255,255,.12),0 60px 120px -30px rgba(0,0,0,.75),0 30px 60px -30px var(--gl,rgba(0,0,0,.5));cursor:none}
   .rl__scr i{display:flex;gap:7px;align-items:center;height:34px;padding:0 16px;background:rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.08)}
   .rl__scr i::before,.rl__scr i::after,.rl__scr i b{content:'';width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.22)}
-  .rl__scr img{display:block;width:100%;height:calc(100% - 34px);object-fit:cover;object-position:0 0;max-width:none}
+  .rl__scr img,.rl__scr video{display:block;width:100%;height:calc(100% - 34px);object-fit:cover;object-position:0 0;max-width:none}
   .rl__scr::after{content:'';position:absolute;inset:0;border-radius:inherit;background:linear-gradient(115deg,rgba(255,255,255,.16),transparent 32%,transparent 70%,rgba(255,255,255,.05));pointer-events:none}
   .rl__scr.is-dim img{filter:saturate(.7) brightness(.55)}
   .rl__ph{display:block;border-radius:44px;padding:10px;background:linear-gradient(160deg,#2a2f2c,#0b0d0c);box-shadow:0 0 0 1px rgba(255,255,255,.16),0 70px 120px -30px rgba(0,0,0,.8),0 30px 80px -30px var(--gl,rgba(0,0,0,.5));cursor:none}
-  .rl__ph img{display:block;width:100%;height:100%;object-fit:cover;border-radius:35px;max-width:none}
+  .rl__ph img,.rl__ph video{display:block;width:100%;height:100%;object-fit:cover;border-radius:35px;max-width:none;background:#0d0d0f}
+  .rl__tab{display:block;border-radius:30px;padding:12px;background:linear-gradient(160deg,#2a2f2c,#0b0d0c);box-shadow:0 0 0 1px rgba(255,255,255,.16),0 70px 120px -30px rgba(0,0,0,.8),0 30px 80px -30px var(--gl,rgba(0,0,0,.5));cursor:none}
+  .rl__tab video,.rl__tab img{display:block;width:100%;height:100%;object-fit:cover;object-position:0 0;border-radius:19px;max-width:none;background:#0d0d0f}
+  .rl__role{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;border-radius:999px;background:rgba(10,10,12,.72);box-shadow:0 0 0 1px rgba(255,255,255,.16);font-size:14px;font-weight:500;white-space:nowrap;pointer-events:none}
+  .rl__role::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--b)}
   .rl__ph::before{content:'';position:absolute;left:50%;top:20px;width:84px;height:24px;margin-left:-42px;border-radius:14px;background:#050606;z-index:1}
 
   /* Текст сцены */
@@ -123,7 +127,7 @@ void CASES;
     .rl{aspect-ratio:4/5;border-radius:24px}
     .rl__who{left:16px;top:16px}.rl__now{right:16px;top:16px}.rl__bar{left:16px;right:16px;bottom:12px}
     .rl__cur{display:none}
-    .rl__scr,.rl__ph,.rl__c,.rl__go{cursor:pointer}
+    .rl__scr,.rl__ph,.rl__tab,.rl__c,.rl__go{cursor:pointer}
   }
 </style>
 
@@ -219,15 +223,23 @@ void main(){
     const bar = root.querySelector<HTMLElement>('[data-rl-bar]')!;
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    type Sc = { id: string; label: string; dur: number; start: number; el: HTMLElement; a: number[]; b: number[]; up: (lt: number, s: Sc) => void; ring?: (lt: number, s: Sc) => { o: number; rot: number[]; x: number; y: number; s: number } };
+    type Sc = { vids?: HTMLVideoElement[]; id: string; label: string; dur: number; start: number; el: HTMLElement; a: number[]; b: number[]; up: (lt: number, s: Sc) => void; ring?: (lt: number, s: Sc) => { o: number; rot: number[]; x: number; y: number; s: number } };
     const scenes: Sc[] = [];
     const add = (id: string, label: string, dur: number, a: string, b: string, build: (el: HTMLElement) => Sc['up'], ring?: Sc['ring']) => {
       const el = h('div', 'rl__sc'); el.style.setProperty('--a', a); el.style.setProperty('--b', b); el.style.setProperty('--gl', b + '55'); stage.appendChild(el);
-      scenes.push({ id, label, dur, start: 0, el, a: hex(a), b: hex(b), up: build(el), ring });
+      const up = build(el); scenes.push({ id, label, dur, start: 0, el, a: hex(a), b: hex(b), up, ring, vids: [...el.querySelectorAll('video')] });
     };
     const item = (par: HTMLElement, e: HTMLElement, w?: number, hh?: number) => { e.classList.add('rl__i'); if (w) e.style.width = w + 'px'; if (hh) e.style.height = hh + 'px'; par.appendChild(e); return e; };
-    const screen = (par: HTMLElement, c: V, w: number, hh: number, pos = '0 0') => { const a = item(par, h('a', 'rl__scr', `<i><b></b></i><img src="${c.img}" alt="" decoding="async" style="object-position:${pos}">`, { href: c.href, 'data-rl-link': 'Открыть кейс', 'aria-label': c.name }), w, hh) as HTMLAnchorElement; return a; };
-    const phone = (par: HTMLElement, c: V, pos: string) => item(par, h('a', 'rl__ph', `<img src="${c.img}" alt="" decoding="async" style="object-position:${pos}">`, { href: c.href, 'data-rl-link': 'Открыть кейс', 'aria-label': c.name }), 286, 590);
+    // Картинка или короткая запись экрана. Запись задается как v:имя и лежит в /reel/
+    const med = (src: string, pos = '0 0') => src.startsWith('v:')
+      ? `<video muted playsinline loop preload="none" poster="/reel/${src.slice(2)}.webp" data-v="${src.slice(2)}" style="object-position:${pos}"></video>`
+      : `<img src="${src}" alt="" decoding="async" style="object-position:${pos}">`;
+    const link = (c: V) => ({ href: c.href, 'data-rl-link': 'Открыть кейс', 'aria-label': c.name });
+    const R2 = 1.99; // пропорции записей с широкого экрана
+    const screen = (par: HTMLElement, c: V, w: number, hh: number, pos = '0 0', src = c.img) => item(par, h('a', 'rl__scr', `<i><b></b></i>${med(src, pos)}`, link(c)), w, hh || 34 + Math.round(w / R2)) as HTMLAnchorElement;
+    const phone = (par: HTMLElement, c: V, src: string) => item(par, h('a', 'rl__ph', med(src), link(c)), 286, 590);
+    const tablet = (par: HTMLElement, c: V, src: string) => item(par, h('a', 'rl__tab', med(src), link(c)), 404, 530);
+    const role = (par: HTMLElement, t: string) => item(par, h('span', 'rl__role', t));
     const text = (par: HTMLElement, c: V, n: number) => {
       const sc = item(par, h('div', 'rl__scrim'));
       const t = item(par, h('div', 'rl__tx', `<span class="rl__kind">Кейс 0${n} · ${c.kind}</span><span class="rl__name" style="--fs:${Math.round(Math.min(112, 960 / c.name.length))}px">${c.name}</span><span class="rl__line">${c.line}</span><a class="rl__go" href="${c.href}" data-rl-link="Открыть кейс">Смотреть кейс →</a>`));
@@ -251,45 +263,49 @@ void main(){
       const sd = c.side;
       add(c.key, c.name, 3.3, c.a, c.b, (el) => {
         if (c.lay === 'hero') {
-          const back = screen(el, c, 760, 480, '100% 100%'); back.classList.add('is-dim');
-          const main = screen(el, c, 900, 566);
+          const back = screen(el, c, 780, 0, '0 0', '/reel/mf-cab.webp'); back.classList.add('is-dim');
+          const main = screen(el, c, 940, 0, '0 0', 'v:mf-site');
           const T = text(el, c, i + 1);
           return (lt) => { const e = oExpo(sg(lt, 0, 1.3)), d = lt * 1.0;
-            tf(back, sd * (520 - d * 6), -170, -520 + e * 60, 8, sd * (-30 + d), 0, 1, sg(lt, 0.15, 0.6) * 0.9);
-            tf(main, sd * (300 - d * 10), 40 + (1 - e) * 120, mix(-700, 0, e), mix(22, 6, e), sd * (mix(-46, -20, e) + d * 1.6), sd * mix(-6, 0, e), 1, sg(lt, 0, 0.3));
+            tf(back, sd * (500 - d * 6), -190, -520 + e * 60, 8, sd * (-30 + d), 0, 1, sg(lt, 0.15, 0.6) * 0.9);
+            tf(main, sd * (300 - d * 10), 50 + (1 - e) * 120, mix(-700, 0, e), mix(22, 6, e), sd * (mix(-46, -20, e) + d * 1.6), sd * mix(-6, 0, e), 1, sg(lt, 0, 0.3));
             textUp(T, lt, sd * -470); };
         }
-        if (c.lay === 'phones') {
-          const ps = ['0 0', '100% 0', '50% 100%'].map((p) => phone(el, c, p));
+        if (c.lay === 'roles') {
+          // Три рабочих места одной системы: владелец, бариста, гость
+          const adm = screen(el, c, 800, 0, '0 0', 'v:mono-admin'), tab = tablet(el, c, 'v:mono-bar'), ph = phone(el, c, 'v:mono-guest');
+          const tags = [role(el, 'Владелец'), role(el, 'Бариста'), role(el, 'Гость')];
           const T = text(el, c, i + 1);
-          return (lt) => { ps.forEach((p, k) => { const e = oExpo(sg(lt, k * 0.12, 1.2 + k * 0.12)), o = k - 1;
-            tf(p, sd * (330 + o * 250 - lt * 8), (1 - e) * 620 + [50, -40, 60][k] - lt * (6 + k * 5), o === 0 ? 80 : -60, mix(30, 6, e), sd * (-20 + lt * 1.5), o * 7 * e, 1, sg(lt, k * 0.12, k * 0.12 + 0.3)); });
-            textUp(T, lt, sd * -470); };
+          const P = [[adm, 60, -150, -320, -236], [tab, 215, 70, -20, 286], [ph, -160, 75, 160, 316]] as [HTMLElement, number, number, number, number][];
+          return (lt) => { P.forEach(([d, dx, dy, dz, th], k) => { const e = oExpo(sg(lt, k * 0.14, 1.3 + k * 0.14)), o = sg(lt, k * 0.14, k * 0.14 + 0.3);
+            const x = sd * 330 - sd * dx * -1 - lt * (4 + k * 4) * -sd, y = dy + (1 - e) * (300 + k * 160) - lt * (3 + k * 3), z = dz + (1 - e) * -500, rx = mix(26, 5, e), ry = sd * (-22 + lt * 1.4);
+            tf(d, x, y, z, rx, ry, k === 2 ? sd * 4 * e : 0, 1, o);
+            tf(tags[k], x, y + th, z + 30, rx, ry, 0, 1, sg(lt, 0.9 + k * 0.12, 1.3 + k * 0.12)); });
+            textUp(T, lt, sd * -480); };
         }
         if (c.lay === 'iso') {
           const plane = item(el, h('div', '')); plane.style.transformStyle = 'preserve-3d';
-          const tiles: HTMLElement[] = []; const pos = ['0 0', '100% 0', '50% 100%', '100% 100%', '0 100%', '50% 0'];
-          for (let r = -1; r <= 1; r++) for (let q = -1; q <= 1; q++) { const s = screen(plane, c, 560, 350, pos[(r * 3 + q + 8) % 6]); (s as V)._r = r; (s as V)._q = q; if (r || q) s.classList.add('is-dim'); tiles.push(s); }
+          const tiles: HTMLElement[] = []; let n = 0;
+          for (let r = -1; r <= 1; r++) for (let q = -1; q <= 1; q++) { const hot = !r && !q, sc = screen(plane, c, 600, 0, '0 0', hot ? 'v:alfa' : `/reel/alfa-${(n++ % 6) + 1}.webp`); (sc as V)._r = r; (sc as V)._q = q; if (!hot) sc.classList.add('is-dim'); tiles.push(sc); }
           const T = text(el, c, i + 1);
           return (lt) => { const e = oExpo(sg(lt, 0, 1.4));
             tf(plane, sd * 420, 30, mix(-900, -260, e), 56, 0, sd * (-34 + lt * 1.2), 1, sg(lt, 0, 0.35));
-            tiles.forEach((s: V) => { const hot = !s._r && !s._q, k = oBack(sg(lt, 0.9, 1.7));
-              tf(s, s._q * 600 - lt * 22, s._r * 392 + lt * 14 + (1 - e) * s._r * 260, hot ? k * 150 : 0, 0, 0, 0, hot ? 1 + k * 0.06 : 1); });
+            tiles.forEach((sc: V) => { const hot = !sc._r && !sc._q, k = oBack(sg(lt, 0.9, 1.7));
+              tf(sc, sc._q * 640 - lt * 22, sc._r * 376 + lt * 14 + (1 - e) * sc._r * 260, hot ? k * 150 : 0, 0, 0, 0, hot ? 1 + k * 0.06 : 1); });
             textUp(T, lt, sd * -470); };
         }
         if (c.lay === 'trip') {
-          const L = screen(el, c, 620, 400, '100% 0'), R = screen(el, c, 620, 400, '50% 100%'); L.classList.add('is-dim'); R.classList.add('is-dim');
-          const M = screen(el, c, 820, 520); const im = M.querySelector('img')!;
+          const L = screen(el, c, 640, 0, '0 0', '/reel/caro-1.webp'), Rr = screen(el, c, 640, 0, '0 0', '/reel/caro-2.webp'); L.classList.add('is-dim'); Rr.classList.add('is-dim');
+          const M = screen(el, c, 860, 0, '0 0', 'v:caro');
           const T = text(el, c, i + 1);
           return (lt) => { const e = oExpo(sg(lt, 0, 1.3)), cx = sd * 335;
-            tf(L, cx - 400 * e, -10, -520, 0, 58, 0, 1, sg(lt, 0.2, 0.7) * 0.9); tf(R, cx + 400 * e, -10, -520, 0, -58, 0, 1, sg(lt, 0.2, 0.7) * 0.9);
+            tf(L, cx - 410 * e, -10, -520, 0, 58, 0, 1, sg(lt, 0.2, 0.7) * 0.9); tf(Rr, cx + 410 * e, -10, -520, 0, -58, 0, 1, sg(lt, 0.2, 0.7) * 0.9);
             tf(M, cx, 20, mix(-600, 40, e) + lt * 12, mix(-14, 0, e), sd * mix(24, 6, e), 0, 1, sg(lt, 0, 0.3));
-            im.style.objectPosition = `${(ioCub(sg(lt, 0.6, 3.1)) * 100).toFixed(1)}% 50%`;
             textUp(T, lt, sd * -520); };
         }
         // Колода экранов: стопка раскрывается в глубину, верхний экран выходит вперед
         const pos = ['0 0', '100% 0', '50% 100%', '100% 100%', '0 100%'];
-        const deck = pos.map((p, k) => { const sc = screen(el, c, 820, 512, p); if (k < 4) sc.classList.add('is-dim'); return sc; });
+        const deck = pos.map((p, k) => { const sc = screen(el, c, 820, 446, p); if (k < 4) sc.classList.add('is-dim'); return sc; });
         const T = text(el, c, i + 1);
         return (lt) => { const e = oExpo(sg(lt, 0, 1.5)), sp = oExpo(sg(lt, 0.25, 1.8));
           deck.forEach((sc, k) => { const d = 4 - k, top = k === 4;
@@ -361,12 +377,18 @@ void main(){
     const rotM = (a: number[]) => { const [x, y, z] = a, cx = Math.cos(x), sx = Math.sin(x), cy = Math.cos(y), sy = Math.sin(y), cz = Math.cos(z), sz = Math.sin(z);
       return [cy * cz, cy * sz, -sy, sx * sy * cz - cx * sz, sx * sy * sz + cx * cz, sx * cy, cx * sy * cz + sx * sz, cx * sy * sz - sx * cz, cx * cy]; };
 
+    const arm = (sc: Sc) => sc.vids!.forEach((v) => { if (v.dataset.on) return; v.dataset.on = '1'; const n = v.dataset.v; v.innerHTML = `<source src="/reel/${n}.mp4" type="video/mp4"><source src="/reel/${n}.webm" type="video/webm">`; v.load(); });
+    let onNow: Sc | null = null;
     let t = 0, speed = 1, want = 1, hot: HTMLElement | null = null, vis = true, last = 0, raf = 0, curX = 0, curY = 0, mX = 0, mY = 0, curO = 0;
     const draw = () => {
       const tt = ((t % T) + T) % T; let ci = 0; scenes.forEach((s, i) => { if (tt >= s.start) ci = i; });
       const s = scenes[ci], lt = tt - s.start, nx = scenes[(ci + 1) % scenes.length], pv = scenes[(ci + scenes.length - 1) % scenes.length];
       const out = iCub(sg(lt, s.dur - 0.45, s.dur)), inn = sg(lt, 0, 0.5);
       scenes.forEach((x) => x.el.classList.toggle('is-on', x === s));
+      arm(s); arm(nx);
+      if (onNow !== s) { onNow && onNow.vids!.forEach((v) => v.pause()); s.vids!.forEach((v) => { try { v.currentTime = 0; } catch (e) {} }); onNow = s; }
+      s.vids!.forEach((v) => { if (api.manual) { if (v.readyState > 0 && v.duration) v.currentTime = Math.min(lt, v.duration - 0.05); }
+        else { v.playbackRate = Math.max(0.1, Math.min(1, speed)); if (v.paused && vis) v.play().catch(() => {}); } });
       s.up(lt, s);
       s.el.style.transform = `translateZ(${(out * 900 - (1 - oExpo(inn)) * 500).toFixed(1)}px)`;
       s.el.style.opacity = (cl(inn * 3) * (1 - out)).toFixed(3);
@@ -400,7 +422,7 @@ void main(){
     root.addEventListener('pointerleave', () => { hot = null; want = reduce ? 0 : 1; });
     bar.addEventListener('click', (e) => { const b = (e.target as HTMLElement).closest<HTMLElement>('button'); if (!b) return; t = scenes[+b.dataset.i!].start + (reduce ? 1.8 : 0.02); draw(); (window as V).swGoal && (window as V).swGoal('reel_seek'); });
     stage.addEventListener('click', (e) => { const l = (e.target as HTMLElement).closest('a[data-rl-link]'); if (l) (window as V).swGoal && (window as V).swGoal('reel_open'); });
-    new IntersectionObserver((en) => { vis = en[0].isIntersecting; vis ? play() : 0; }, { threshold: 0.05 }).observe(root);
+    new IntersectionObserver((en) => { vis = en[0].isIntersecting; vis ? play() : onNow && onNow.vids!.forEach((v) => v.pause()); }, { threshold: 0.05 }).observe(root);
     document.addEventListener('visibilitychange', () => { vis = !document.hidden; play(); });
     if (reduce) { want = 0; speed = 0; t = scenes[1].start + 1.8; }
     draw(); play();
