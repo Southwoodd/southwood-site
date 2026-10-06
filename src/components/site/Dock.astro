@@ -48,6 +48,7 @@ const on = (href: string) => (path === href || (href !== '/' && path.startsWith(
     <button class="dock__menu" type="button" aria-expanded="false" aria-controls="dock-menu" data-dock-toggle>
       <span class="dock__burger"><i></i><i></i></span><span data-dock-label>Меню</span>
     </button>
+    <button class="dock__snd" type="button" data-snd-toggle aria-pressed="true" aria-label="Звуки сайта"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3l5-4v13l-5-4H4z"/><path class="snd-on" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="snd-off" d="m16 9.5 5 5m0-5-5 5"/></svg></button>
     <button class="dock__write" type="button" data-open="write">{header.cta}<Arrow /></button>
   </div>
 </div>
@@ -123,6 +124,10 @@ const on = (href: string) => (path === href || (href !== '/' && path.startsWith(
     .dock__name span{color:var(--sub);font-weight:400;font-size:max(1.4rem,12px);overflow:hidden;text-overflow:ellipsis}
     .dock__menu{flex:none;padding:0 2.2rem;gap:1.2rem}
     .dock__menu:hover{background:color-mix(in srgb,var(--seg) 82%,var(--txt))}
+    .dock__bar .dock__snd{width:6rem;flex:none;justify-content:center;cursor:pointer}
+    .dock__snd:hover{background:color-mix(in srgb,var(--seg) 82%,var(--txt))}
+    .dock__snd svg{width:2.2rem;height:2.2rem}
+    .dock__snd[aria-pressed=false]{color:var(--sub)}
     .dock__burger{display:grid;width:1.8rem;height:1.8rem;place-items:center}
     .dock__burger i{grid-area:1/1;width:1.8rem;height:.2rem;border-radius:1px;background:currentColor;transition:transform .35s var(--ease)}
     .dock__burger i:first-child{transform:translateY(-.35rem)}.dock__burger i:last-child{transform:translateY(.35rem)}

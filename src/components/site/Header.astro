@@ -33,7 +33,7 @@ const cur = (href: string) => (!href.includes('#') && path.startsWith(href) ? 'p
   <div class="menu__contact">
     <div><b>{header.menuTitle}</b><small>{nb(header.menuSub)}</small></div>
     <button class="btn btn--white menu__write" type="button" data-open="write" data-menu-link>{header.cta}<Arrow /></button>
-    <div class="menu__links"><a href={site.telegram} target="_blank" rel="noopener">Telegram</a><a href={`mailto:${site.email}`}>Почта</a></div>
+    <div class="menu__links"><a href={site.telegram} target="_blank" rel="noopener">Telegram</a><a href={`mailto:${site.email}`}>Почта</a><button class="menu__snd" type="button" data-snd-toggle aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3l5-4v13l-5-4H4z"/><path class="snd-on" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="snd-off" d="m16 9.5 5 5m0-5-5 5"/></svg>Звуки сайта <span data-snd-label>включены</span></button></div>
   </div>
 </div>
 
@@ -124,6 +124,8 @@ const cur = (href: string) => (!href.includes('#') && path.startsWith(href) ? 'p
     .menu__contact b{font-size:20px;line-height:24px;font-weight:500}.menu__contact small{font-size:13px;opacity:.6}
     .menu__write{height:54px;font-size:16px;width:100%}
     .menu__links{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .menu__snd{grid-column:1/-1;height:46px;border-radius:999px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:500}
+    .menu__snd svg{width:20px;height:20px}
     .menu__links a{height:46px;border-radius:999px;background:rgba(255,255,255,.1);display:grid;place-items:center;font-size:15px;font-weight:500}
   }
   @media (max-height:700px) and (max-width:1023px){.tile{min-height:100px}}

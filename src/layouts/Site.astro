@@ -3,6 +3,7 @@ import '../styles/site.css';
 import '../styles/illus.css';
 import CookieBar from '../components/site/CookieBar.astro';
 import Modals from '../components/site/Modals.astro';
+import Sound from '../components/site/Sound.astro';
 interface Props { title: string; description: string; lang?: string; noindex?: boolean; path?: string; image?: string }
 const { title, description, lang = 'ru', noindex = false, path = '/', image = '/og-cover.png' } = Astro.props;
 // Описание для выдачи: целые предложения, пока укладываемся в 160 знаков
@@ -51,6 +52,7 @@ const url = new URL(path, Astro.site).toString();
     <slot />
     <Modals />
     <CookieBar />
+    <Sound />
     <script>
       // Появление блоков при скролле
       const io = new IntersectionObserver((entries) => {

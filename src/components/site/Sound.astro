@@ -1,0 +1,57 @@
+---
+// Звуки интерфейса на всем сайте: короткие синтезированные сигналы на нажатия, наведение, окна и отправку форм.
+// Файлов нет, все считается в браузере. Включены по умолчанию, выключаются кнопкой [data-snd-toggle], выбор запоминается.
+---
+<script>
+  type O = { type?: OscillatorType; at?: number; to?: number };
+  const KEY = 'swSnd';
+  let on = true; try { on = localStorage.getItem(KEY) !== '0'; } catch {}
+  let ac: AudioContext | null = null, out: GainNode, nb: AudioBuffer;
+  // Контекст создается только по живому нажатию, иначе браузер его не запустит
+  const boot = () => { if (ac) return ac; const AC = window.AudioContext || (window as any).webkitAudioContext; if (!AC) return null;
+    ac = new AC(); out = ac!.createGain(); out.gain.value = 0.8; const comp = ac!.createDynamicsCompressor(); out.connect(comp); comp.connect(ac!.destination);
+    nb = ac!.createBuffer(1, ac!.sampleRate * 0.2, ac!.sampleRate); const ch = nb.getChannelData(0); for (let i = 0; i < ch.length; i++) ch[i] = Math.random() * 2 - 1; return ac; };
+  const tone = (f: number, dur: number, vol: number, o: O = {}) => { const c = ac!, t0 = c.currentTime + (o.at || 0), os = c.createOscillator(), g = c.createGain(); os.type = o.type || 'sine';
+    os.frequency.setValueAtTime(f, t0); if (o.to) os.frequency.exponentialRampToValueAtTime(o.to, t0 + dur);
+    g.gain.setValueAtTime(0.0001, t0); g.gain.linearRampToValueAtTime(vol, t0 + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur); os.connect(g); g.connect(out); os.start(t0); os.stop(t0 + dur + 0.03); };
+  const click = (vol: number, f = 3200) => { const c = ac!, s = c.createBufferSource(), fl = c.createBiquadFilter(), g = c.createGain(), t0 = c.currentTime; s.buffer = nb; fl.type = 'bandpass'; fl.frequency.value = f; fl.Q.value = 1.2;
+    g.gain.setValueAtTime(vol, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.03); s.connect(fl); fl.connect(g); g.connect(out); s.start(t0); s.stop(t0 + 0.05); };
+  const S: Record<string, () => void> = {
+    hover: () => tone(1320, 0.05, 0.012),
+    tap: () => { tone(470, 0.08, 0.05, { type: 'triangle', to: 330 }); click(0.03); },
+    pick: () => { tone(880, 0.1, 0.04); click(0.015, 5000); },
+    open: () => { tone(523.25, 0.18, 0.04); tone(783.99, 0.26, 0.035, { at: 0.07 }); },
+    close: () => { tone(659.25, 0.14, 0.032); tone(440, 0.22, 0.03, { at: 0.06 }); },
+    ok: () => [440, 523.25, 659.25, 880].forEach((f, i) => tone(f, 0.45, 0.045, { at: i * 0.085 })),
+    copy: () => { tone(987.77, 0.12, 0.04); tone(1318.5, 0.3, 0.035, { at: 0.07 }); },
+    err: () => { tone(196, 0.16, 0.05, { type: 'triangle' }); tone(185, 0.22, 0.05, { type: 'triangle', at: 0.13 }); },
+  };
+  const last: Record<string, number> = {};
+  const play = (name: string, gesture = false) => { if (!on || !S[name]) return; const now = performance.now(); if (now - (last[name] || 0) < 60) return; last[name] = now;
+    const c = gesture ? boot() : ac; if (!c) return; if (c.state === 'suspended') { if (!gesture) return; c.resume(); } S[name](); };
+
+  const UI = 'a,button,summary,label,select,[role=button],input[type=checkbox],input[type=radio]';
+  document.addEventListener('pointerdown', (e) => { const el = (e.target as HTMLElement).closest?.<HTMLElement>(UI); if (!el || el.hasAttribute('data-snd-toggle') || (el as HTMLButtonElement).disabled) return;
+    play(el.matches('label,select,input,[aria-pressed],[role=switch],[role=tab],[role=radio]') ? 'pick' : 'tap', true); }, true);
+  let hov: Element | null = null;
+  document.addEventListener('pointerover', (e) => { if (e.pointerType !== 'mouse') return; const el = (e.target as HTMLElement).closest?.('button,.btn,summary,a[class]');
+    if (el === hov) return; hov = el; if (el) play('hover'); });
+  // Окна, отправка форм и копирование узнаем по тем же событиям, что уходят в Метрику
+  const MAP: Record<string, string> = { lead_sent: 'ok', write_sent: 'ok', calc_pdf: 'ok', promo_copy: 'copy', calc_link: 'copy', share_copy: 'copy' };
+  const g0 = (window as any).swGoal;
+  (window as any).swGoal = function (name: string, params?: unknown) { try { if (typeof name === 'string') { if (name.startsWith('modal_')) play('open'); else if (MAP[name]) play(MAP[name]); } } catch {} return g0 && g0.call(window, name, params); };
+  document.addEventListener('close', (e) => { if ((e.target as HTMLElement).tagName === 'DIALOG') play('close'); }, true);
+  document.addEventListener('invalid', () => play('err'), true);
+
+  const btns = () => document.querySelectorAll<HTMLElement>('[data-snd-toggle]');
+  const sync = () => btns().forEach((b) => { b.setAttribute('aria-pressed', String(on)); const l = b.querySelector('[data-snd-label]'); if (l) l.textContent = on ? 'включены' : 'выключены'; b.title = on ? 'Выключить звуки сайта' : 'Включить звуки сайта'; });
+  document.addEventListener('click', (e) => { const b = (e.target as HTMLElement).closest('[data-snd-toggle]'); if (!b) return; on = !on; try { localStorage.setItem(KEY, on ? '1' : '0'); } catch {}
+    sync(); if (on) play('copy', true); (window as any).swGoal?.(on ? 'sound_on' : 'sound_off'); });
+  sync();
+  (window as any).swSfx = { play: (n: string) => play(n, true), get on() { return on; } };
+</script>
+<style is:global>
+  [data-snd-toggle] .snd-on{display:none}
+  [data-snd-toggle][aria-pressed=true] .snd-on{display:block}
+  [data-snd-toggle][aria-pressed=true] .snd-off{display:none}
+</style>
