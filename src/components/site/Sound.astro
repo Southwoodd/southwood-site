@@ -1,12 +1,13 @@
 ---
 // Звуки интерфейса на всем сайте: короткие синтезированные сигналы на нажатия, наведение, окна и отправку форм.
-// Файлов нет, все считается в браузере. На десктопе включены по умолчанию, на телефоне выключены, переключаются кнопкой [data-snd-toggle], выбор запоминается.
+// Файлов нет, все считается в браузере. На десктопе включены по умолчанию и переключаются кнопкой, на телефонах и планшетах отключены полностью: [data-snd-toggle], выбор запоминается.
 ---
 <script>
   type O = { type?: OscillatorType; at?: number; to?: number };
   const KEY = 'swSnd';
-  // На телефонах и планшетах звуки по умолчанию выключены, включаются в меню
-  let on = !matchMedia('(hover: none)').matches; try { const v = localStorage.getItem(KEY); if (v) on = v === '1'; } catch {}
+  // На телефонах и планшетах звуков нет совсем, выключатель там скрыт
+  const touch = matchMedia('(hover: none)').matches;
+  let on = !touch; if (!touch) try { on = localStorage.getItem(KEY) !== '0'; } catch {}
   let ac: AudioContext | null = null, out: GainNode, nb: AudioBuffer;
   // Контекст создается только по живому нажатию, иначе браузер его не запустит
   const boot = () => { if (ac) return ac; const AC = window.AudioContext || (window as any).webkitAudioContext; if (!AC) return null;
@@ -52,6 +53,7 @@
   (window as any).swSfx = { play: (n: string) => play(n, true), get on() { return on; } };
 </script>
 <style is:global>
+  @media (hover:none){[data-snd-toggle]{display:none!important}}
   [data-snd-toggle] .snd-on{display:none}
   [data-snd-toggle][aria-pressed=true] .snd-on{display:block}
   [data-snd-toggle][aria-pressed=true] .snd-off{display:none}

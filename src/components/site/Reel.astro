@@ -265,8 +265,14 @@ void CASES;
   .rl--port .rl__bar button::before,.rl--port .rl__bar button i{height:3px;margin-top:-1.5px}
   .rl--port .rl__bar button span{display:none}
   .rl--port .rl__who{left:14px;top:28px;font-size:12px}.rl--port .rl__who i{display:none}
-  .rl--port .rl__now{right:50px;top:28px;font-size:12px}
-  .rl--port .rl__snd{right:12px;top:21px;width:30px;height:30px}
+  .rl--port .rl__now{right:14px;top:28px;font-size:12px}
+  .rl--port .rl__snd{display:none}
+  @media (hover:none){.rl__snd{display:none}.rl__now{right:3.2rem}}
+  @media (hover:none) and (max-width:1023px){.rl__now{right:16px}}
+  /* телефон: убираем дорогие для видеочипа слои */
+  .rl--port .rl__grain{display:none}
+  .rl--port .rl__chips,.rl--port .rl__pnb{backdrop-filter:none;-webkit-backdrop-filter:none}
+  .rl--port .rl__chips{background:rgba(8,14,11,.86)}.rl--port .rl__pnb{background:rgba(12,18,15,.97)}
   .rl--port .rl__chips{top:60px}
   .rl--port .rl__pn{background:linear-gradient(rgba(6,10,8,.3),rgba(6,10,8,.8) 45%)}
   .rl--port .rl__pnb{top:auto;left:8px;right:8px;bottom:8px;width:auto;max-width:none;max-height:82%;border-radius:22px;transform:translateY(24px)}
@@ -603,13 +609,14 @@ void main(){
     } else cv.style.background = 'radial-gradient(80% 90% at 60% 110%,#1d4a39,#060a08 70%)';
     let W = 0, H = 0, q = 1;
     const size = () => { const r = root.getBoundingClientRect(); W = r.width; H = r.height; stage.style.setProperty('--rlk', String(port ? W / 900 : Math.max(W / 1600, H / 900) * (W < H ? 0.62 : 1)));
-      q = Math.min(devicePixelRatio || 1, 1.5) * (W > 1400 ? 0.75 : 1); cv.width = Math.round(W * q); cv.height = Math.round(H * q); gl && gl.viewport(0, 0, cv.width, cv.height); };
+      // На телефоне фон считается чуть мельче, чем на десктопе: на маленьком экране разницы не видно, а нагрузка ниже
+      q = port ? Math.min(devicePixelRatio || 1, 1.25) : Math.min(devicePixelRatio || 1, 1.5) * (W > 1400 ? 0.75 : 1); cv.width = Math.round(W * q); cv.height = Math.round(H * q); gl && gl.viewport(0, 0, cv.width, cv.height); };
     size(); new ResizeObserver(size).observe(root);
     const rotM = (a: number[]) => { const [x, y, z] = a, cx = Math.cos(x), sx = Math.sin(x), cy = Math.cos(y), sy = Math.sin(y), cz = Math.cos(z), sz = Math.sin(z);
       return [cy * cz, cy * sz, -sy, sx * sy * cz - cx * sz, sx * sy * sz + cx * cz, sx * cy, cx * sy * cz + sx * sz, cx * sy * sz - sx * cz, cx * cy]; };
 
     const arm = (sc: Sc) => sc.vids!.forEach((v) => { if (v.dataset.on) return; v.dataset.on = '1'; const n = v.dataset.v; v.innerHTML = `<source src="/reel/${n}.mp4" type="video/mp4"><source src="/reel/${n}.webm" type="video/webm">`; v.load(); });
-    let onNow: Sc | null = null, doneSent = false;
+    let onNow: Sc | null = null, doneSent = false, frame = 0, scrolledAt = 0;
     const goal = (name: string, key?: string) => { const g = (window as V).swGoal; g && g(name, key ? { case: key } : undefined); };
     let t = 0, speed = 1, want = 1, hot: HTMLElement | null = null, vis = false, last = 0, raf = 0, curX = 0, curY = 0, mX = 0, mY = 0, curO = 0;
     // Звук синтезируется в браузере, файлов нет. По умолчанию выключен, включается кнопкой
@@ -689,14 +696,16 @@ void main(){
       s.up(lt, s);
       s.el.style.transform = `translateZ(${(out * 900 - (1 - oExpo(inn)) * 500).toFixed(1)}px)`;
       s.el.style.opacity = (cl(inn * 3) * (1 - out)).toFixed(3);
-      const bl = out * 14 + (1 - cl(inn * 2.2)) * 10; s.el.style.filter = bl > 0.3 ? `blur(${bl.toFixed(1)}px)` : '';
+      if (!port) { const bl = out * 14 + (1 - cl(inn * 2.2)) * 10; s.el.style.filter = bl > 0.3 ? `blur(${bl.toFixed(1)}px)` : ''; }
       // Самый первый кадр идет без вспышки: до старта блок стоит спокойным фоном
       const fl = (t < 0.6 ? 0 : Math.exp(-Math.pow(lt / 0.16, 2))) + (hold ? 0 : Math.exp(-Math.pow((s.dur - lt) / 0.14, 2)));
       flash.style.opacity = (fl * 0.5).toFixed(3);
       const k = oCub(sg(lt, 0, 0.6)), k2 = iCub(sg(lt, s.dur - 0.3, s.dur)) * 0.5;
       const A = s.a.map((v, i) => mix(mix(pv.a[i], v, 0.5 + 0.5 * k), nx.a[i], k2)), B = s.b.map((v, i) => mix(mix(pv.b[i], v, 0.5 + 0.5 * k), nx.b[i], k2));
       root.style.setProperty('--fl', `rgb(${B.map((v) => Math.round(v * 255)).join(',')})`);
-      if (gl) { const rg = s.ring ? s.ring(lt, s) : null;
+      // На телефоне фон обновляется через кадр, а пока страницу листают, не обновляется вовсе: прокрутка остается плавной
+      frame++; const skip = port && !api.manual && (performance.now() - scrolledAt < 180 || frame % 2 === 1);
+      if (gl && !skip) { const rg = s.ring ? s.ring(lt, s) : null;
         gl.uniform2f(U.uRes, cv.width, cv.height); gl.uniform1f(U.uT, t); gl.uniform1f(U.uFlash, fl); gl.uniform3fv(U.uA, A); gl.uniform3fv(U.uB, B);
         gl.uniform1f(U.uRing, rg ? rg.o * (1 - out) : 0); gl.uniform3f(U.uRP, rg ? rg.x : 0, rg ? rg.y * (port ? 0.7 : 1) : 0, rg ? rg.s * (port ? 0.5 : 1) : 1); gl.uniformMatrix3fv(U.uRot, false, rotM(rg ? rg.rot : [0, 0, 0]));
         gl.drawArrays(gl.TRIANGLES, 0, 3); }
@@ -709,6 +718,7 @@ void main(){
       segs.forEach((b, i) => b.style.setProperty('--p', String(i < ci ? 1 : i > ci ? 0 : lt / s.dur)));
       s.el.classList.toggle('is-hot', !!hot && s.el.contains(hot));
     };
+    if (port) addEventListener('scroll', () => { scrolledAt = performance.now(); }, { passive: true });
     const loop = (now: number) => { raf = 0; const dt = Math.min(0.05, (now - last) / 1000 || 0); last = now;
       speed += ((lock ? 0 : want) - speed) * Math.min(1, dt * (lock ? 12 : 7)); t += dt * (speed < 0.01 ? 0 : speed);
       curX += (mX - curX) * 0.22; curY += (mY - curY) * 0.22; curO += ((hot ? 1 : 0) - curO) * 0.2;
