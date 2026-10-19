@@ -66,7 +66,7 @@ void CASES;
   .rl__sc.is-on{visibility:visible}
   .rl__i{position:absolute;left:50%;top:50%;will-change:transform,opacity;transform-style:preserve-3d}
   .rl__flash{position:absolute;inset:0;pointer-events:none;opacity:0;mix-blend-mode:screen;background:radial-gradient(60% 80% at 50% 50%,#fff,var(--fl,#bee0cc) 35%,transparent 75%)}
-  .rl__grain{position:absolute;inset:0;pointer-events:none;opacity:.09;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .rl__grain{position:absolute;inset:0;pointer-events:none;opacity:.045;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")}
 
   /* Экран сайта */
   .rl__scr{display:block;border-radius:18px;overflow:hidden;background:#0d1210;box-shadow:0 0 0 1px rgba(255,255,255,.12),0 60px 120px -30px rgba(0,0,0,.75),0 30px 60px -30px var(--gl,rgba(0,0,0,.5));cursor:none}
@@ -98,10 +98,11 @@ void CASES;
   .rl__want:hover{background:#fff}
   .rl__fact{display:inline-flex;align-items:center;gap:12px;margin-top:22px;padding:11px 18px 11px 14px;border-radius:14px;background:rgba(255,255,255,.07);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);font-size:19px;font-weight:500;line-height:1.2;white-space:nowrap}
   .rl__fact::before{content:'';flex:none;width:22px;height:22px;border-radius:50%;background:var(--b) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22' fill='none'%3E%3Cpath d='M6.5 11.3l3 3 6-6.4' stroke='%230a0a0a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain}
-  .rl__wt img{filter:brightness(.62) saturate(.85);transition:filter .3s}
-  .rl__wt:hover img{filter:none}
-  .rl__wt em{position:absolute;left:12px;bottom:12px;height:30px;padding:0 12px;border-radius:999px;background:rgba(8,12,10,.78);box-shadow:0 0 0 1px rgba(255,255,255,.14);display:flex;align-items:center;font-style:normal;font-size:14px;font-weight:500;white-space:nowrap;opacity:.0;transform:translateY(6px);transition:opacity .25s,transform .25s}
-  .rl__wt:hover em{opacity:1;transform:none}
+  .rl__wt{box-shadow:0 0 0 1px rgba(255,255,255,.12),0 30px 60px -30px rgba(0,0,0,.6);contain:layout paint}
+  .rl__wt img{opacity:.6;transition:opacity .25s}
+  .rl__wt:hover img{opacity:1}
+  .rl__wt em{position:absolute;left:12px;bottom:12px;height:30px;padding:0 12px;border-radius:999px;background:rgba(8,12,10,.78);box-shadow:0 0 0 1px rgba(255,255,255,.14);display:flex;align-items:center;font-style:normal;font-size:14px;font-weight:500;white-space:nowrap;opacity:0;transition:opacity .2s}
+  .rl__wt:hover em{opacity:1}
   .rl__veil{width:1700px;height:1000px;pointer-events:none;background:radial-gradient(42% 52% at 50% 50%,rgba(8,14,11,.96) 0,rgba(8,14,11,.88) 42%,rgba(8,14,11,0) 100%)}
   .rl--port .rl__veil{width:1000px;height:760px;background:linear-gradient(rgba(8,14,11,.96) 62%,rgba(8,14,11,0))}
   .rl__tx--mid{width:1000px;text-align:center}
@@ -558,7 +559,8 @@ void main(){
       const plane = item(root2, h('div', '')); plane.style.transformStyle = 'preserve-3d';
       const N = D.more.length, rows = [-1.5, -0.5, 0.5, 1.5], per = 9, W = 560, step = W + 30;
       const tiles: [HTMLElement, number, number][] = [];
-      rows.forEach((r, ri) => { for (let q = 0; q < per; q++) { const m = D.more[(q + ri * 6) % N];
+      // Крайние плитки ряда никогда не попадают в кадр, их не создаем: меньше слоев для видеокарты
+      rows.forEach((r, ri) => { for (let q = 1; q < per - 1; q++) { const m = D.more[(q + ri * 6) % N];
         const a = item(plane, h('a', 'rl__scr rl__wt', `<i><b></b></i><img src="${m.img}" alt="" decoding="async"><em>${m.name}</em>`, { href: m.href, 'data-rl-link': 'Открыть кейс', 'aria-label': m.name, 'data-rl-ev': 'reel_open', 'data-rl-case': m.key }), W, 34 + Math.round(W / 1.99)); tiles.push([a, ri, q]); } });
       const veil = item(root2, h('div', 'rl__veil'));
       const T = text(root2, { key: 'all', kind: 'Портфолио', name: `Еще ${D.moreN} проектов`, line: 'Сайты, магазины, редизайны и сервисы для бизнеса', href: D.all, fact: '' }, 0);
@@ -711,7 +713,9 @@ void main(){
     const api = { T, manual: false, scenes: scenes.map((s) => ({ id: s.id, start: s.start, dur: s.dur })), seek(v: number) { t = v; draw(); }, hold(v: boolean) { api.manual = v; if (!v) play(); } };
     (window as V).__reel = api;
 
-    if (!port) root.addEventListener('pointermove', (e) => { const r = root.getBoundingClientRect(); mX = e.clientX - r.left; mY = e.clientY - r.top;
+    // Рамку блока считаем при входе курсора, а не на каждом движении: так браузер не пересчитывает раскладку
+    let rr: DOMRect | null = null; const drop = () => { rr = null; }; addEventListener('scroll', drop, { passive: true }); addEventListener('resize', drop);
+    if (!port) root.addEventListener('pointermove', (e) => { const r = rr || (rr = root.getBoundingClientRect()); mX = e.clientX - r.left; mY = e.clientY - r.top;
       const l = (e.target as HTMLElement).closest<HTMLElement>('[data-rl-link]'); if (l !== hot) { hot = l; if (l) curTx.textContent = l.getAttribute('data-rl-link'); }
       want = reduce ? 0 : l || (e.target as HTMLElement).closest('.rl__cta,.rl__bar') ? 0.06 : 1; });
     if (!port) root.addEventListener('pointerleave', () => { hot = null; want = reduce ? 0 : 1; });
