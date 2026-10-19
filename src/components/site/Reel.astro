@@ -499,24 +499,6 @@ void main(){
       });
     });
 
-    // Остальные кейсы: стена экранов во весь кадр, ряды едут навстречу друг другу, заголовок по центру
-    if (D.more.length) add('more', 'Еще проекты', 4.2, '#0c1512', '#bee0cc', (root2) => {
-      const plane = item(root2, h('div', '')); plane.style.transformStyle = 'preserve-3d';
-      const N = D.more.length, rows = [-1.5, -0.5, 0.5, 1.5], per = 9, W = 560, step = W + 30;
-      const tiles: [HTMLElement, number, number][] = [];
-      rows.forEach((r, ri) => { for (let q = 0; q < per; q++) { const m = D.more[(q + ri * 6) % N];
-        const a = item(plane, h('a', 'rl__scr rl__wt', `<i><b></b></i><img src="${m.img}" alt="" decoding="async"><em>${m.name}</em>`, { href: m.href, 'data-rl-link': 'Открыть кейс', 'aria-label': m.name, 'data-rl-ev': 'reel_open', 'data-rl-case': m.key }), W, 34 + Math.round(W / 1.99)); tiles.push([a, ri, q]); } });
-      const veil = item(root2, h('div', 'rl__veil'));
-      const T = text(root2, { key: 'all', kind: 'Портфолио', name: `Еще ${D.moreN} проектов`, line: 'Сайты, магазины, редизайны и сервисы для бизнеса', href: D.all, fact: '' }, 0);
-      if (!port) { T.t.classList.add('rl__tx--mid'); T.sc.style.display = 'none'; }
-      if (film) T.go.insertAdjacentHTML('afterend', '<span class="rl__vline">southwood.pw/kejsy</span>');
-      return (lt) => { const e = oExpo(sg(lt, 0, 1.6));
-        tf(plane, port ? 0 : 40, port ? 330 : 60, mix(-1500, port ? -700 : -380, e), mix(64, 50, e), 0, -18 + lt * 0.9, 1, sg(lt, 0, 0.35));
-        tiles.forEach(([a, ri, q]) => { const dir = ri % 2 ? -1 : 1; tf(a, (q - (per - 1) / 2) * step + dir * (lt * 70 - 150) + (ri % 2 ? step / 2 : 0), rows[ri] * 340, 0); });
-        tf(veil, 0, port ? -470 : 0, 40, 0, 0, 0, 1, sg(lt, 0.1, 0.7));
-        textUp(T, lt, 0, port ? 0 : -8); };
-    });
-
     // Система: одна заявка проходит по всей автоматизации. Камера идет за ней слева направо, в конце отъезжает на всю схему
     add('sys', 'Система', 8.0, '#081a13', '#74c49d', (el) => {
       const BW = 2400, BH = 1200, S = D.svc;
@@ -582,6 +564,24 @@ void main(){
         deal.style.opacity = sg(lt, 2.5, 2.7).toFixed(2); deal.style.transform = `translate(${(m1 * 143 + m2 * 144).toFixed(1)}px,${(m1 * 42 + m2 * 42).toFixed(1)}px) scale(${(0.6 + 0.4 * dk).toFixed(3)})`;
         num.textContent = lt >= 6.9 ? '131' : lt >= 5.3 ? '129' : '128'; lastBar.style.transform = `scaleY(${(0.82 + 0.18 * oBack(sg(lt, 5.3, 5.9))).toFixed(3)})`;
         tf(cap, 0, port ? 430 : 356, 80, 0, 0, 0, 1, sg(lt, 6.4, 6.9)); rise(cw, lt, 6.5, 0.07); };
+    });
+
+    // Остальные кейсы: стена экранов во весь кадр, ряды едут навстречу друг другу, заголовок по центру
+    if (D.more.length) add('more', 'Еще проекты', 4.2, '#0c1512', '#bee0cc', (root2) => {
+      const plane = item(root2, h('div', '')); plane.style.transformStyle = 'preserve-3d';
+      const N = D.more.length, rows = [-1.5, -0.5, 0.5, 1.5], per = 9, W = 560, step = W + 30;
+      const tiles: [HTMLElement, number, number][] = [];
+      rows.forEach((r, ri) => { for (let q = 0; q < per; q++) { const m = D.more[(q + ri * 6) % N];
+        const a = item(plane, h('a', 'rl__scr rl__wt', `<i><b></b></i><img src="${m.img}" alt="" decoding="async"><em>${m.name}</em>`, { href: m.href, 'data-rl-link': 'Открыть кейс', 'aria-label': m.name, 'data-rl-ev': 'reel_open', 'data-rl-case': m.key }), W, 34 + Math.round(W / 1.99)); tiles.push([a, ri, q]); } });
+      const veil = item(root2, h('div', 'rl__veil'));
+      const T = text(root2, { key: 'all', kind: 'Портфолио', name: `Еще ${D.moreN} проектов`, line: 'Сайты, магазины, редизайны и сервисы для бизнеса', href: D.all, fact: '' }, 0);
+      if (!port) { T.t.classList.add('rl__tx--mid'); T.sc.style.display = 'none'; }
+      if (film) T.go.insertAdjacentHTML('afterend', '<span class="rl__vline">southwood.pw/kejsy</span>');
+      return (lt) => { const e = oExpo(sg(lt, 0, 1.6));
+        tf(plane, port ? 0 : 40, port ? 330 : 60, mix(-1500, port ? -700 : -380, e), mix(64, 50, e), 0, -18 + lt * 0.9, 1, sg(lt, 0, 0.35));
+        tiles.forEach(([a, ri, q]) => { const dir = ri % 2 ? -1 : 1; tf(a, (q - (per - 1) / 2) * step + dir * (lt * 70 - 150) + (ri % 2 ? step / 2 : 0), rows[ri] * 340, 0); });
+        tf(veil, 0, port ? -470 : 0, 40, 0, 0, 0, 1, sg(lt, 0.1, 0.7));
+        textUp(T, lt, 0, port ? 0 : -8); };
     });
 
     // Финал
