@@ -45,7 +45,6 @@ void CASES;
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3l5-4v13l-5-4H4z"/><path class="rl__snd-on" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="rl__snd-off" d="m16 9.5 5 5m0-5-5 5"/></svg>
     </button>
   </div>
-  <div class="rl__chips is-off" data-rl-chips role="group" aria-label="Тип бизнеса"></div>
   <div class="rl__pn" data-rl-pn hidden>
     <div class="rl__pnb" role="dialog" aria-label="Кейс" tabindex="-1">
       <button class="rl__pnx" type="button" data-rl-pnx aria-label="Закрыть"></button>
@@ -197,11 +196,6 @@ void CASES;
   .rl__snd[aria-pressed=true]{background:#bee0cc;color:#0a0a0a}
   .rl__snd[aria-pressed=true] .rl__snd-on{display:block}.rl__snd[aria-pressed=true] .rl__snd-off{display:none}
   /* Тип бизнеса в сцене системы */
-  .rl__chips{position:absolute;left:50%;top:2rem;z-index:2;display:flex;gap:max(.4rem,3px);padding:max(.5rem,4px);border-radius:999px;background:rgba(8,14,11,.62);box-shadow:0 0 0 1px rgba(255,255,255,.12);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transform:translateX(-50%);transition:opacity .35s,transform .35s}
-  .rl__chips.is-off{opacity:0;transform:translate(-50%,-.8rem);pointer-events:none}
-  .rl__chips button{height:max(3.4rem,28px);padding:0 max(1.6rem,11px);border-radius:999px;font-size:max(1.4rem,12px);font-weight:500;color:rgba(255,255,255,.72);white-space:nowrap;cursor:pointer;transition:background-color .25s,color .25s}
-  .rl__chips button:hover{color:#fff;background:rgba(255,255,255,.1)}
-  .rl__chips button[aria-pressed=true]{background:#bee0cc;color:#0a0a0a}
   /* Панель кейса */
   .rl__pn{position:absolute;inset:0;z-index:4;background:linear-gradient(90deg,rgba(6,10,8,.25),rgba(6,10,8,.72) 55%);opacity:0;transition:opacity .3s;user-select:text;-webkit-user-select:text}
   .rl__pn[hidden]{display:none}
@@ -231,15 +225,15 @@ void CASES;
   .rl__pngo{background:#fff;color:#0a0a0a}
   @media (hover:hover){.rl__pngo:hover{background:#bee0cc}}
   .rl__pnw{background:var(--pb,#bee0cc);color:#0a0a0a}.rl__pnw:hover{background:#fff}
-  .rl--film .rl__snd,.rl--film .rl__chips,.rl--film .rl__pn{display:none!important}
+  .rl--film .rl__snd,.rl--film .rl__pn{display:none!important}
   @media (max-width:1023px){
     .rl{aspect-ratio:4/5;border-radius:24px}
     .rl__who{left:16px;top:16px}.rl__now{right:16px;top:16px}.rl__bar{left:16px;right:16px;bottom:12px}
     .rl__cur{display:none}
     .rl__scr,.rl__ph,.rl__tab,.rl__c,.rl__go{cursor:pointer}
-    .rl__snd{right:16px;top:9px}.rl__now{right:56px}.rl__chips{top:48px}
+    .rl__snd{right:16px;top:9px}.rl__now{right:56px}
     .rl__snd{width:30px;height:30px}
-    .rl__chips{gap:2px;padding:3px}.rl__chips button{height:30px;padding:0 11px;font-size:12.5px}
+    
     .rl__pnx{width:32px;height:32px;right:12px;top:12px}
     .rl__pnc{padding:20px 18px 14px}
     .rl__pnt{gap:5px;padding-right:38px}.rl__pnt i{height:24px;padding:0 10px;font-size:12px}
@@ -271,9 +265,8 @@ void CASES;
   @media (hover:none) and (max-width:1023px){.rl__now{right:16px}}
   /* телефон: убираем дорогие для видеочипа слои */
   .rl--port .rl__grain{display:none}
-  .rl--port .rl__chips,.rl--port .rl__pnb{backdrop-filter:none;-webkit-backdrop-filter:none}
-  .rl--port .rl__chips{background:rgba(8,14,11,.86)}.rl--port .rl__pnb{background:rgba(12,18,15,.97)}
-  .rl--port .rl__chips{top:60px}
+  .rl--port .rl__pnb{backdrop-filter:none;-webkit-backdrop-filter:none}
+  .rl--port .rl__pnb{background:rgba(12,18,15,.97)}
   .rl--port .rl__pn{background:linear-gradient(rgba(6,10,8,.3),rgba(6,10,8,.8) 45%)}
   .rl--port .rl__pnb{top:auto;left:8px;right:8px;bottom:8px;width:auto;max-width:none;max-height:82%;border-radius:22px;transform:translateY(24px)}
   .rl--port .rl__pn.is-open .rl__pnb{transform:none}
@@ -383,7 +376,7 @@ void main(){
     const film = new URLSearchParams(location.search).has('video'); root.classList.toggle('rl--film', film);
     const port = root.clientWidth < 700; root.classList.toggle('rl--port', port);
     const mgo = root.querySelector<HTMLAnchorElement>('[data-rl-mgo]')!, mwant = root.querySelector<HTMLElement>('[data-rl-mwant]')!;
-    const chips = root.querySelector<HTMLElement>('[data-rl-chips]')!, sndBtn = root.querySelector<HTMLElement>('[data-rl-snd]')!;
+    const sndBtn = root.querySelector<HTMLElement>('[data-rl-snd]')!;
     const pn = root.querySelector<HTMLElement>('[data-rl-pn]')!, pnBox = pn.querySelector<HTMLElement>('.rl__pnb')!, pnC = root.querySelector<HTMLElement>('[data-rl-pnc]')!;
     let lock = false; // открыта панель кейса: ролик стоит
     // Варианты сцены системы под тип бизнеса: меняются подписи узлов, схема та же
@@ -391,12 +384,6 @@ void main(){
     const VARS: V[] = [
       { id: 'services', name: 'Услуги', cap: 'От заявки до оплаты <em>в одной системе</em>', ai: 'заявка', kv: [['Кто', 'Анна'], ['Что нужно', 'сайт и CRM'], ['Срочность', 'высокая'], ['Кому', 'менеджеру']], cols: ['Новые', 'В работе', 'Оплачено'], deal: ['Анна', 'сайт и CRM'], kp: ['шаблон с расчетом', 'собираю PDF', 'отправлено клиенту'],
         n: { site: ['Сайт', 'форма и калькулятор', 'заявка от Анны'], tg: ['Бот в Telegram', 'отвечает сам', 'новый диалог'], call: ['Звонок', 'телефония', 'пропущенный, перезвонить'], mail: ['Почта', 'входящие письма', 'новое письмо'], max: ['Бот в MAX', 'отвечает сам', 'новый диалог'], kp: ['КП в PDF'], task: ['Задача менеджеру', 'ставится сама', 'позвонить до 15:00'], rem: ['Напоминание', 'если клиент молчит', 'напомню через 2 дня'], inv: ['Счет', 'по сумме из КП', '№ 214 выставлен'], pay: ['Оплата', 'карта и СБП', 'оплачено по СБП'], onec: ['1С', 'обмен без рук', 'проводка создана'], stock: ['Склад', 'остатки', 'товар в резерве'], rep: ['Отчет владельцу', 'каждый вечер', 'отправлен в Telegram'] } },
-      { id: 'shop', name: 'Магазин', cap: 'От заказа до отгрузки <em>в одной системе</em>', ai: 'заказ', kv: [['Кто', 'Анна'], ['Что в заказе', '3 товара'], ['Доставка', 'курьером'], ['Кому', 'на сборку']], cols: ['Новые', 'В работе', 'Оплачено'], deal: ['Анна', '3 товара'], kp: ['создается сам', 'передаю в 1С', 'создан в 1С'],
-        n: { site: ['Интернет-магазин', 'корзина и оплата', 'заказ от Анны'], tg: ['Бот в Telegram', 'принимает заказы', 'новый заказ'], call: ['Звонок', 'телефония', 'пропущенный, перезвонить'], mail: ['Почта', 'входящие письма', 'новое письмо'], max: ['Бот в MAX', 'принимает заказы', 'новый заказ'], kp: ['Заказ в 1С'], task: ['Задача на сборку', 'ставится сама', 'собрать до 15:00'], rem: ['Брошенная корзина', 'если заказ не оплачен', 'напомню через час'], inv: ['Счет', 'по сумме заказа', '№ 214 выставлен'], pay: ['Оплата', 'карта и СБП', 'оплачено по СБП'], onec: ['1С', 'обмен без рук', 'проводка создана'], stock: ['Склад', 'остатки', 'товар в резерве'], rep: ['Отчет владельцу', 'каждый вечер', 'отправлен в Telegram'] } },
-      { id: 'food', name: 'Общепит', cap: 'От заказа до кухни и отчета <em>в одной системе</em>', ai: 'заказ', kv: [['Кто', 'Анна'], ['Что в заказе', '2 блюда'], ['Когда', 'к 19:30'], ['Кому', 'на кухню']], cols: ['Новые', 'Готовят', 'Оплачено'], deal: ['Анна', 'доставка'], kp: ['очередь заказов', 'передаю на кухню', 'принят на кухне'],
-        n: { site: ['Сайт с меню', 'заказ и бронь', 'заказ от Анны'], tg: ['Бот в Telegram', 'принимает заказы', 'новый заказ'], call: ['Звонок', 'телефония', 'бронь стола на вечер'], mail: ['Почта', 'входящие письма', 'новое письмо'], max: ['Бот в MAX', 'принимает заказы', 'новый заказ'], kp: ['Экран кухни'], task: ['Задача курьеру', 'ставится сама', 'забрать в 19:10'], rem: ['Отзыв после заказа', 'если гость молчит', 'спрошу через час'], inv: ['Счет гостю', 'ссылка на оплату', 'ссылка отправлена'], pay: ['Оплата', 'карта и СБП', 'оплачено по СБП'], onec: ['Касса и учет', 'обмен без рук', 'продажа записана'], stock: ['Склад', 'продукты по техкартам', 'списано по техкартам'], rep: ['Отчет владельцу', 'каждый вечер', 'отправлен в Telegram'] } },
-      { id: 'clinic', name: 'Клиника', cap: 'От записи до оплаты <em>в одной системе</em>', ai: 'запись', kv: [['Кто', 'Анна'], ['Что нужно', 'прием у врача'], ['Когда', 'завтра утром'], ['Кому', 'администратору']], cols: ['Новые', 'Записаны', 'Оплачено'], deal: ['Анна', 'прием'], kp: ['свободные окна', 'сверяю расписание', 'записана на 10:30'],
-        n: { site: ['Сайт клиники', 'онлайн-запись', 'запись от Анны'], tg: ['Бот в Telegram', 'отвечает на вопросы', 'вопрос о цене'], call: ['Звонок', 'телефония', 'пропущенный, перезвонить'], mail: ['Почта', 'входящие письма', 'новое письмо'], max: ['Бот в MAX', 'отвечает на вопросы', 'новый диалог'], kp: ['Расписание'], task: ['Задача администратору', 'ставится сама', 'подтвердить запись'], rem: ['Напоминание пациенту', 'перед приемом', 'напомню за день'], inv: ['Счет', 'по прайсу услуги', '№ 214 выставлен'], pay: ['Оплата', 'карта и СБП', 'оплачено по СБП'], onec: ['1С', 'обмен без рук', 'проводка создана'], stock: ['Склад', 'расходники', 'расходники списаны'], rep: ['Отчет владельцу', 'каждый вечер', 'отправлен в Telegram'] } },
     ];
 
     type Sc = { vids?: HTMLVideoElement[]; id: string; label: string; dur: number; start: number; el: HTMLElement; a: number[]; b: number[]; up: (lt: number, s: Sc) => void; ring?: (lt: number, s: Sc) => { o: number; rot: number[]; x: number; y: number; s: number } };
@@ -674,14 +661,10 @@ void main(){
       pnC.scrollTop = 0; pnBack = document.activeElement as HTMLElement | null; lock = true; hot = null; pn.hidden = false; void pn.offsetWidth; pn.classList.add('is-open'); pnBox.focus({ preventScroll: true });
       onNow && onNow.vids!.forEach((v) => v.pause()); if (sndOn && sfx) sfx.pop(); return true; };
     const closePn = () => { if (!lock) return; lock = false; pn.classList.remove('is-open'); setTimeout(() => { if (!lock) pn.hidden = true; }, 320); pnBack && pnBack.isConnected && pnBack.focus({ preventScroll: true }); play(); };
-    // Тип бизнеса: сам меняется на каждом круге, пока человек не выбрал свой
-    chips.innerHTML = VARS.map((v, i) => `<button type="button" data-v="${i}" aria-pressed="${!i}">${v.name}</button>`).join('');
-    const chipEls = [...chips.querySelectorAll<HTMLElement>('button')]; let pick = -1, curVar = 0;
-    const setVar = (i: number) => { if (i === curVar) return; curVar = i; applyVar(i); chipEls.forEach((b, k) => b.setAttribute('aria-pressed', String(k === i))); };
+    applyVar(0);
     const draw = () => {
       const tt = ((t % T) + T) % T; let ci = 0; scenes.forEach((s, i) => { if (tt >= s.start) ci = i; });
       const s = scenes[ci], lt = tt - s.start, nx = scenes[(ci + 1) % scenes.length], pv = scenes[(ci + scenes.length - 1) % scenes.length];
-      setVar(film || reduce ? Math.max(pick, 0) : pick >= 0 ? pick : Math.max(0, Math.floor(t / T)) % VARS.length); chips.classList.toggle('is-off', s.id !== 'sys' || lock);
       const hold = film && ci === scenes.length - 1; // в файле ролик заканчивается на финальном кадре, без ухода
       const out = hold ? 0 : iCub(sg(lt, s.dur - 0.45, s.dur)), inn = sg(lt, 0, 0.5);
       scenes.forEach((x) => x.el.classList.toggle('is-on', x === s));
@@ -730,14 +713,14 @@ void main(){
 
     if (!port) root.addEventListener('pointermove', (e) => { const r = root.getBoundingClientRect(); mX = e.clientX - r.left; mY = e.clientY - r.top;
       const l = (e.target as HTMLElement).closest<HTMLElement>('[data-rl-link]'); if (l !== hot) { hot = l; if (l) curTx.textContent = l.getAttribute('data-rl-link'); }
-      want = reduce ? 0 : l || (e.target as HTMLElement).closest('.rl__cta,.rl__bar,.rl__chips') ? 0.06 : 1; });
+      want = reduce ? 0 : l || (e.target as HTMLElement).closest('.rl__cta,.rl__bar') ? 0.06 : 1; });
     if (!port) root.addEventListener('pointerleave', () => { hot = null; want = reduce ? 0 : 1; });
     bar.addEventListener('click', (e) => { const b = (e.target as HTMLElement).closest<HTMLElement>('button'); if (!b) return; t = scenes[+b.dataset.i!].start + (reduce ? 1.8 : 0.02); draw(); goal('reel_seek'); });
     // Листание: тап и свайп на телефоне, стрелки на клавиатуре
     const go = (d: number) => { const tt = ((t % T) + T) % T; let ci = 0; scenes.forEach((x, k) => { if (tt >= x.start) ci = k; });
       const k = d > 0 ? (ci + 1) % scenes.length : tt - scenes[ci].start > 1.2 ? ci : (ci + scenes.length - 1) % scenes.length; t = scenes[k].start + 0.02; draw(); goal('reel_seek'); };
     if (port) { let dn = 0, dx = 0, dy = 0, hold = 0;
-      const free = (e: Event) => !lock && !(e.target as HTMLElement).closest('.rl__mgo,.rl__mwant,.rl__cta,.rl__pn,.rl__chips,.rl__snd');
+      const free = (e: Event) => !lock && !(e.target as HTMLElement).closest('.rl__mgo,.rl__mwant,.rl__cta,.rl__pn,.rl__snd');
       root.addEventListener('pointerdown', (e) => { if (!free(e)) return; dn = performance.now(); dx = e.clientX; dy = e.clientY; hold = window.setTimeout(() => { want = 0; }, 220); });
       const up = (e: PointerEvent, tap: boolean) => { clearTimeout(hold); if (!dn) return; const mx = e.clientX - dx, my = e.clientY - dy, quick = performance.now() - dn < 260 && Math.abs(mx) < 12 && Math.abs(my) < 12; dn = 0; want = reduce ? 0 : 1;
         if (!started) return;
@@ -751,7 +734,7 @@ void main(){
       // Клик по кейсу открывает панель поверх ролика. С Ctrl или Cmd ссылка открывается как обычно
       if (l && l.dataset.rlEv === 'reel_open' && !film && !e.metaKey && !e.ctrlKey && !e.shiftKey && openPn(l.dataset.rlCase!)) { e.preventDefault(); return; }
       if (tg === pn || tg.closest('[data-rl-pnx]')) closePn();
-      const ch = tg.closest<HTMLElement>('.rl__chips button'); if (ch) { pick = +ch.dataset.v!; const sy = scenes.find((x) => x.id === 'sys')!; t = Math.max(0, Math.floor(t / T)) * T + sy.start + 0.02; draw(); goal('reel_sys', VARS[pick].id); } });
+    });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lock && !document.querySelector('dialog[open]')) closePn(); });
     // Ролик стартует с начала, когда блок наполовину вошел в экран, и встает на паузу, когда ушел
     let started = false;
