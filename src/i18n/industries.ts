@@ -21,7 +21,7 @@ export type Industry = {
   appsTitle: string[]; appsIntro: string; apps: string[];
   blocksTitle: string[]; blocksIntro: string; blocks: Block[];
   scenario?: string;
-  flowChart?: boolean;
+  flowChart?: string;
   cases: string[]; casesTitle: string; casesIntro: string;
   faq: { q: string; a: string }[];
   chipsForm: string;
@@ -70,7 +70,7 @@ export const INDUSTRIES: Industry[] = [
       { title: 'Админка и отчет владельцу', price: show('dash'), text: 'Выручка, заказы, подписки и графики на одном экране. Отчет за день приходит в Telegram сам.', note: 'Сделано для Mono Coffee' },
     ],
 
-    scenario: 'food',
+    scenario: 'food', flowChart: 'food',
     cases: ['mono'],
     casesTitle: 'Кейс в общепите',
     casesIntro: 'Кофейня с доставкой, которая реально работает на этой системе. Данные в админке настоящие.',
@@ -125,7 +125,7 @@ export const INDUSTRIES: Industry[] = [
       { title: 'Документы по 152-ФЗ', price: show('legal'), text: 'Политика обработки данных, согласия в формах и на записи, оферта. Для клиники это обязательная часть, а не опция.' },
     ],
 
-    scenario: 'clinic',
+    scenario: 'clinic', flowChart: 'clinic',
     cases: [],
     casesTitle: '',
     casesIntro: '',
@@ -180,7 +180,7 @@ export const INDUSTRIES: Industry[] = [
       { title: 'Дашборд собственника', price: show('dash'), text: 'Выручка по каналам и категориям, средний чек, остатки и маржа на одном экране, данные из учета и CRM.' },
     ],
 
-    scenario: 'shop', flowChart: true,
+    scenario: 'shop', flowChart: 'trade',
     cases: ['caro'],
     casesTitle: 'Кейс в торговле',
     casesIntro: 'Магазин с собственным каталогом, интерактивом и удобной мобильной версией. Запуск занял две недели.',

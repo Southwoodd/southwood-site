@@ -85,7 +85,7 @@ const ld = [
   </section>
 
   {n.flowChart ? (
-    <AutoFlow title="Один заказ проходит всю цепочку сам" intro="Так выглядит торговля, когда сайт, CRM и учет связаны." />
+    <AutoFlow flow={n.flowChart} context={`industry:${n.slug}:flow`} />
   ) : scn && (
     <section class="section sec sec--one">
       <Head badge="Scenario" icon="flash" intro={automation.scenarios.note} title={['Как это работает после']} />
