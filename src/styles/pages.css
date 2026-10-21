@@ -68,6 +68,10 @@
 .scn dt{font-size:max(1.4rem,12px);color:var(--grey-text);margin-bottom:.4rem}
 .scn dd{margin:0;font-size:max(1.6rem,14px);line-height:1.45}
 .scn em{font-style:normal;display:flex;flex-wrap:wrap;gap:.8rem;padding-top:1.6rem;border-top:1px solid rgba(0,0,0,.1);font-size:max(1.5rem,13px);font-weight:500;color:var(--deep)}
+/* когда сценарий один, карточка занимает всю ширину, а не половину */
+.sec--one .scn{grid-template-columns:1fr}
+.sec--one .scn dl{grid-template-columns:repeat(2,1fr);gap:3.2rem}
+@media (max-width:767px){.sec--one .scn dl{grid-template-columns:1fr;gap:12px}}
 
 .qa{margin-top:5.6rem;display:grid;gap:1.2rem}
 .qa details{background:#fff;border-radius:2rem}

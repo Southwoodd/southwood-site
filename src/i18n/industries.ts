@@ -21,6 +21,7 @@ export type Industry = {
   appsTitle: string[]; appsIntro: string; apps: string[];
   blocksTitle: string[]; blocksIntro: string; blocks: Block[];
   scenario?: string;
+  flowChart?: boolean;
   cases: string[]; casesTitle: string; casesIntro: string;
   faq: { q: string; a: string }[];
   chipsForm: string;
@@ -179,7 +180,7 @@ export const INDUSTRIES: Industry[] = [
       { title: 'Дашборд собственника', price: show('dash'), text: 'Выручка по каналам и категориям, средний чек, остатки и маржа на одном экране, данные из учета и CRM.' },
     ],
 
-    scenario: 'shop',
+    scenario: 'shop', flowChart: true,
     cases: ['caro'],
     casesTitle: 'Кейс в торговле',
     casesIntro: 'Магазин с собственным каталогом, интерактивом и удобной мобильной версией. Запуск занял две недели.',

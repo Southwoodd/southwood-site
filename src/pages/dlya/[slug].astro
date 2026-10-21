@@ -6,6 +6,7 @@ import Head from '../../components/ui/Head.astro';
 import Arrow from '../../components/site/Arrow.astro';
 import Process from '../../components/site/Process.astro';
 import Cases from '../../components/site/Cases.astro';
+import AutoFlow from '../../components/site/AutoFlow.astro';
 import { nb, automation } from '../../i18n/ru';
 import { INDUSTRIES, industryHref, type Industry } from '../../i18n/industries';
 import { SERVICES, serviceHref, caseBy, R_ } from '../../i18n/routes';
@@ -83,8 +84,10 @@ const ld = [
     <p class="sec__calc"><a class="btn btn--ink" href={R_.calc} data-go="calc">Собрать в калькуляторе<Arrow /></a><span>{nb('Точную сумму фиксирую в договоре после брифа на 30–45 минут.')}</span></p>
   </section>
 
-  {scn && (
-    <section class="section sec">
+  {n.flowChart ? (
+    <AutoFlow title="Один заказ проходит всю цепочку сам" intro="Так выглядит торговля, когда сайт, CRM и учет связаны." />
+  ) : scn && (
+    <section class="section sec sec--one">
       <Head badge="Scenario" icon="flash" intro={automation.scenarios.note} title={['Как это работает после']} />
       <ul class="scn">
         <li data-reveal>
