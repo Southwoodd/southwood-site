@@ -33,6 +33,8 @@
 .section.sec--deep{background:var(--deep);color:#fff}
 .sec--deep .head__intro,.sec--deep .head__title{color:#fff}
 .sec--deep .badge{--badge-bg:#c5d9c8;color:var(--ink-2);font-weight:500}.sec--deep .badge svg{color:var(--ink-2)}
+/* пилюли на темном фоне: подложка светлая, поэтому текст возвращаем темный */
+.sec--deep .pills li{color:var(--ink)}
 .sec__h3{margin-top:5.6rem;font-size:2.4rem;font-weight:500;letter-spacing:-.02em}
 .sec__more{margin-top:4rem;display:flex;justify-content:center}
 .sec__more .btn{height:6rem;padding:0 2.8rem;font-size:max(1.7rem,15px)}

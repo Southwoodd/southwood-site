@@ -5,6 +5,7 @@ import { site, hero, about, packages, process, faq, cases, automation } from '..
 import data from '../i18n/modals.ru.json';
 import { ITEMS, GROUPS, PLATFORMS, fmtRange } from '../pricing/model';
 import { SERVICES, serviceHref, CASES, caseBy } from '../i18n/routes';
+import { INDUSTRIES, industryHref } from '../i18n/industries';
 import { LIVE_POSTS } from '../i18n/blog';
 
 const U = 'https://southwood.pw/';
@@ -18,6 +19,7 @@ export const GET: APIRoute = () => {
   L.push(`- Сайт: ${U}`, `- Кому подходит: малый и средний бизнес, учреждения, эксперты. Тем, кому нужны сайт, CRM и боты как одна система, а не от трех разных подрядчиков.`, `- Где работает: ${about.place}.`, `- Формат: фиксированная смета, оплата частями 30% / 40% / 30%, возможна рассрочка без банка.`, `- Сроки: набор из сайта, CRM и бота занимает 2–3 недели.`, `- Контакты: Telegram ${site.telegram}, почта ${site.email}.`, '');
   L.push('## Страницы сайта', '');
   L.push(`- [Услуги](${U}uslugi/): все направления`, ...SERVICES.map((x) => `- [${x.menu}](${U.slice(0, -1)}${serviceHref(x.slug)}): от ${x.from} тыс. ₽. ${clean(x.card)}`));
+  L.push(`- [Кому подходит](${U}dlya/): решения под отрасль`, ...INDUSTRIES.map((x) => `- [${x.menu}](${U.slice(0, -1)}${industryHref(x.slug)}): от ${x.from} тыс. ₽. ${clean(x.card)}`));
   L.push(`- [Цены и калькулятор](${U}ceny/): готовые наборы и расчет суммы`, `- [Кейсы](${U}kejsy/): ${CASES.length} работ со страницей у каждой`, `- [Обо мне](${U}obo-mne/): кто делает, как устроена работа, ответы на вопросы`, `- [Контакты](${U}kontakty/)`, `- [Бизнес в Катаре](${U}katar/)`, '');
   if (LIVE_POSTS.length) L.push('## Блог', '', ...LIVE_POSTS.map((p) => `- [${p.title}](${U}blog/${p.slug}/): ${p.description}`), '');
   L.push('## Готовые наборы', '');
@@ -48,6 +50,7 @@ export const GET: APIRoute = () => {
   }
   L.push('## Вопросы по услугам', '');
   for (const x of SERVICES) { L.push(`### ${x.menu}`, ''); for (const f of x.faq) L.push(`**${clean(f.q)}** ${clean(f.a)}`, ''); }
+  for (const x of INDUSTRIES) { L.push(`### ${x.menu}`, ''); for (const f of x.faq) L.push(`**${clean(f.q)}** ${clean(f.a)}`, ''); }
   L.push('## Вопросы и ответы', '');
   for (const f of faq.list) L.push(`### ${clean(f.q)}`, '', clean(f.a), '');
   L.push('## Ссылки', '', `- Главная: ${U}`, `- Расчет цены: ${U}ceny/#pricing`, `- Кейсы: ${U}kejsy/`, `- Behance: ${site.behance}`, `- TenChat: ${site.tenchat}`, `- VK: ${site.vk}`, `- Политика конфиденциальности: ${U}privacy/`, '');

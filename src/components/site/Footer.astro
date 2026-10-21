@@ -4,6 +4,7 @@ import Arrow from './Arrow.astro';
 import { footer, site, nb } from '../../i18n/ru';
 import { calcHref, SERVICES, serviceHref } from '../../i18n/routes';
 import { BLOG_LIVE } from '../../i18n/blog';
+import { INDUSTRIES, industryHref } from '../../i18n/industries';
 const h = (x: string) => x;
 const links = [...footer.sectionLinks, ...(BLOG_LIVE ? [{ label: 'Блог', href: '/blog/' }] : [])];
 ---
@@ -24,6 +25,8 @@ const links = [...footer.sectionLinks, ...(BLOG_LIVE ? [{ label: 'Блог', hre
     <nav class="ft__col ft__col--srv" aria-label="Услуги">
       <h3>Услуги</h3>
       <ul>{SERVICES.map((s) => <li><a href={serviceHref(s.slug)}>{s.menu}</a></li>)}</ul>
+      <h3 class="ft__h3--second">Кому подходит</h3>
+      <ul><li><a href="/dlya/">Все отрасли</a></li>{INDUSTRIES.map((n) => <li><a href={industryHref(n.slug)}>{n.menu}</a></li>)}</ul>
     </nav>
     <div class="ft__col">
       <h3>{footer.contacts}</h3>
@@ -52,6 +55,7 @@ const links = [...footer.sectionLinks, ...(BLOG_LIVE ? [{ label: 'Блог', hre
   .ft__ghost{background:rgba(255,255,255,.14);color:#fff}.ft__ghost:hover{background:rgba(255,255,255,.24)}
   .ft__col{width:20rem}.ft__col--srv{width:23rem}.ft__col--wide{width:26rem}
   .ft__col h3{font-size:max(1.4rem,12px);font-weight:500;color:rgba(255,255,255,.65);margin-bottom:1.4rem}
+  .ft__h3--second{margin-top:2.8rem}
   .ft__col ul{display:flex;flex-direction:column;gap:1.4rem;font-size:max(1.7rem,14px);font-weight:500}
   .ft__col a{transition:opacity .2s}.ft__col a:hover{opacity:.7}
   .ft__hints a{display:flex;flex-direction:column;gap:.1rem}
@@ -71,6 +75,7 @@ const links = [...footer.sectionLinks, ...(BLOG_LIVE ? [{ label: 'Блог', hre
     .ft__actions{flex-direction:column;gap:8px}.ft__actions .btn{height:56px;font-size:16px}
     .ft__col{width:calc(50% - 8px)}.ft__col--wide{width:100%}
     .ft__col h3{font-size:13px;margin-bottom:10px}
+    .ft__h3--second{margin-top:20px}
     .ft__col ul{gap:10px;font-size:16px}
     .ft__hints small{font-size:13px}
     .ft__legal{margin-top:20px;padding-top:20px;flex-direction:column;align-items:flex-start;gap:14px;font-size:12px;line-height:17px}

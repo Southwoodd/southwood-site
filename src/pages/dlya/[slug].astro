@@ -1,0 +1,147 @@
+---
+// Отраслевая страница: один тип бизнеса, внутри все услуги под его процессы. Один шаблон на все отрасли.
+import Page from '../../layouts/Page.astro';
+import Crumbs from '../../components/site/Crumbs.astro';
+import Head from '../../components/ui/Head.astro';
+import Arrow from '../../components/site/Arrow.astro';
+import Process from '../../components/site/Process.astro';
+import Cases from '../../components/site/Cases.astro';
+import { nb, automation } from '../../i18n/ru';
+import { INDUSTRIES, industryHref, type Industry } from '../../i18n/industries';
+import { SERVICES, serviceHref, caseBy, R_ } from '../../i18n/routes';
+export function getStaticPaths() { return INDUSTRIES.map((n) => ({ params: { slug: n.slug }, props: { n } })); }
+const { n } = Astro.props as { n: Industry };
+const path = industryHref(n.slug);
+const crumbs = [{ label: 'Кому подходит', href: '/dlya/' }, { label: n.menu }];
+const first = n.cases.length ? caseBy[n.cases[0]] : null;
+const scn = n.scenario ? (automation.scenarios.list as any[]).find((x) => x.key === n.scenario) : null;
+const others = INDUSTRIES.filter((x) => x.slug !== n.slug);
+const ld = [
+  { '@type': 'Service', '@id': `https://southwood.pw${path}#service`, name: n.h1.join(' '), description: n.lead, url: `https://southwood.pw${path}`, serviceType: n.menu,
+    areaServed: { '@type': 'Country', name: 'Россия' }, audience: { '@type': 'BusinessAudience', name: n.menu.replace('Для ', '') },
+    provider: { '@id': 'https://southwood.pw/#person' },
+    offers: { '@type': 'AggregateOffer', priceCurrency: 'RUB', lowPrice: n.from * 1000, offerCount: n.blocks.length } },
+  { '@type': 'FAQPage', mainEntity: n.faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
+];
+---
+<Page title={n.seoTitle} description={n.seoDesc} path={path} label={n.menu} crumbs={crumbs} ld={ld}>
+  <section class="section ph ph--svc">
+    <div class="ph__left">
+      <Crumbs items={crumbs} />
+      <h1>{n.h1.map((l) => <span>{nb(l)} </span>)}</h1>
+      <p class="ph__lead">{nb(n.lead)}</p>
+      <ul class="ph__chips"><li>от {n.from} тыс. ₽</li>{n.chips.map((c) => <li>{c}</li>)}</ul>
+      <div class="ph__cta">
+        <a class="btn btn--deep" href={R_.calc} data-go="calc" data-goal="industry_calc">Рассчитать стоимость<Arrow /></a>
+        <button class="btn btn--grey" type="button" data-open="lead" data-chips={n.chipsForm} data-context={`industry:${n.slug}`}>Бесплатная консультация<Arrow /></button>
+      </div>
+    </div>
+    {first && !first.noimg ? (
+      <div class="ph__vis">
+        <a href={first.href} aria-label={`Кейс: ${first.name}`}>
+          <img src={`/img/cases/${first.key}.webp`} alt={`${first.name}: экраны проекта`} loading="eager" decoding="async" />
+          <b>{first.name}</b>
+          <p>{nb(first.lead)}</p>
+          <small>{first.term}</small>
+        </a>
+      </div>
+    ) : (
+      <div class="ph__vis ph__vis--plain"><p>{nb(n.flowIntro)}</p></div>
+    )}
+  </section>
+
+  <section class="section sec" id="flow">
+    <Head badge="Before" icon="flash" intro={n.flowIntro} title={n.flowTitle} />
+    <ol class="flow">
+      {n.flow.map((f, i) => (
+        <li data-reveal style={`--d:${i * 60}ms`}>
+          <b>{String(i + 1).padStart(2, '0')}</b>
+          <h3>{nb(f.title)}</h3>
+          <p>{nb(f.text)}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="section sec sec--deep" id="apps">
+    <Head badge="Stack" icon="task" intro={n.appsIntro} title={n.appsTitle} />
+    <ul class="pills pills--big">{n.apps.map((a) => <li>{a}</li>)}</ul>
+  </section>
+
+  <section class="section sec" id="prices">
+    <Head badge="Prices" icon="shield" intro={n.blocksIntro} title={n.blocksTitle} />
+    <ul class="kinds">
+      {n.blocks.map((b, i) => (
+        <li class:list={{ hot: b.hot }} data-reveal style={`--d:${i * 60}ms`}>
+          <h3>{b.title}</h3>
+          <b>{nb(b.price)}</b>
+          <p>{nb(b.text)}</p>
+          {b.note && <small>{b.note}</small>}
+        </li>
+      ))}
+    </ul>
+    <p class="sec__calc"><a class="btn btn--ink" href={R_.calc} data-go="calc">Собрать в калькуляторе<Arrow /></a><span>{nb('Точную сумму фиксирую в договоре после брифа на 30–45 минут.')}</span></p>
+  </section>
+
+  {scn && (
+    <section class="section sec">
+      <Head badge="Scenario" icon="flash" intro={automation.scenarios.note} title={['Как это работает после']} />
+      <ul class="scn">
+        <li data-reveal>
+          <span>{scn.who} · {scn.apps.join(' → ')}</span>
+          <h3>{scn.title}</h3>
+          <dl><div><dt>{automation.scenarios.was}</dt><dd>{nb(scn.was)}</dd></div><div><dt>{automation.scenarios.now}</dt><dd>{nb(scn.now)}</dd></div></dl>
+          <em><span>{scn.price}</span><span>·</span><span>{scn.term}</span><span>·</span><span>{scn.cond}</span></em>
+        </li>
+      </ul>
+    </section>
+  )}
+
+  <Process />
+
+  {n.cases.length > 0 && <Cases keys={n.cases} title={[n.casesTitle]} intro={n.casesIntro} />}
+
+  <section class="section sec sec--mint" id="faq">
+    <Head badge="FAQ" icon="shield" intro="Вопросы именно про эту отрасль. Общие вопросы о сроках, гарантии и доступах собраны на странице Обо мне." title={['Частые вопросы']} />
+    <div class="qa">{n.faq.map((f, i) => <details name="ind-faq" open={i === 0}><summary><h3>{nb(f.q)}</h3><i></i></summary><p>{nb(f.a)}</p></details>)}</div>
+  </section>
+
+  <section class="section sec oth">
+    <h2>Услуги по отдельности</h2>
+    <ul>{SERVICES.map((o) => <li><a href={serviceHref(o.slug)}><span>{o.menu}</span><small>от {o.from} тыс. ₽</small><Arrow /></a></li>)}</ul>
+    {others.length > 0 && (
+      <>
+        <h2 class="oth__second">Другие отрасли</h2>
+        <ul>{others.map((o) => <li><a href={industryHref(o.slug)}><span>{o.menu}</span><small>от {o.from} тыс. ₽</small><Arrow /></a></li>)}</ul>
+      </>
+    )}
+  </section>
+</Page>
+<style>
+  .flow{margin-top:4rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem}
+  .flow li{padding:3.2rem;border-radius:2.4rem;background:var(--card)}
+  .flow b{font-size:max(1.5rem,13px);font-weight:500;color:var(--muted);letter-spacing:.04em}
+  .flow h3{margin-top:1.6rem;font-size:2.2rem;font-weight:500;line-height:1.2;letter-spacing:-.02em}
+  .flow p{margin-top:1.2rem;font-size:max(1.7rem,14px);line-height:1.45;color:var(--muted)}
+  .pills--big li{font-size:max(1.8rem,15px)}
+  .oth__second{margin-top:4.8rem}
+  .oth{padding-top:5.6rem;padding-bottom:5.6rem}
+  .oth h2{font-size:2.4rem;font-weight:500;letter-spacing:-.02em}
+  .oth ul{margin-top:2.4rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
+  .oth a{height:7.2rem;padding:0 2.4rem;border-radius:2rem;background:var(--card);display:flex;align-items:center;gap:1.6rem;font-size:max(1.8rem,15px);font-weight:500;transition:background-color .2s var(--ease)}
+  .oth a:hover{background:var(--mint)}
+  .oth small{margin-left:auto;font-size:max(1.5rem,13px);font-weight:400;color:var(--muted);white-space:nowrap}
+  .oth :global(.arrow){width:1.8rem;height:1.8rem;flex:none}
+  @media (max-width:1023px){
+    .flow h3{font-size:19px}.flow p{font-size:14px}.flow b{font-size:13px}
+    .oth a{font-size:15px}.oth small{font-size:13px}.oth h2{font-size:20px}
+  }
+  @media (max-width:767px){
+    .flow{grid-template-columns:1fr;gap:8px;margin-top:20px}
+    .flow li{padding:20px;border-radius:18px}
+    .flow h3{margin-top:10px}.flow p{margin-top:8px}
+    .oth ul{grid-template-columns:1fr;gap:8px;margin-top:14px}
+    .oth a{height:56px;padding:0 16px;border-radius:16px}
+    .oth__second{margin-top:28px}
+  }
+</style>

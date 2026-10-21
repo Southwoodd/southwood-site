@@ -1,0 +1,54 @@
+---
+// Список отраслей: вход для тех, кто ищет решение под свой тип бизнеса, а не отдельную услугу.
+import Page from '../../layouts/Page.astro';
+import PageHero from '../../components/site/PageHero.astro';
+import Arrow from '../../components/site/Arrow.astro';
+import Start from '../../components/site/Start.astro';
+import Support from '../../components/site/Support.astro';
+import { nb } from '../../i18n/ru';
+import { INDUSTRIES, industryHref } from '../../i18n/industries';
+const crumbs = [{ label: 'Кому подходит' }];
+const ld = [{ '@type': 'ItemList', name: 'Отрасли', itemListElement: INDUSTRIES.map((n, i) => ({ '@type': 'ListItem', position: i + 1, url: 'https://southwood.pw' + industryHref(n.slug), name: n.menu })) }];
+---
+<Page title="Кому подходит: решения под отрасль | Сергей Воробьев" description="Цифровая часть бизнеса под конкретную отрасль: общепит, клиники и стоматологии. Разбор процессов, с какими программами связываю, состав работ и цены." path="/dlya/" label="Кому подходит" crumbs={crumbs} ld={ld}>
+  <PageHero crumbs={crumbs} title={['Кому подходит']} lead="Если вы знаете свою задачу, но не знаете, как она называется у разработчиков, начните отсюда. На каждой странице разобрано, что в вашей отрасли обычно делают руками, с какими программами я связываюсь и сколько это стоит." />
+  <section class="section sec ind">
+    <ul>
+      {INDUSTRIES.map((n, i) => (
+        <li data-reveal style={`--d:${i * 70}ms`}>
+          <a href={industryHref(n.slug)}>
+            <h2>{n.menu}</h2>
+            <p>{nb(n.card)}</p>
+            <ul class="ind__apps">{n.apps.slice(0, 4).map((a) => <li>{a}</li>)}</ul>
+            <span>от {n.from} тыс. ₽<Arrow /></span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <p class="ind__note">{nb('Своей отрасли не нашли? Это не значит, что задача не моя. Процессы повторяются: прием обращения, передача ответственному, оплата, учет и отчет. Напишите, разберем вашу.')}</p>
+  </section>
+  <Start />
+  <Support />
+</Page>
+<style>
+  .ind > ul{display:grid;grid-template-columns:repeat(2,1fr);gap:1.6rem}
+  .ind > ul > li > a{height:100%;padding:3.2rem;border-radius:2.4rem;background:var(--card);display:flex;flex-direction:column;transition:background-color .2s var(--ease)}
+  .ind > ul > li > a:hover{background:var(--mint)}
+  .ind h2{font-size:3.2rem;font-weight:500;line-height:1.1;letter-spacing:-.03em}
+  .ind > ul p{margin-top:1.6rem;font-size:max(1.8rem,15px);line-height:1.45;color:var(--muted)}
+  .ind__apps{margin-top:2.4rem;display:flex;flex-wrap:wrap;gap:.8rem}
+  .ind__apps li{height:3.6rem;padding:0 1.6rem;border-radius:999px;background:var(--bg);display:flex;align-items:center;font-size:max(1.5rem,13px);color:var(--ink)}
+  .ind > ul span{margin-top:auto;padding-top:3.2rem;display:flex;align-items:center;gap:1.2rem;font-size:max(1.7rem,14px);font-weight:500}
+  .ind :global(.arrow){width:1.8rem;height:1.8rem}
+  .ind__note{margin-top:4rem;max-width:72rem;font-size:max(1.7rem,14px);line-height:1.5;color:var(--muted)}
+  @media (max-width:1023px){.ind h2{font-size:24px}.ind > ul p{font-size:15px}.ind__apps li{font-size:13px}.ind > ul span{font-size:14px}.ind__note{font-size:14px}}
+  @media (max-width:767px){
+    .ind > ul{grid-template-columns:1fr;gap:10px}
+    .ind > ul > li > a{padding:20px;border-radius:18px}
+    .ind > ul p{margin-top:10px}
+    .ind__apps{margin-top:16px;gap:6px}
+    .ind__apps li{height:30px;padding:0 12px}
+    .ind > ul span{padding-top:20px}
+    .ind__note{margin-top:24px}
+  }
+</style>
