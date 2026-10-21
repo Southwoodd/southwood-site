@@ -6,8 +6,10 @@ import Head from '../../components/ui/Head.astro';
 import Arrow from '../../components/site/Arrow.astro';
 import Process from '../../components/site/Process.astro';
 import Cases from '../../components/site/Cases.astro';
-import { nb, automation } from '../../i18n/ru';
+import { nb, automation, readTime } from '../../i18n/ru';
 import { SERVICES, serviceHref, addonLabel, caseBy, R_, type Service } from '../../i18n/routes';
+import { LIVE_POSTS } from '../../i18n/blog';
+import { industryBy, industryHref } from '../../i18n/industries';
 export function getStaticPaths() { return SERVICES.map((s) => ({ params: { slug: s.slug }, props: { s } })); }
 const { s } = Astro.props as { s: Service };
 const path = serviceHref(s.slug);
@@ -15,6 +17,8 @@ const crumbs = [{ label: 'Услуги', href: R_.services }, { label: s.menu }]
 const first = caseBy[s.cases[0]];
 const scn = (s.scenarios || []).map((k) => (automation.scenarios.list as any[]).find((x) => x.key === k)).filter(Boolean);
 const others = SERVICES.filter((x) => x.slug !== s.slug);
+const relPosts = (s.related?.posts || []).map((k) => LIVE_POSTS.find((p) => p.slug === k)).filter(Boolean);
+const relInd = (s.related?.industries || []).map((k) => industryBy[k]).filter(Boolean);
 const ld = [
   { '@type': 'Service', '@id': `https://southwood.pw${path}#service`, name: s.h1.join(' '), description: s.lead, url: `https://southwood.pw${path}`, serviceType: s.menu, areaServed: { '@type': 'Country', name: 'Россия' }, provider: { '@id': 'https://southwood.pw/#person' },
     offers: { '@type': 'AggregateOffer', priceCurrency: 'RUB', lowPrice: s.from * 1000, offerCount: s.kinds.length } },
@@ -98,12 +102,37 @@ import AutoFlow from '../../components/site/AutoFlow.astro';
     <div class="qa">{s.faq.map((f, i) => <details name="svc-faq" open={i === 0}><summary><h3>{nb(f.q)}</h3><i></i></summary><p>{nb(f.a)}</p></details>)}</div>
   </section>
 
+  {(relPosts.length > 0 || relInd.length > 0) && (
+    <section class="section sec rel">
+      {relPosts.length > 0 && (
+        <>
+          <h2>Разборы по теме</h2>
+          <ul>{relPosts.map((p: any) => <li><a href={`/blog/${p.slug}/`}><span>{nb(p.title)}</span><small>{readTime(p.minutes)}</small><Arrow /></a></li>)}</ul>
+        </>
+      )}
+      {relInd.length > 0 && (
+        <>
+          <h2 class="rel__second">Решения под отрасль</h2>
+          <ul>{relInd.map((n: any) => <li><a href={industryHref(n.slug)}><span>{n.menu}</span><small>от {n.from} тыс. ₽</small><Arrow /></a></li>)}</ul>
+        </>
+      )}
+    </section>
+  )}
+
   <section class="section sec oth">
     <h2>Другие услуги</h2>
     <ul>{others.map((o) => <li><a href={serviceHref(o.slug)}><span>{o.menu}</span><small>от {o.from} тыс. ₽</small><Arrow /></a></li>)}</ul>
   </section>
 </Page>
 <style>
+  .rel{padding-top:5.6rem;padding-bottom:0}
+  .rel h2{font-size:2.4rem;font-weight:500;letter-spacing:-.02em}
+  .rel__second{margin-top:4.8rem}
+  .rel ul{margin-top:2.4rem;display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem}
+  .rel a{min-height:7.2rem;padding:1.6rem 2.4rem;border-radius:2rem;background:var(--card);display:flex;align-items:center;gap:1.6rem;font-size:max(1.7rem,14px);font-weight:500;line-height:1.3;transition:background-color .2s var(--ease)}
+  .rel a:hover{background:var(--mint)}
+  .rel small{margin-left:auto;font-size:max(1.5rem,13px);font-weight:400;color:var(--muted);white-space:nowrap}
+  .rel :global(.arrow){width:1.8rem;height:1.8rem;flex:none}
   .oth{padding-top:5.6rem;padding-bottom:5.6rem}
   .oth h2{font-size:2.4rem;font-weight:500;letter-spacing:-.02em}
   .oth ul{margin-top:2.4rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
@@ -112,6 +141,6 @@ import AutoFlow from '../../components/site/AutoFlow.astro';
   .oth small{margin-left:auto;font-size:max(1.5rem,13px);font-weight:400;color:var(--muted);white-space:nowrap}
   .oth :global(.arrow){width:1.8rem;height:1.8rem;flex:none}
   /* телефон: вместо rem берем нижнюю границу в px */
-  @media (max-width:1023px){.oth a{font-size:15px}.oth small{font-size:13px}}
-  @media (max-width:1023px){.oth ul{grid-template-columns:1fr;gap:8px;margin-top:14px}.oth a{height:56px;padding:0 16px;border-radius:16px}.oth h2{font-size:20px}}
+  @media (max-width:1023px){.oth a{font-size:15px}.oth small{font-size:13px}.rel a{font-size:14px}.rel small{font-size:13px}.rel h2{font-size:20px}}
+  @media (max-width:1023px){.oth ul{grid-template-columns:1fr;gap:8px;margin-top:14px}.oth a{height:56px;padding:0 16px;border-radius:16px}.oth h2{font-size:20px}.rel ul{grid-template-columns:1fr;gap:8px;margin-top:14px}.rel a{padding:14px 16px;border-radius:16px}.rel__second{margin-top:28px}.rel{padding-top:32px}}
 </style>

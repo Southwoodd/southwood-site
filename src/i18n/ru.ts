@@ -3,6 +3,16 @@ const SHORT = 'а|в|и|к|о|с|у|я|бы|во|да|до|же|за|из|ко|�
 const RE = new RegExp(`(^|[\\s\\u00A0(«])(${SHORT}) (?=\\S)`, 'gi');
 export const nb = (s: string) => s.replace(RE, '$1$2 ').replace(RE, '$1$2 ');
 
+// Склонение по числу: plural(4, 'минута', 'минуты', 'минут') -> 'минуты'
+export const plural = (n: number, one: string, few: string, many: string) => {
+  const a = Math.abs(n) % 100, b = a % 10;
+  if (a > 10 && a < 20) return many;
+  if (b > 1 && b < 5) return few;
+  if (b === 1) return one;
+  return many;
+};
+export const readTime = (n: number) => `${n} ${plural(n, 'минута', 'минуты', 'минут')} чтения`;
+
 export const site = {
   name: 'Сергей Воробьев',
   telegram: 'https://t.me/imsouthwood',
