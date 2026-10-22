@@ -83,7 +83,7 @@ export const content = {
       title: 'MeetFlow',
       description:
         'AI-помощник на созвонах без бота в звонке. От идеи до Chrome Web Store за месяц — meetflow.host.',
-      href: '/cases/meetflow',
+      href: '/kejsy/meetflow/',
       cta: 'Открыть кейс',
     },
   },
@@ -169,7 +169,7 @@ export const content = {
         title: 'Alfa Elite',
         result:
           'Международный консалтинг: воронка, КП за час вместо дней, регламенты. Шестой месяц retainer.',
-        href: '/cases/alfa-elite',
+        href: '/kejsy/alfa-elite/',
       },
       {
         slug: 'meetflow',
@@ -177,7 +177,7 @@ export const content = {
         title: 'MeetFlow',
         result:
           'AI-помощник на созвонах без бота в звонке. От идеи до Chrome Web Store за месяц — meetflow.host.',
-        href: '/cases/meetflow',
+        href: '/kejsy/meetflow/',
       },
       {
         slug: 'mono-coffee',
@@ -185,7 +185,7 @@ export const content = {
         title: 'Mono Coffee',
         result:
           'Кофейня с нуля: финмодель, клиентское приложение, юрбаза и связка каналов.',
-        href: '/cases/mono-coffee',
+        href: '/kejsy/mono-coffee/',
       },
     ],
   },
@@ -572,13 +572,13 @@ export const content = {
     reqs: 'Воробьев Сергей Валентинович · Самозанятый · ИНН 301809508260',
     year: '2026',
     privacyLabel: 'Политика конфиденциальности',
-    privacyHref: '/privacy',
+    privacyHref: '/privacy/',
   },
 
   cookies: {
     text: 'Сайт использует технические cookies для корректной работы страниц.',
     linkLabel: 'Подробнее',
-    linkHref: '/privacy#cookies',
+    linkHref: '/privacy/#cookies',
     accept: 'Понятно',
   },
 
@@ -590,10 +590,10 @@ export const content = {
     updated: '20 октября 2026 г.',
     consentLabel: 'Даю',
     consentLinkLabel: 'согласие на обработку персональных данных',
-    consentHref: '/consent',
+    consentHref: '/consent/',
     policyLabel: 'и принимаю',
     policyLinkLabel: 'политику обработки данных',
-    policyHref: '/privacy',
+    policyHref: '/privacy/',
     consentError: 'Без согласия не могу принять заявку: в ней ваши контакты',
     sections: [
       {
@@ -725,7 +725,7 @@ export const content = {
   cookieBanner: {
     text: 'Сайт использует cookies: технические для работы калькулятора и аналитические Яндекс Метрики.',
     linkLabel: 'Подробнее',
-    linkHref: '/privacy#cookies',
+    linkHref: '/privacy/#cookies',
     accept: 'Принять все',
     decline: 'Только технические',
   },
