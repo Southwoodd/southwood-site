@@ -15,7 +15,8 @@ IP=$(curl -s --max-time 5 ifconfig.me)
 echo "адрес этого сервера: $IP"
 BAD=0
 for d in southwood.pw www.southwood.pw; do
-  GOT=$(getent hosts "$d" | awk '{print $1}' | head -1)
+  # getent возвращает код 2, когда записи еще нет - это не ошибка, а ожидаемый случай
+  GOT=$(getent hosts "$d" 2>/dev/null | awk '{print $1}' | head -1 || true)
   if [ "$GOT" = "$IP" ]; then echo "  $d -> $GOT  ок"
   else echo "  $d -> ${GOT:-нет записи}  ЕЩЕ НЕ СЮДА"; BAD=1; fi
 done
