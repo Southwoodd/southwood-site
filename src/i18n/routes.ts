@@ -327,7 +327,7 @@ export const SERVICES: Service[] = [
       { file: 'dubai', title: 'ОАЭ и Дубай', note: 'Та же рубрика, съемки с дрона', dur: '0:55' },
       { file: 'dj-leyo', title: 'DJ Leyo', note: 'Промо вечеринки: ритм под музыку, анонс даты', dur: '0:27' },
       { file: 'central-park', title: 'Central Park 22', note: 'Афиша диджей-сета, графика и анимация', dur: '0:15' },
-      { file: 'style', title: 'Стиль', note: 'Короткий ролик для бренда', dur: '0:20' },
+      { file: 'style', title: 'Клонс', note: 'Короткий ролик для бренда', dur: '0:20' },
     ],
     addons: ['pres', 'logo'],
     extra: ['Обложки для постов: 8 тыс. ₽ за 10 штук', 'Два круга правок на каждый ролик', 'Файлы под Instagram, TikTok, VK и YouTube'],

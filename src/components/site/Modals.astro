@@ -16,6 +16,7 @@ const tick = 'M11 1.83a9.17 9.17 0 1 0 0 18.34 9.17 9.17 0 0 0 0-18.34Zm4.38 7.0
     <button class="md__close" type="button" data-close aria-label={m.close}></button>
     <section class="md__panel md__panel--form" data-panel="lead" hidden><LeadForm variant="modal" /></section>
     <section class="md__panel md__panel--form" data-panel="write" hidden><WriteForm /></section>
+    <section class="md__panel md__panel--form" data-panel="study" hidden><LeadForm variant="study" /></section>
     {packs.map(([k, p]) => (
       <section class="md__panel md__panel--pack" data-panel={`pack-${k}`} hidden>
         <header class="mp__head"><span class="mp__ico"><Ui n={k as any} /></span><div><h3>{p.name}</h3><p>{p.sub}</p></div></header>
@@ -67,6 +68,7 @@ const tick = 'M11 1.83a9.17 9.17 0 1 0 0 18.34 9.17 9.17 0 0 0 0-18.34Zm4.38 7.0
       const d = el.dataset; const kind = d.open!;
       if (kind === 'lead') open('lead', { chips: d.chips ? d.chips.split(',') : d.chip ? [d.chip] : undefined, task: d.task, sub: d.sub, context: d.context });
       else if (kind === 'write') open('write', { msg: d.msg });
+      else if (kind === 'study') open('study', { context: d.context });
       else if (kind === 'pack') open('pack-' + d.pack);
       else if (kind === 'case') open('case-' + d.case);
       return;

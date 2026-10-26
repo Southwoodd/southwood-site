@@ -1,22 +1,39 @@
 ---
 // Форма заявки. variant block стоит в финальном блоке, modal открывается в окне.
 import { form as f } from '../../i18n/ru';
-interface Props { variant?: 'block' | 'modal' }
+interface Props { variant?: 'block' | 'modal' | 'study' }
 const { variant = 'block' } = Astro.props;
-const title = variant === 'modal' ? f.modalTitle : f.title;
-const sub = variant === 'modal' ? f.modalSub : f.sub;
+const study = variant === 'study';
+const title = study ? f.studyTitle : variant === 'modal' ? f.modalTitle : f.title;
+const sub = study ? f.studySub : variant === 'modal' ? f.modalSub : f.sub;
+const S = f.study;
 ---
 <form class="lf ym-disable-keys" data-lead-form data-variant={variant} data-endpoint={f.endpoint} data-sub={sub} novalidate>
   <div class="lf__main">
     <header><h3>{title}</h3><p data-sub-text>{sub}</p></header>
-    <fieldset class="lf__need" data-field="chips">
-      <legend><span>{f.needLabel} <i>*</i></span><small>{f.needHint}</small></legend>
-      <div class="lf__chips">{f.chips.map((c) => <label><input type="checkbox" name="need" value={c.v} data-label={c.l} /><span>{c.l}</span></label>)}</div>
-      <p class="lf__err" hidden>{f.errors.chips}</p>
-    </fieldset>
+    {!study && (
+      <fieldset class="lf__need" data-field="chips">
+        <legend><span>{f.needLabel} <i>*</i></span><small>{f.needHint}</small></legend>
+        <div class="lf__chips">{f.chips.map((c) => <label><input type="checkbox" name="need" value={c.v} data-label={c.l} /><span>{c.l}</span></label>)}</div>
+        <p class="lf__err" hidden>{f.errors.chips}</p>
+      </fieldset>
+    )}
+    {study && S.groups.map((g) => (
+      <fieldset class="lf__need" data-field={g.n}>
+        <legend><span>{g.l} <i>*</i></span></legend>
+        <div class="lf__chips">{g.opts.map((o) => <label><input type="radio" name={g.n} value={o} data-label={o} /><span>{o}</span></label>)}</div>
+        <p class="lf__err" hidden>{S.errGroup}</p>
+      </fieldset>
+    ))}
+    {study && (
+      <fieldset class="lf__need" data-field="tools">
+        <legend><span>{S.toolsLabel}</span><small>{S.toolsHint}</small></legend>
+        <div class="lf__chips">{S.tools.map((o) => <label><input type="checkbox" name="tools" value={o} data-label={o} /><span>{o}</span></label>)}</div>
+      </fieldset>
+    )}
     <div class="lf__row">
       <label class="lf__field" data-field="name"><span>{f.name} <i>*</i></span><input type="text" name="name" autocomplete="name" placeholder={f.namePh} maxlength="80" /><p class="lf__err" hidden>{f.errors.name}</p></label>
-      <label class="lf__field" data-field="company"><span>{f.company} <i>*</i></span><input type="text" name="company" autocomplete="organization" placeholder={f.companyPh} maxlength="120" /><p class="lf__err" hidden>{f.errors.company}</p></label>
+      {!study && <label class="lf__field" data-field="company"><span>{f.company} <i>*</i></span><input type="text" name="company" autocomplete="organization" placeholder={f.companyPh} maxlength="120" /><p class="lf__err" hidden>{f.errors.company}</p></label>}
     </div>
     <div class="lf__row">
       <label class="lf__field" data-field="phone"><span>{f.phone} <i>*</i></span><input type="tel" name="phone" autocomplete="tel" inputmode="tel" placeholder={f.phonePh} maxlength="24" /><p class="lf__err" hidden data-empty={f.errors.phoneEmpty} data-short={f.errors.phone}>{f.errors.phone}</p></label>
@@ -24,11 +41,15 @@ const sub = variant === 'modal' ? f.modalSub : f.sub;
         <div>{f.viaOptions.map((o, i) => <label><input type="radio" name="via" value={o.v} checked={i === 0} /><span>{o.l}</span></label>)}</div>
       </fieldset>
     </div>
-    <div class="lf__row">
-      <label class="lf__field"><span>{f.deadline} <em>{f.taskOpt}</em></span><input type="date" name="deadline" data-min-today /></label>
-      <p class="lf__hint">{f.deadlineHint}</p>
-    </div>
-    <label class="lf__field"><span>{f.task} <em>{f.taskOpt}</em></span><textarea name="task" placeholder={f.taskPh} maxlength="1500" rows="3"></textarea></label>
+    {!study && (
+      <div class="lf__row">
+        <label class="lf__field"><span>{f.deadline} <em>{f.taskOpt}</em></span><input type="date" name="deadline" data-min-today /></label>
+        <p class="lf__hint">{f.deadlineHint}</p>
+      </div>
+    )}
+    {study
+      ? <label class="lf__field" data-field="goal"><span>{S.goalLabel} <i>*</i></span><textarea name="goal" placeholder={S.goalPh} maxlength="1500" rows="3"></textarea><p class="lf__err" hidden>{S.errGoal}</p></label>
+      : <label class="lf__field"><span>{f.task} <em>{f.taskOpt}</em></span><textarea name="task" placeholder={f.taskPh} maxlength="1500" rows="3"></textarea></label>}
     <input class="lf__hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
     <footer>
       <label class="lf__consent" data-field="consent"><input type="checkbox" name="consent" /><i></i><span>{f.consentA}<a href="/consent/" target="_blank">{f.consentLink}</a>{f.consentB}<a href="/privacy/" target="_blank">{f.policyLink}</a></span></label>
@@ -72,24 +93,38 @@ const sub = variant === 'modal' ? f.modalSub : f.sub;
       const fd = new FormData(form);
       const digits = String(fd.get('phone') || '').replace(/\D/g, '');
       const pe = form.querySelector<HTMLElement>('[data-field="phone"] .lf__err')!; pe.textContent = digits.length ? pe.dataset.short! : pe.dataset.empty!;
-      const bad = [
-        setErr('chips', fd.getAll('need').length === 0),
-        setErr('name', String(fd.get('name') || '').trim().length < 2),
-        setErr('company', String(fd.get('company') || '').trim().length < 2),
-        setErr('phone', digits.length < 11),
-        setErr('consent', !fd.get('consent')),
-      ];
+      const study = form.dataset.variant === 'study';
+      const bad = study
+        ? [
+          ...['who', 'exp', 'ai'].map((n) => setErr(n, !fd.get(n))),
+          setErr('name', String(fd.get('name') || '').trim().length < 2),
+          setErr('phone', digits.length < 11),
+          setErr('goal', String(fd.get('goal') || '').trim().length < 10),
+          setErr('consent', !fd.get('consent')),
+        ]
+        : [
+          setErr('chips', fd.getAll('need').length === 0),
+          setErr('name', String(fd.get('name') || '').trim().length < 2),
+          setErr('company', String(fd.get('company') || '').trim().length < 2),
+          setErr('phone', digits.length < 11),
+          setErr('consent', !fd.get('consent')),
+        ];
       return !bad.includes(true);
     };
     const live = () => { if (form.classList.contains('was-sent')) validate(); };
     form.addEventListener('change', live); form.addEventListener('input', live);
     const send = async () => {
       const fd = new FormData(form);
-      const labels = [...form.querySelectorAll<HTMLInputElement>('input[name=need]:checked')].map((i) => i.dataset.label!);
+      const study = form.dataset.variant === 'study';
+      const labels = study ? ['Обучение'] : [...form.querySelectorAll<HTMLInputElement>('input[name=need]:checked')].map((i) => i.dataset.label!);
       const via = String(fd.get('via'));
       form.querySelector('[data-ok-text]')!.textContent = `${JSON.parse(ok.dataset.via!)[via]} ${ok.dataset.chosen} ${labels.join(', ').toLowerCase()}.`;
       if (fd.get('website')) { show(ok); return; }
-      const body: Record<string, unknown> = { kind: 'lead', need: fd.getAll('need'), needLabels: labels, name: fd.get('name'), company: fd.get('company'), phone: fd.get('phone'), via, deadline: fd.get('deadline'), task: fd.get('task'), page: location.pathname, context: form.dataset.context || '', consent: true };
+      // анкета обучения уходит текстом в поле задачи: серверу не нужно знать про новые поля
+      const quiz = study
+        ? ['Кто: ' + fd.get('who'), 'Опыт: ' + fd.get('exp'), 'Нейросети: ' + fd.get('ai'), 'Инструменты: ' + (fd.getAll('tools').join(', ') || 'не указаны'), 'Цель: ' + fd.get('goal')].join('\n')
+        : '';
+      const body: Record<string, unknown> = { kind: 'lead', need: study ? ['study'] : fd.getAll('need'), needLabels: labels, name: fd.get('name'), company: study ? 'Частное лицо' : fd.get('company'), phone: fd.get('phone'), via, deadline: fd.get('deadline'), task: study ? quiz : fd.get('task'), page: location.pathname, context: form.dataset.context || (study ? 'study' : ''), consent: true };
       btn.disabled = true; btn.textContent = btn.dataset.sending!; btn.classList.add('is-busy'); failMsg.hidden = true;
       const post = (b: unknown) => fetch(form.dataset.endpoint!, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) });
       try {
