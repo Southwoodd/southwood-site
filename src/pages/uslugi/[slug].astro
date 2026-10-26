@@ -54,6 +54,17 @@ import AutoFlow from '../../components/site/AutoFlow.astro';
 
   {s.slug === 'avtomatizaciya' && <AutoFlow />}
 
+  {s.points && (
+    <section class="section sec pts">
+      <Head badge={s.points.badge} icon="task" intro={s.points.intro} title={s.points.title} />
+      <ul class="pts__grid">
+        {s.points.list.map((x, i) => (
+          <li data-reveal style={`--d:${(i % 3) * 70}ms`}><h3>{nb(x.title)}</h3><p>{nb(x.text)}</p></li>
+        ))}
+      </ul>
+    </section>
+  )}
+
   <section class="section sec" id="prices">
     <Head badge="Prices" icon="shield" intro={s.kindsIntro} title={s.kindsTitle} />
     <ul class:list={['kinds', { 'kinds--4': s.kinds.length === 4 }]}>
@@ -76,7 +87,7 @@ import AutoFlow from '../../components/site/AutoFlow.astro';
       <Head badge="Works" icon="flash" intro="Ролики смонтированы из материала, который сняли сами заказчики. Нажмите, чтобы посмотреть со звуком." title={['Примеры работ']} />
       <ul class="vids__grid">
         {s.videos.map((v, i) => (
-          <li data-reveal style={`--d:${(i % 3) * 70}ms`}>
+          <li class:list={{ 'vids--wide': v.wide }} data-reveal style={`--d:${(i % 3) * 70}ms`}>
             <button type="button" class="vids__play" data-vid aria-label={`Смотреть ролик ${v.title}`}>
               <video src={`/video/${v.file}.mp4`} poster={`/video/poster/${v.file}.webp`} preload="none" playsinline loop muted></video>
               <i aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg></i>
@@ -163,6 +174,13 @@ import AutoFlow from '../../components/site/AutoFlow.astro';
   @media (max-width:1023px){.oth a{font-size:15px}.oth small{font-size:13px}.rel a{font-size:14px}.rel small{font-size:13px}.rel h2{font-size:20px}}
   @media (max-width:1023px){.oth ul{grid-template-columns:1fr;gap:8px;margin-top:14px}.oth a{height:56px;padding:0 16px;border-radius:16px}.oth h2{font-size:20px}.rel ul{grid-template-columns:1fr;gap:8px;margin-top:14px}.rel a{padding:14px 16px;border-radius:16px}.rel__second{margin-top:28px}.rel{padding-top:32px;padding-bottom:32px}}
   .vids__grid{margin-top:5.6rem;display:grid;grid-template-columns:repeat(3,1fr);gap:2.4rem}
+  .pts__grid{margin-top:5.6rem;display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
+  .pts__grid li{background:var(--card);border-radius:2.4rem;padding:3.2rem}
+  .pts__grid h3{font-size:max(2.2rem,16px);line-height:1.2;font-weight:500;letter-spacing:-.02em}
+  .pts__grid p{margin-top:1.6rem;font-size:max(1.7rem,14px);line-height:1.45;color:var(--muted)}
+  @media (max-width:1023px){.pts__grid{grid-template-columns:1fr;gap:8px;margin-top:24px}.pts__grid li{border-radius:16px;padding:18px}.pts__grid h3{font-size:16px}.pts__grid p{margin-top:8px;font-size:14px}}
+  .vids--wide .vids__play{aspect-ratio:16/9}
+  .vids--wide{grid-column:1/-1}
   .vids__play{position:relative;display:block;width:100%;aspect-ratio:9/16;border-radius:2rem;overflow:hidden;background:#0d0f0e;cursor:pointer;border:0;padding:0}
   .vids__play video{width:100%;height:100%;object-fit:cover;display:block}
   .vids__play i{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:6.4rem;height:6.4rem;border-radius:50%;background:rgba(255,255,255,.92);color:var(--ink);display:grid;place-items:center;transition:transform .2s var(--ease),background-color .2s var(--ease)}
