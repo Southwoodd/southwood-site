@@ -30,6 +30,7 @@ export type Service = {
   slug: string; menu: string; card: string; h1: string[]; lead: string; from: number; fromUnit?: string; chips: string[];
   seoTitle: string; seoDesc: string;
   kindsTitle: string[]; kindsIntro: string; kinds: Kind[]; calcNote?: string;
+  videos?: { file: string; title: string; note: string; dur: string }[];
   addons: string[]; extra?: string[];
   mult?: { badge: string; title: string; intro: string; list: { title: string; k: string; text: string; hot?: boolean }[] };
   scenarios?: string[];
@@ -306,6 +307,14 @@ export const SERVICES: Service[] = [
       kind('promo', { title: 'Горизонтальное видео', text: 'Промо продукта, запись демо или ролик для главной страницы сайта. Считается отдельно от пакетов.' }),
     ],
     calcNote: 'Пакеты роликов считаются отдельно, в калькуляторе есть только горизонтальное промо-видео.',
+    videos: [
+      { file: 'afghanistan', title: 'Афганистан', note: 'Тревел-рубрика: факты, инфографика, субтитры', dur: '0:55' },
+      { file: 'brooklyn', title: 'Бруклин', note: 'Та же рубрика, другой выпуск', dur: '0:55' },
+      { file: 'dubai', title: 'ОАЭ и Дубай', note: 'Та же рубрика, съемки с дрона', dur: '0:55' },
+      { file: 'dj-leyo', title: 'DJ Leyo', note: 'Промо вечеринки: ритм под музыку, анонс даты', dur: '0:27' },
+      { file: 'central-park', title: 'Central Park 22', note: 'Афиша диджей-сета, графика и анимация', dur: '0:15' },
+      { file: 'style', title: 'Стиль', note: 'Короткий ролик для бренда', dur: '0:20' },
+    ],
     addons: ['pres', 'logo'],
     extra: ['Обложки для постов: 8 тыс. ₽ за 10 штук', 'Два круга правок на каждый ролик', 'Файлы под Instagram, TikTok, VK и YouTube'],
     cases: ['mono', 'caro'], casesTitle: 'Как выглядит моя графика', chipsForm: 'fix',

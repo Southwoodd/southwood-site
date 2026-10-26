@@ -71,6 +71,25 @@ import AutoFlow from '../../components/site/AutoFlow.astro';
     <p class="sec__calc"><a class="btn btn--ink" href={R_.calc} data-go="calc">Собрать в калькуляторе<Arrow /></a><span>{nb(s.calcNote || 'Цены для компании до 50 человек. Точную сумму фиксирую в договоре после брифа на 30–45 минут.')}</span></p>
   </section>
 
+  {s.videos && (
+    <section class="section sec vids" id="raboty">
+      <Head badge="Works" icon="flash" intro="Ролики смонтированы из материала, который сняли сами заказчики. Нажмите, чтобы посмотреть со звуком." title={['Примеры работ']} />
+      <ul class="vids__grid">
+        {s.videos.map((v, i) => (
+          <li data-reveal style={`--d:${(i % 3) * 70}ms`}>
+            <button type="button" class="vids__play" data-vid aria-label={`Смотреть ролик ${v.title}`}>
+              <video src={`/video/${v.file}.mp4`} poster={`/video/poster/${v.file}.webp`} preload="none" playsinline loop muted></video>
+              <i aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg></i>
+              <span class="vids__dur">{v.dur}</span>
+            </button>
+            <h3>{v.title}</h3>
+            <p>{nb(v.note)}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
   {s.mult && (
     <section class="section sec sec--deep">
       <Head badge={s.mult.badge} icon="task" intro={s.mult.intro} title={[s.mult.title]} />
@@ -143,4 +162,29 @@ import AutoFlow from '../../components/site/AutoFlow.astro';
   /* телефон: вместо rem берем нижнюю границу в px */
   @media (max-width:1023px){.oth a{font-size:15px}.oth small{font-size:13px}.rel a{font-size:14px}.rel small{font-size:13px}.rel h2{font-size:20px}}
   @media (max-width:1023px){.oth ul{grid-template-columns:1fr;gap:8px;margin-top:14px}.oth a{height:56px;padding:0 16px;border-radius:16px}.oth h2{font-size:20px}.rel ul{grid-template-columns:1fr;gap:8px;margin-top:14px}.rel a{padding:14px 16px;border-radius:16px}.rel__second{margin-top:28px}.rel{padding-top:32px;padding-bottom:32px}}
+  .vids__grid{margin-top:5.6rem;display:grid;grid-template-columns:repeat(3,1fr);gap:2.4rem}
+  .vids__play{position:relative;display:block;width:100%;aspect-ratio:9/16;border-radius:2rem;overflow:hidden;background:#0d0f0e;cursor:pointer;border:0;padding:0}
+  .vids__play video{width:100%;height:100%;object-fit:cover;display:block}
+  .vids__play i{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:6.4rem;height:6.4rem;border-radius:50%;background:rgba(255,255,255,.92);color:var(--ink);display:grid;place-items:center;transition:transform .2s var(--ease),background-color .2s var(--ease)}
+  .vids__play i svg{width:2.8rem;height:2.8rem;margin-left:.2rem}
+  .vids__play:hover i{transform:translate(-50%,-50%) scale(1.06);background:#fff}
+  .vids__play.is-on i{opacity:0;pointer-events:none}
+  .vids__dur{position:absolute;right:1.2rem;top:1.2rem;padding:.4rem 1rem;border-radius:1rem;background:rgba(10,14,12,.6);backdrop-filter:blur(.6rem);color:#fff;font-size:max(1.4rem,12px);font-weight:500}
+  .vids__play.is-on .vids__dur{opacity:0}
+  .vids h3{margin-top:1.8rem;font-size:max(2rem,16px);font-weight:500;letter-spacing:-.02em}
+  .vids p{margin-top:.6rem;font-size:max(1.6rem,13px);line-height:1.4;color:var(--muted)}
+  @media (max-width:1023px){.vids__grid{grid-template-columns:repeat(2,1fr);gap:12px;margin-top:24px}.vids__play{border-radius:14px}.vids__play i{width:44px;height:44px}.vids__play i svg{width:20px;height:20px}.vids h3{margin-top:10px;font-size:16px}.vids p{font-size:13px;margin-top:2px}}
 </style>
+<script>
+  // Ролики на странице монтажа: грузим только по клику, звук включаем вместе с показом
+  document.querySelectorAll<HTMLButtonElement>('[data-vid]').forEach((btn) => {
+    const v = btn.querySelector('video');
+    if (!v) return;
+    btn.addEventListener('pointerenter', () => { if (v.preload === 'none') v.preload = 'metadata'; }, { once: true });
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-vid] video').forEach((o) => { if (o !== v) { (o as HTMLVideoElement).pause(); (o as HTMLVideoElement).controls = false; o.parentElement?.classList.remove('is-on'); } });
+      if (v.paused) { v.muted = false; v.controls = true; btn.classList.add('is-on'); v.play().catch(() => { v.muted = true; v.play().catch(() => {}); }); }
+      else { v.pause(); v.controls = false; btn.classList.remove('is-on'); }
+    });
+  });
+</script>
