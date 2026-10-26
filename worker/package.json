@@ -1,0 +1,14 @@
+{
+  "name": "southwood-lead-worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node test-build.mjs",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "schema": "wrangler d1 execute southwood-lead --file schema.sql"
+  },
+  "devDependencies": {
+    "wrangler": "^4.42.3"
+  }
+}

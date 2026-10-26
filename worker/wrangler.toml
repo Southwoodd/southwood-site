@@ -1,0 +1,29 @@
+name = "southwood-lead"
+main = "lead-worker.mjs"
+compatibility_date = "2026-10-01"
+
+# Очереди, счетчики блога и защита от повторов
+[[d1_databases]]
+binding = "DB"
+database_name = "southwood-lead"
+database_id = "ПОДСТАВИТЬ_ПОСЛЕ_d1_create"
+
+# PDF расчетов: ссылка на файл уходит в письме, в Telegram файл уходит вложением
+[[r2_buckets]]
+binding = "PDFS"
+bucket_name = "southwood-lead-pdf"
+
+# Первая строка: разбор очереди. Вторая: уборка старых файлов и адресов.
+[triggers]
+crons = ["* * * * *", "0 */6 * * *"]
+
+[vars]
+TG_API_BASES = "https://api.telegram.org"
+ALLOWED_ORIGINS = "https://southwood.pw,https://www.southwood.pw"
+SMTP_PORT = "465"
+SHOW_READS = "300"
+SHOW_SHARES = "20"
+KEEP_DAYS = "30"
+PUBLIC_BASE = "https://api.southwood.pw"
+
+# Секретами (wrangler secret put): TG_BOT_TOKEN, TG_CHAT_ID, SMTP_HOST, SMTP_USER, SMTP_PASS, MAIL_TO
