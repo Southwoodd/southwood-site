@@ -88,6 +88,7 @@ const tick = 'M11 1.83a9.17 9.17 0 1 0 0 18.34 9.17 9.17 0 0 0 0-18.34Zm4.38 7.0
   .md__box{position:relative;width:min(max(66.2rem,580px),calc(100vw - 4rem));max-height:calc(100dvh - 6rem);overflow:auto;overscroll-behavior:contain;background:#fff;border-radius:2.8rem;box-shadow:0 4rem 10rem rgba(0,0,0,.35);animation:md-in .4s var(--ease) both;scrollbar-width:thin}
   .md[data-kind=pack] .md__box{width:min(max(74.4rem,640px),calc(100vw - 4rem))}
   .md[data-kind=case] .md__box{width:min(max(110rem,880px),calc(100vw - 4rem))}
+  @media (min-width:1300px){.md[data-kind=lead] .md__box,.md[data-kind=study] .md__box,.md[data-kind=write] .md__box{width:min(max(104rem,900px),calc(100vw - 8rem))}}
   @keyframes md-fade{from{opacity:0}}
   @keyframes md-in{from{opacity:0;transform:translateY(2.4rem) scale(.985)}}
   .md__box:focus{outline:0}

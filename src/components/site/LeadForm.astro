@@ -173,6 +173,14 @@ const S = f.study;
   .lf__chips input:checked+span{background:var(--deep);border-color:var(--deep);color:#fff}
   .lf__chips input:focus-visible+span,.lf__via input:focus-visible+span,.lf__consent input:focus-visible+i{outline:2px solid var(--deep);outline-offset:2px}
   .lf__row{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem}
+  /* широкий экран: раскладываем форму в две колонки, иначе в окне появляется прокрутка */
+  @media (min-width:1300px){
+    .lf[data-variant=modal] .lf__main,.lf[data-variant=study] .lf__main{display:grid;grid-template-columns:1fr 1fr;column-gap:3.2rem;row-gap:2.4rem;align-content:start}
+    .lf[data-variant=modal] .lf__main>header,.lf[data-variant=study] .lf__main>header,
+    .lf[data-variant=modal] .lf__need,.lf[data-variant=modal] .lf__hp,.lf[data-variant=modal] footer,
+    .lf[data-variant=study] .lf__hp,.lf[data-variant=study] footer{grid-column:1/-1}
+    .lf[data-variant=modal] .lf__row,.lf[data-variant=study] .lf__row{display:contents}
+  }
   .lf__field{display:flex;flex-direction:column;gap:.6rem;min-width:0}
   .lf__via legend{display:block}
   .lf__field>span,.lf__via legend{font-size:max(1.4rem,13px);font-weight:500}
