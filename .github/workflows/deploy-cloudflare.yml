@@ -1,9 +1,8 @@
-# Сборка и выкладка сайта в Cloudflare Pages. Основная выкладка с 26 октября 2026 года.
+# Выкладка в Cloudflare Pages. Оставлена для отката: сама не запускается, только вручную.
+# С 27 октября 2026 года сайт раздает свой сервер Beget, см. deploy-own.yml
 name: Deploy to Cloudflare Pages
 
 on:
-  push:
-    branches: [master]
   workflow_dispatch:
 
 concurrency:

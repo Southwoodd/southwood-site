@@ -1,8 +1,13 @@
-# Сборка и выкладка на свой сервер. Оставлена для отката: сама не запускается, только вручную.
-# С 26 октября 2026 года сайт раздает Cloudflare Pages, см. deploy-cloudflare.yml
+# Сборка и выкладка на свой сервер Beget. Основная выкладка с 27 октября 2026 года.
+# Cloudflare отдавал сайт в России около 800 байт в секунду, поэтому вернулись на свой сервер.
 name: Deploy to own server
 on:
+  push:
+    branches: [master]
   workflow_dispatch:
+concurrency:
+  group: deploy-own
+  cancel-in-progress: true
 jobs:
   deploy:
     runs-on: ubuntu-latest
