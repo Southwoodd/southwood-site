@@ -1,8 +1,8 @@
+# Запасная выкладка на GitHub Pages. Сама не запускается, только вручную.
+# Диапазон адресов GitHub Pages фильтруется у части российских провайдеров, поэтому боевая выкладка идет в Cloudflare.
 name: Deploy GitHub Pages
 
 on:
-  push:
-    branches: [master]
   workflow_dispatch:
 
 permissions:

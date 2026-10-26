@@ -1,8 +1,7 @@
-# Сборка и выкладка на свой сервер. Запускается на ветке нового сайта и вручную.
+# Сборка и выкладка на свой сервер. Оставлена для отката: сама не запускается, только вручную.
+# С 26 октября 2026 года сайт раздает Cloudflare Pages, см. deploy-cloudflare.yml
 name: Deploy to own server
 on:
-  push:
-    branches: [claude/site-v2]
   workflow_dispatch:
 jobs:
   deploy:

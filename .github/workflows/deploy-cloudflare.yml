@@ -1,0 +1,37 @@
+# Сборка и выкладка сайта в Cloudflare Pages. Основная выкладка с 26 октября 2026 года.
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: cloudflare-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run build
+
+      - name: Выложить в Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=southwood-site --branch=master
+
+      - name: Сообщить поисковикам об обновлении (IndexNow)
+        continue-on-error: true
+        run: |
+          # Все адреса из карты сайта одним запросом: новые страницы попадают в Яндекс и Bing без ручного добавления
+          URLS=$(grep -o '<loc>[^<]*</loc>' dist/sitemap-0.xml | sed -e 's/<[^>]*>//g' -e 's/.*/"&"/' | paste -sd, -)
+          BODY='{"host":"southwood.pw","key":"0a4537940f3687fcf00debdcfbe35193","keyLocation":"https://southwood.pw/0a4537940f3687fcf00debdcfbe35193.txt","urlList":['"$URLS"']}'
+          curl -sS -m 20 -X POST "https://api.indexnow.org/indexnow" -H "Content-Type: application/json; charset=utf-8" -d "$BODY" -w " %{http_code}\n" || true
+          curl -sS -m 20 -X POST "https://yandex.com/indexnow" -H "Content-Type: application/json; charset=utf-8" -d "$BODY" -w " %{http_code}\n" || true

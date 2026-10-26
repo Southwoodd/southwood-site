@@ -2,6 +2,9 @@ name = "southwood-lead"
 main = "lead-worker.mjs"
 compatibility_date = "2026-10-01"
 
+# Свой адрес вместо workers.dev: код сайта обращается к нему же, что и к прежнему серверу
+routes = [{ pattern = "api.southwood.pw", custom_domain = true }]
+
 # Очереди повторной отправки, счетчики блога и защита от повторов
 [[d1_databases]]
 binding = "DB"

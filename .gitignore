@@ -24,3 +24,6 @@ worker/.dev.vars
 .idea
 scripts/*.png
 src/styles/illus.css
+
+.dev.vars*
+!.dev.vars.example
