@@ -64,14 +64,19 @@ await t('заявка принята и без каналов легла в об
   assert.equal(after.mail, before.mail + 1, 'очередь почты');
 });
 
-await t('заявка с PDF: файл отдается по ссылке', async () => {
+await t('заявка с PDF принята, в очередь лег состав расчета без файла', async () => {
+  const before = await (await fetch(BASE + '/health')).json();
   const pdf = new Uint8Array(2000); pdf.set(new TextEncoder().encode('%PDF-1.7'));
   let bin = ''; for (const b of pdf) bin += String.fromCharCode(b);
-  const r = await post('/lead', lead({ calc: { title: '100 000 ₽', text: 'состав', link: 'https://southwood.pw/ceny/' }, pdf: btoa(bin) }));
+  const r = await post('/lead', lead({ calc: { title: '100 000 ₽', text: 'Сайт: 100 000', link: 'https://southwood.pw/ceny/#calc=abc' }, pdf: btoa(bin) }));
   assert.equal(r.status, 200);
-  // имя файла знает только воркер, поэтому проверяем сам обработчик ссылок
-  assert.equal((await fetch(BASE + '/pdf/нет.pdf')).status, 400, 'чужое имя не принимается');
-  assert.equal((await fetch(BASE + '/pdf/1700000000000-abcdef.pdf')).status, 404, 'несуществующий файл');
+  const after = await (await fetch(BASE + '/health')).json();
+  assert.equal(after.queue, before.queue + 1);
+  assert.equal(after.mail, before.mail + 1);
+});
+
+await t('хранилища файлов больше нет', async () => {
+  assert.equal((await fetch(BASE + '/pdf/1700000000000-abcdef.pdf')).status, 404);
 });
 
 await t('счетчик блога: до порога числа не отдаются', async () => {

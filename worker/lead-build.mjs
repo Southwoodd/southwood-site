@@ -21,7 +21,11 @@ export function encWord(x) { // заголовок с кириллицей ку�
   return out.map((p) => `=?UTF-8?B?${b64(p)}?=`).join('\r\n ');
 }
 
-// Все поля формы по строкам. Для калькулятора и подбора расчет приходит файлом PDF, без него составом в тексте.
+const LINK = 'Открыть расчет на сайте';
+
+// Все поля формы по строкам.
+// Письмо всегда получает расчет составом: файл уходит только в Telegram, нигде не хранится.
+// Для Telegram готовятся два вида текста: с файлом (состав не дублируем) и без него, на случай сбоя отправки.
 export function build(b) {
   if (b.consent !== true) return { error: 'consent' };
   if (b.website) return { spam: true };
@@ -32,8 +36,9 @@ export function build(b) {
     const lines = ['Сообщение с сайта', '', `Сообщение: ${msg}`, '', `Ответить через: ${VIA[via] || via}`, `Контакт: ${contact}`];
     if (name) lines.push(`Имя: ${name}`);
     if (page) lines.push(`Страница: ${page}`);
+    const text = lines.join('\n'), html = esc(text);
     return { subj: `Сообщение с сайта${name ? `: ${name}` : ''}`.slice(0, 120), reply: via === 'email' && EMAIL.test(contact) ? contact : '',
-      text: lines.join('\n'), html: esc(lines.join('\n')), n: lines.join('\n').length };
+      text, html, n: text.length, htmlPlain: html, nPlain: text.length, pdf: null };
   }
   const name = clean(b.name, 80), company = clean(b.company, 120), phone = clean(b.phone, 24), task = clean(b.task, 1500), via = clean(b.via, 12);
   const labels = Array.isArray(b.needLabels) ? b.needLabels.slice(0, 12).map((x) => clean(x, 40)) : [];
@@ -47,19 +52,24 @@ export function build(b) {
     calc = { title: clean(b.calc.title, 60), text: clean(b.calc.text, 2000), link: /^https:\/\/southwood\.pw\/\S*$/.test(link) && link.length <= 2500 ? link : '' };
     if (typeof b.pdf === 'string' && b.pdf.length < 700_000) { const buf = unb64(b.pdf); if (buf.length > 1000 && new TextDecoder().decode(buf.subarray(0, 5)) === '%PDF-') pdf = buf; }
   }
-  const lines = [`Заявка с сайта${ctx ? `, ${source(ctx)}` : ''}`, '', `Имя: ${name}`, `Компания: ${company}`, `Телефон: ${phone}`, `Связаться: ${VIA[via] || via}`, `Нужно: ${labels.join(', ')}`];
-  if (deadline) lines.push(`Нужно к дате: ${deadline}`);
-  if (task) lines.push(`Комментарий: ${task}`);
-  if (calc) {
-    lines.push('', `Расчет: ${calc.title || 'без суммы'}${pdf ? ', PDF отдельной ссылкой' : ''}`);
-    if (!pdf && calc.text) lines.push(calc.text);
-  }
-  if (page) lines.push('', `Страница: ${page}`);
-  // В Telegram ссылка на расчет уходит словами, в письме адресом
-  const LINK = 'Открыть расчет на сайте';
-  const tgText = lines.join('\n') + (calc?.link ? `\n\n${LINK}` : '');
-  const html = esc(lines.join('\n')) + (calc?.link ? `\n\n<a href="${esc(calc.link)}">${LINK}</a>` : '');
-  if (calc?.link) lines.push('', `${LINK}: ${calc.link}`);
-  return { subj: `Заявка с сайта: ${name}, ${company}`.slice(0, 120), reply: '', text: lines.join('\n'), html, n: tgText.length,
-    pdf, cap: `Расчет к заявке: ${name}, ${company}`.slice(0, 200) };
+  const head = [`Заявка с сайта${ctx ? `, ${source(ctx)}` : ''}`, '', `Имя: ${name}`, `Компания: ${company}`, `Телефон: ${phone}`, `Связаться: ${VIA[via] || via}`, `Нужно: ${labels.join(', ')}`];
+  if (deadline) head.push(`Нужно к дате: ${deadline}`);
+  if (task) head.push(`Комментарий: ${task}`);
+  // Состав расчета. В Telegram с файлом его не повторяем, в письме он есть всегда.
+  const title = calc ? `Расчет: ${calc.title || 'без суммы'}` : '';
+  const whole = calc ? ['', title, ...(calc.text ? [calc.text] : [])] : [];
+  const brief = calc ? ['', `${title}${pdf ? ', PDF во вложении' : ''}`, ...(!pdf && calc.text ? [calc.text] : [])] : [];
+  const tail = page ? ['', `Страница: ${page}`] : [];
+
+  const mail = [...head, ...whole, ...tail].join('\n') + (calc?.link ? `\n\n${LINK}: ${calc.link}` : '');
+  const tg = [...head, ...brief, ...tail].join('\n');
+  const tgPlain = [...head, ...whole, ...tail].join('\n');
+  const withLink = (s) => esc(s) + (calc?.link ? `\n\n<a href="${esc(calc.link)}">${LINK}</a>` : '');
+  const lenWithLink = (s) => s.length + (calc?.link ? LINK.length + 2 : 0);
+
+  return { subj: `Заявка с сайта: ${name}, ${company}`.slice(0, 120), reply: '',
+    text: mail, html: withLink(tg), n: lenWithLink(tg), htmlPlain: withLink(tgPlain), nPlain: lenWithLink(tgPlain),
+    pdf, cap: `Расчет к заявке: ${name}, ${company}`.slice(0, 200),
+    // Если текст уже ушел, а файл не дошел: отдельным сообщением только состав расчета.
+    calcHtml: calc ? esc([title, ...(calc.text ? [calc.text] : [])].join('\n')) : '' };
 }

@@ -1,6 +1,7 @@
 // Прием заявок с сайта на Cloudflare Workers. Без зависимостей.
-// Порядок: проверка → отправка в Telegram и копия на почту. Сами заявки нигде не хранятся.
-// PDF расчета живет в R2 отведенный срок: в Telegram уходит вложением, в письме ссылкой.
+// Порядок: проверка → отправка в Telegram и копия на почту. Ничего не хранится.
+// PDF расчета собирается в браузере посетителя и уходит в Telegram вложением прямо из памяти.
+// В письмо идет состав расчета текстом и ссылка: по ней расчет открывается на сайте таким же, с кнопкой скачать PDF.
 // Если канал недоступен, заявка ждет в своей очереди в D1 и уходит по расписанию.
 import { connect } from 'cloudflare:sockets';
 import { build, b64, encWord, list, num } from './lead-build.mjs';
@@ -18,28 +19,21 @@ async function tgCall(env, method, make, ms) {
 const tgMsg = (env, text, html) => tgCall(env, 'sendMessage', (chat) => ({ headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ chat_id: chat, text: text.slice(0, 4000), disable_web_page_preview: true, ...(html ? { parse_mode: 'HTML' } : {}) }) }), 8000);
 const PDF_NAME = () => `raschet-southwood-${new Date().toISOString().slice(0, 10)}.pdf`;
-// Имя файла в R2. Ровно шесть знаков: короче нельзя, иначе ссылка из письма не пройдет проверку ниже.
-const KEY = /^\d+-[0-9a-f]{6}\.pdf$/;
-const newKey = () => `${Date.now()}-${Array.from(crypto.getRandomValues(new Uint8Array(3)), (b) => b.toString(16).padStart(2, '0')).join('')}.pdf`;
-async function tgDoc(env, file, cap, html) {
-  const obj = await env.PDFS.get(file);
-  if (!obj) throw new Error('pdf is gone'); // файл убрали по срокам, дублировать текст незачем
-  const bytes = await obj.arrayBuffer();
-  return tgCall(env, 'sendDocument', (chat) => {
-    const fd = new FormData(); fd.set('chat_id', chat); fd.set('caption', cap); if (html) fd.set('parse_mode', 'HTML');
-    fd.set('document', new Blob([bytes], { type: 'application/pdf' }), PDF_NAME());
-    return { body: fd };
-  }, 20000);
-}
+const tgDoc = (env, bytes, cap, html) => tgCall(env, 'sendDocument', (chat) => {
+  const fd = new FormData(); fd.set('chat_id', chat); fd.set('caption', cap); if (html) fd.set('parse_mode', 'HTML');
+  fd.set('document', new Blob([bytes], { type: 'application/pdf' }), PDF_NAME());
+  return { body: fd };
+}, 20000);
+
 // Одна заявка в Telegram. С расчетом: файл с подписью из всех полей. Если подпись длиннее лимита, текст и файл отдельно.
-// При сбое на файле после ушедшего текста в ошибке лежит остаток, чтобы текст не дублировался.
+// Элемент из очереди файла уже не несет: вместо него там состав расчета текстом.
 async function tgItem(env, it) {
   if (typeof it === 'string') return tgMsg(env, it);
-  const file = it.doc && (await env.PDFS.head(it.doc)) ? it.doc : '';
-  if (!it.h) { if (file) await tgDoc(env, file, it.cap || ''); return; }
-  if (file && it.n <= 1000) return tgDoc(env, file, it.h, true);
+  if (!it.pdf) return tgMsg(env, it.h, true);
+  if (it.n <= 1000) return tgDoc(env, it.pdf, it.h, true);
   await tgMsg(env, it.h, true);
-  if (file) try { await tgDoc(env, file, it.cap || ''); } catch (e) { e.rest = { doc: file, cap: it.cap }; throw e; }
+  // Текст уже ушел: пометка нужна, чтобы при сбое на файле не продублировать его в очереди.
+  try { await tgDoc(env, it.pdf, it.cap || ''); } catch (e) { e.sent = true; throw e; }
 }
 
 // Почта: SMTP поверх TLS (порт 465), вход по логину и паролю приложения. Порт 25 из воркера закрыт, 465 разрешен.
@@ -80,30 +74,16 @@ async function drain(env, kind, send) {
   for (;;) {
     const row = await env.DB.prepare('select id, body from queue where kind = ?1 order by id limit 1').bind(kind).first();
     if (!row) return;
-    try { await send(JSON.parse(row.body)); } catch (e) {
-      console.error(kind + ' queue:', e.message);
-      if (e.rest) await env.DB.prepare('update queue set body = ?2 where id = ?1').bind(row.id, JSON.stringify(e.rest)).run();
-      return; // следующая попытка по расписанию, порядок не рвем
-    }
+    try { await send(JSON.parse(row.body)); } catch (e) { console.error(kind + ' queue:', e.message); return; } // следующая попытка по расписанию, порядок не рвем
     await env.DB.prepare('delete from queue where id = ?1').bind(row.id).run();
   }
 }
 
-// Уборка: старые файлы расчетов, отметки посетителей и записи о частоте.
-async function sweep(env) {
-  const limit = Date.now() - num(env.KEEP_DAYS, 30) * 864e5, day = Date.now() - 864e5;
-  await env.DB.batch([
-    env.DB.prepare('delete from seen where at < ?1').bind(day),
-    env.DB.prepare('delete from hits where at < ?1').bind(day),
-  ]);
-  let cursor;
-  do {
-    const page = await env.PDFS.list({ cursor, limit: 500 });
-    const old = page.objects.filter((o) => o.uploaded.getTime() < limit).map((o) => o.key);
-    if (old.length) await env.PDFS.delete(old);
-    cursor = page.truncated ? page.cursor : undefined;
-  } while (cursor);
-}
+// Уборка: отметки посетителей и записи о частоте живут сутки.
+const sweep = (env) => env.DB.batch([
+  env.DB.prepare('delete from seen where at < ?1').bind(Date.now() - 864e5),
+  env.DB.prepare('delete from hits where at < ?1').bind(Date.now() - 864e5),
+]);
 
 // Заявки с одного адреса: не больше шести за десять минут.
 async function limited(env, ip) {
@@ -150,15 +130,6 @@ export default {
       return send(200, { ok: true, queue: by.tg || 0, mail: by.mail || 0 });
     }
 
-    // Файл расчета по ссылке из письма
-    if (url.pathname.startsWith('/pdf/')) {
-      const key = url.pathname.slice(5);
-      if (!KEY.test(key)) return send(400, { ok: false });
-      const obj = await env.PDFS.get(key);
-      if (!obj) return send(404, { ok: false, error: 'gone' });
-      return new Response(obj.body, { headers: { 'Content-Type': 'application/pdf', 'Content-Disposition': `inline; filename="${PDF_NAME()}"`, 'Cache-Control': 'private, max-age=600' } });
-    }
-
     if (url.pathname === '/stat') {
       if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: { ...cors, 'Access-Control-Allow-Methods': 'GET, POST', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Max-Age': '86400' } });
       if (req.method === 'GET') { const p = url.searchParams.get('p') || ''; return SLUG.test(p) ? send(200, await statOut(env, p)) : send(400, { ok: false }); }
@@ -186,19 +157,15 @@ export default {
     if (r.spam) return send(200, { ok: true });
     if (r.error) return send(422, { ok: false, error: r.error });
 
-    // Файл расчета нужен и Telegram, и письму, поэтому кладем его до отправки.
-    let file = '', text = r.text;
-    if (r.pdf) {
-      file = newKey();
-      try {
-        await env.PDFS.put(file, r.pdf, { httpMetadata: { contentType: 'application/pdf' } });
-        text += `\n\nРасчет файлом: ${(env.PUBLIC_BASE || '').replace(/\/$/, '')}/pdf/${file}`;
-      } catch (e) { console.error('r2:', e.message); file = ''; }
-    }
-    const m = { s: r.subj, t: text, r: r.reply };
-    const item = { h: r.html, n: r.n, ...(file ? { doc: file, cap: r.cap } : {}) };
     // Если канал не ответил, заявка уйдет из очереди позже, посетителю это не мешает.
-    const viaTg = async () => { try { await tgItem(env, item); } catch (e) { console.error('telegram:', e.message); await push(env, 'tg', e.rest || item); } };
+    // В очередь кладем вид без файла: байты PDF нигде не хранятся, состав расчета в тексте есть.
+    const viaTg = async () => {
+      try { await tgItem(env, { h: r.html, n: r.n, cap: r.cap, pdf: r.pdf }); } catch (e) {
+        console.error('telegram:', e.message);
+        await push(env, 'tg', e.sent ? { h: r.calcHtml, n: r.calcHtml.length } : { h: r.htmlPlain, n: r.nPlain });
+      }
+    };
+    const m = { s: r.subj, t: r.text, r: r.reply };
     const viaMail = async () => { try { await mail(env, m); } catch (e) { console.error('mail:', e.message); await push(env, 'mail', m); } };
     await Promise.all([viaTg(), viaMail()]);
     return send(200, { ok: true });
