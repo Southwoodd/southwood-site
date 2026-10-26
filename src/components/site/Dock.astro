@@ -139,7 +139,7 @@ const on = (href: string) => (path === href || (href !== '/' && path.startsWith(
     .dock__write:hover :global(.arrow){transform:translate(.2rem,-.2rem)}
 
     .dock__body{position:relative;height:0;overflow:hidden;transition:height .5s var(--ease)}
-    .is-open .dock__body{height:min(62.4rem,calc(100vh - 12rem))}
+    .is-open .dock__body{height:min(70rem,calc(100vh - 12rem))}
     .dock__in{position:absolute;top:0;bottom:.8rem;left:50%;width:min(116.4rem,calc(100vw - 5.6rem));transform:translateX(-50%);overflow-y:auto;scrollbar-width:none;
       display:grid;grid-template-columns:47rem 1fr 1fr 1fr 1fr;grid-template-rows:minmax(34rem,1fr) 8.4rem 9.6rem;gap:.8rem;opacity:0;transition:opacity .25s var(--ease)}
     .is-open .dock__in{opacity:1;transition-delay:.18s}
@@ -150,7 +150,7 @@ const on = (href: string) => (path === href || (href !== '/' && path.startsWith(
     .dk-srv__top{display:flex;justify-content:space-between;align-items:center;padding-bottom:2.4rem}
     .dk-srv__top b{font-size:2.8rem;line-height:1;font-weight:500;letter-spacing:-.03em}
     .dk-srv__top a{display:flex;align-items:center;gap:.8rem;font-size:max(1.5rem,12px);font-weight:500;color:var(--deep)}
-    .dk-srv ul{flex:1;display:flex;flex-direction:column}
+    .dk-srv ul{flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin;display:flex;flex-direction:column}
     .dk-srv li{flex:1;border-top:1px solid #e6e6e6;display:flex}
     .dk-srv li a{flex:1;display:flex;align-items:center;justify-content:space-between;gap:1.2rem;font-size:max(1.8rem,14px);font-weight:500;min-height:4rem}
     .dk-srv li a:hover,.dk-srv a[aria-current]{color:var(--deep)}
