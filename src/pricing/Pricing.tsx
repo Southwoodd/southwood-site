@@ -222,7 +222,7 @@ export default function Pricing() {
         <Opt on={!s.urgent} title="Обычно" desc="Работаю в спокойном темпе, этапы по графику" sum={s.urgent ? 'без наценки' : c.weeks} onClick={() => up({ urgent: false })} />
         <Opt on={s.urgent} title="Срочно" desc="Нужно еще вчера: сроки вдвое короче, работаю в приоритете" sum="× 2 к цене" onClick={() => up({ urgent: true })} />
       </div></div>
-      <div class="pr-param"><span class="pr-label">После запуска</span><div class="pr-opts pr-opts--4">
+      <div class="pr-param"><span class="pr-label">После запуска</span><div class="pr-opts pr-opts--5">
         {AFTER.map((a) => <Opt on={s.after === a.v} title={a.l} desc={a.d} sum={a.p} onClick={() => up({ after: a.v })} />)}
       </div></div>
     </>),
@@ -410,7 +410,7 @@ export default function Pricing() {
               <p class="pr-calc__label"><span>Сроки</span><small>срочно: сроки вдвое короче, × 2 к цене</small></p>
               <Seg opts={['Обычно', 'Срочно × 2']} value={s.urgent ? 1 : 0} onChange={(i) => up({ urgent: i === 1 })} />
               <p class="pr-calc__label"><span>После запуска</span></p>
-              <div class="pr-opts pr-opts--4">{AFTER.map((a) => <Opt on={s.after === a.v} title={a.l} desc={a.d} sum={a.p} onClick={() => up({ after: a.v })} />)}</div>
+              <div class="pr-opts pr-opts--5">{AFTER.map((a) => <Opt on={s.after === a.v} title={a.l} desc={a.d} sum={a.p} onClick={() => up({ after: a.v })} />)}</div>
             </div>)}
         </div>
         {s.mode === 'calc' && <aside class="pr-aside">{summary()}</aside>}

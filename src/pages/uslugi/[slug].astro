@@ -1,5 +1,5 @@
 ---
-// Страница услуги. Один шаблон на все семь: цены и допы берутся из каталога калькулятора.
+// Страница услуги. Один шаблон на все: цены и допы берутся из каталога калькулятора.
 import Page from '../../layouts/Page.astro';
 import Crumbs from '../../components/site/Crumbs.astro';
 import Head from '../../components/ui/Head.astro';
@@ -32,7 +32,7 @@ import AutoFlow from '../../components/site/AutoFlow.astro';
       <Crumbs items={crumbs} />
       <h1>{s.h1.map((l) => <span>{nb(l)} </span>)}</h1>
       <p class="ph__lead">{nb(s.lead)}</p>
-      <ul class="ph__chips"><li>от {s.from} тыс. ₽</li>{s.chips.map((c) => <li>{c}</li>)}</ul>
+      <ul class="ph__chips"><li>от {s.from} тыс. ₽{s.fromUnit ? ` ${s.fromUnit}` : ''}</li>{s.chips.map((c) => <li>{c}</li>)}</ul>
       <div class="ph__cta">
         <a class="btn btn--deep" href={R_.calc} data-go="calc" data-goal="service_calc">Рассчитать стоимость<Arrow /></a>
         <button class="btn btn--grey" type="button" data-open="lead" data-chips={s.chipsForm} data-context={`service:${s.slug}`}>Бесплатная консультация<Arrow /></button>
@@ -56,7 +56,7 @@ import AutoFlow from '../../components/site/AutoFlow.astro';
 
   <section class="section sec" id="prices">
     <Head badge="Prices" icon="shield" intro={s.kindsIntro} title={s.kindsTitle} />
-    <ul class="kinds">
+    <ul class:list={['kinds', { 'kinds--4': s.kinds.length === 4 }]}>
       {s.kinds.map((k, i) => (
         <li class:list={{ hot: k.hot }} data-reveal style={`--d:${i * 80}ms`}>
           <h3>{k.title}</h3>
@@ -68,7 +68,7 @@ import AutoFlow from '../../components/site/AutoFlow.astro';
     </ul>
     <h3 class="sec__h3">Можно добавить</h3>
     <ul class="pills">{s.addons.map((a) => <li>{addonLabel(a)}</li>)}{(s.extra || []).map((e) => <li>{e}</li>)}</ul>
-    <p class="sec__calc"><a class="btn btn--ink" href={R_.calc} data-go="calc">Собрать в калькуляторе<Arrow /></a><span>{nb('Цены для компании до 50 человек. Точную сумму фиксирую в договоре после брифа на 30–45 минут.')}</span></p>
+    <p class="sec__calc"><a class="btn btn--ink" href={R_.calc} data-go="calc">Собрать в калькуляторе<Arrow /></a><span>{nb(s.calcNote || 'Цены для компании до 50 человек. Точную сумму фиксирую в договоре после брифа на 30–45 минут.')}</span></p>
   </section>
 
   {s.mult && (

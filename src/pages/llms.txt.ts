@@ -18,7 +18,7 @@ export const GET: APIRoute = () => {
   L.push('## Коротко', '');
   L.push(`- Сайт: ${U}`, `- Кому подходит: малый и средний бизнес, учреждения, эксперты. Тем, кому нужны сайт, CRM и боты как одна система, а не от трех разных подрядчиков.`, `- Где работает: ${about.place}.`, `- Формат: фиксированная смета, оплата частями 30% / 40% / 30%, возможна рассрочка без банка.`, `- Сроки: набор из сайта, CRM и бота занимает 2–3 недели.`, `- Контакты: Telegram ${site.telegram}, почта ${site.email}.`, '');
   L.push('## Страницы сайта', '');
-  L.push(`- [Услуги](${U}uslugi/): все направления`, ...SERVICES.map((x) => `- [${x.menu}](${U.slice(0, -1)}${serviceHref(x.slug)}): от ${x.from} тыс. ₽. ${clean(x.card)}`));
+  L.push(`- [Услуги](${U}uslugi/): все направления`, ...SERVICES.map((x) => `- [${x.menu}](${U.slice(0, -1)}${serviceHref(x.slug)}): от ${x.from} тыс. ₽${x.fromUnit ? ' ' + x.fromUnit : ''}. ${clean(x.card)}`));
   L.push(`- [Кому подходит](${U}dlya/): решения под отрасль`, ...INDUSTRIES.map((x) => `- [${x.menu}](${U.slice(0, -1)}${industryHref(x.slug)}): от ${x.from} тыс. ₽. ${clean(x.card)}`));
   L.push(`- [Цены и калькулятор](${U}ceny/): готовые наборы и расчет суммы`, `- [Кейсы](${U}kejsy/): ${CASES.length} работ со страницей у каждой`, `- [Обо мне](${U}obo-mne/): кто делает, как устроена работа, ответы на вопросы`, `- [Контакты](${U}kontakty/)`, `- [Бизнес в Катаре](${U}katar/)`, '');
   if (LIVE_POSTS.length) L.push('## Блог', '', ...LIVE_POSTS.map((p) => `- [${p.title}](${U}blog/${p.slug}/): ${p.description}`), '');

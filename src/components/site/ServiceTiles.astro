@@ -1,5 +1,5 @@
 ---
-// Плитка услуг: семь страниц услуг с ценой от и зеленая карточка со всеми ценами.
+// Плитка услуг: страницы услуг с ценой от и зеленая карточка со всеми ценами.
 import Head from '../ui/Head.astro';
 import Arrow from './Arrow.astro';
 import { nb } from '../../i18n/ru';
@@ -8,14 +8,14 @@ interface Props { head?: boolean; all?: 'services' | 'prices' }
 const { head = true, all = 'services' } = Astro.props;
 ---
 <section class="section sec stl" id="services">
-  {head && <Head badge="Services" icon="flash" intro="Семь направлений, у каждого своя страница с ценами, сроками и примерами." title={['Услуги под ключ:', 'от сайта до автоматизации']} />}
+  {head && <Head badge="Services" icon="flash" intro="У каждого направления своя страница с ценами, сроками и примерами." title={['Услуги под ключ:', 'от сайта до автоматизации']} />}
   <ul class:list={['stl__grid', { 'stl__grid--top': !head }]}>
     {SERVICES.map((s, i) => (
       <li data-reveal style={`--d:${(i % 4) * 70}ms`}>
         <a href={serviceHref(s.slug)}>
           <span class="stl__top"><h3>{s.menu}</h3><Arrow /></span>
           <p>{nb(s.card)}</p>
-          <b>от {s.from} тыс. ₽</b>
+          <b>от {s.from} тыс. ₽{s.fromUnit ? ` ${s.fromUnit}` : ''}</b>
         </a>
       </li>
     ))}
