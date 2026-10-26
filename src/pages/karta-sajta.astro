@@ -1,0 +1,83 @@
+---
+// Карта сайта для людей: все страницы одним списком. Берется из тех же данных, что и меню, поэтому обновляется сама.
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/site/PageHero.astro';
+import { SERVICES, serviceHref, CASES, R_ } from '../i18n/routes';
+import { INDUSTRIES, industryHref } from '../i18n/industries';
+import { LIVE_POSTS, BLOG_LIVE } from '../i18n/blog';
+
+const crumbs = [{ label: 'Карта сайта' }];
+const main = [
+  { href: R_.home, label: 'Главная', note: 'Коротко обо всем: услуги, кейсы, цены' },
+  { href: R_.services, label: 'Услуги', note: 'Все направления с ценами и сроками' },
+  { href: R_.prices, label: 'Цены и калькулятор', note: 'Готовые наборы и расчет за 2 минуты' },
+  { href: R_.cases, label: 'Кейсы', note: `${CASES.length} работ с цифрами и ссылками` },
+  { href: '/dlya/', label: 'Кому подходит', note: 'Решения под отрасль' },
+  { href: R_.about, label: 'Обо мне', note: 'Кто делает задачу, как идет работа, гарантии' },
+  ...(BLOG_LIVE ? [{ href: R_.blog, label: 'Блог', note: 'Разборы, инструкции и цены' }] : []),
+  { href: R_.qatar, label: 'Бизнес в Катаре', note: 'Инвестиции и регистрация компаний' },
+  { href: R_.contacts, label: 'Контакты', note: 'Telegram, MAX, почта' },
+];
+const legal = [
+  { href: '/privacy/', label: 'Политика обработки персональных данных' },
+  { href: '/consent/', label: 'Согласие на обработку персональных данных' },
+];
+const ld = [{
+  '@type': 'ItemList', name: 'Карта сайта',
+  itemListElement: [...main, ...SERVICES.map((s) => ({ href: serviceHref(s.slug), label: s.menu }))].map((l, i) => ({ '@type': 'ListItem', position: i + 1, url: 'https://southwood.pw' + l.href, name: l.label })),
+}];
+---
+<Page title="Карта сайта | Сергей Воробьев" description="Все страницы сайта southwood.pw одним списком: услуги с ценами, отрасли, кейсы, статьи блога и контакты." path="/karta-sajta/" label="Карта сайта" crumbs={crumbs} ld={ld}>
+  <PageHero crumbs={crumbs} title={['Карта сайта']} lead="Все страницы одним списком. Если ищете что-то конкретное, отсюда быстрее, чем через меню." />
+
+  <section class="section sec map">
+    <div class="map__grid">
+      <nav class="map__col" aria-label="Разделы">
+        <h2>Разделы</h2>
+        <ul>{main.map((l) => <li><a href={l.href}><span>{l.label}</span><small>{l.note}</small></a></li>)}</ul>
+      </nav>
+
+      <nav class="map__col" aria-label="Услуги">
+        <h2>Услуги</h2>
+        <ul>{SERVICES.map((s) => <li><a href={serviceHref(s.slug)}><span>{s.menu}</span><small>от {s.from} тыс. ₽{s.fromUnit ? ` ${s.fromUnit}` : ''}</small></a></li>)}</ul>
+        <h2 class="map__h2--second">Кому подходит</h2>
+        <ul>{INDUSTRIES.map((n) => <li><a href={industryHref(n.slug)}><span>{n.menu}</span><small>от {n.from} тыс. ₽</small></a></li>)}</ul>
+      </nav>
+
+      <nav class="map__col" aria-label="Кейсы">
+        <h2>Кейсы</h2>
+        <ul>{CASES.map((c) => <li><a href={c.href}><span>{c.name}</span></a></li>)}</ul>
+      </nav>
+
+      <nav class="map__col" aria-label="Блог и документы">
+        {BLOG_LIVE && (
+          <>
+            <h2>Блог</h2>
+            <ul>{LIVE_POSTS.map((p) => <li><a href={`/blog/${p.slug}/`}><span>{p.title}</span></a></li>)}</ul>
+          </>
+        )}
+        <h2 class="map__h2--second">Документы</h2>
+        <ul>{legal.map((l) => <li><a href={l.href}><span>{l.label}</span></a></li>)}</ul>
+      </nav>
+    </div>
+  </section>
+</Page>
+
+<style>
+  .map{padding-top:5.6rem;padding-bottom:5.6rem}
+  .map__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:3.2rem}
+  .map h2{font-size:2.4rem;font-weight:500;letter-spacing:-.02em}
+  .map__h2--second{margin-top:4rem}
+  .map ul{margin-top:1.6rem;display:grid;gap:.4rem}
+  .map a{display:block;padding:1rem 1.4rem;margin-left:-1.4rem;border-radius:1.4rem;transition:background-color .2s var(--ease)}
+  .map a:hover{background:var(--card)}
+  .map a span{display:block;font-size:max(1.7rem,14px);font-weight:500;line-height:1.3}
+  .map a small{display:block;margin-top:.2rem;font-size:max(1.5rem,13px);line-height:1.3;color:var(--muted)}
+  @media (max-width:1023px){
+    .map{padding-top:32px;padding-bottom:32px}
+    .map__grid{grid-template-columns:1fr;gap:28px}
+    .map h2{font-size:20px}.map__h2--second{margin-top:24px}
+    .map ul{margin-top:10px;gap:2px}
+    .map a{padding:8px 12px;margin-left:-12px;border-radius:12px}
+  }
+</style>
