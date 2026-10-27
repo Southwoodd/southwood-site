@@ -98,7 +98,9 @@ const GROUPS: Group[] = [
 </section>
 
 <style>
-  .tls{padding-top:5.6rem;padding-bottom:5.6rem}
+  /* Поля те же, что у соседних секций на главной: без них карточки
+     упирались в край подложки, а бейдж уезжал за скругление */
+  .tls{padding:10rem 4rem}
   .tls__grid{margin-top:5.6rem;padding:0;list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
   .tls__grid > li{background:var(--card);border-radius:2.4rem;padding:3.2rem;display:flex;flex-direction:column}
   /* Если последняя карточка осталась одна в ряду - растягиваем ее на всю ширину.
@@ -113,7 +115,7 @@ const GROUPS: Group[] = [
   .tls__foot{margin-top:2rem;padding:2.4rem 3.2rem;border-radius:2.4rem;background:var(--mint);font-size:max(1.7rem,14px);line-height:1.45}
 
   @media (max-width:1023px){
-    .tls{padding-top:32px;padding-bottom:32px}
+    .tls{padding:56px 12px 12px}
     .tls__grid{grid-template-columns:1fr;gap:8px;margin-top:24px}
     .tls__grid > li{border-radius:16px;padding:18px}
     .tls__grid h3{font-size:16px}
