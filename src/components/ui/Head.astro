@@ -1,8 +1,10 @@
 ---
 // Шапка блока: плашка слева, вводный текст и заголовок справа. На телефоне плашка, заголовок, текст.
 import Badge from './Badge.astro';
+import badges from '../../icons/badge.json';
 import { nb } from '../../i18n/ru';
-interface Props { badge: string; icon?: any; intro: string; title: string[] }
+// Имя иконки сверяем с набором: при any опечатка проходила молча, Badge рисовал пустой svg
+interface Props { badge: string; icon?: keyof typeof badges; intro: string; title: string[] }
 const { badge, icon, intro, title } = Astro.props;
 ---
 <div class="head">
