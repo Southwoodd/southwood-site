@@ -1,0 +1,325 @@
+---
+// Карусель роликов: карточки стоят по дуге, центральная развернута к зрителю,
+// соседние уходят вбок и вглубь. Без мокапов устройств - в кадре только сам ролик.
+//
+// Раскладка считается в JS и отдается в CSS переменными, поэтому сам переход
+// остается на стороне браузера: его видно в devtools и он сам замирает,
+// когда человек просил не анимировать.
+//
+// Без JS карточки остаются обычной лентой с прокруткой - смотреть можно все равно.
+import Head from '../ui/Head.astro';
+import { nb } from '../../i18n/ru';
+interface Vid { file: string; title: string; note: string; dur: string; wide?: boolean }
+const { videos } = Astro.props as { videos: Vid[] };
+// Центром открываем вертикальный ролик: ради них сюда и приходят
+const start = Math.max(0, videos.findIndex((v) => !v.wide));
+---
+
+<section class="section sec vids" id="raboty">
+  <Head
+    badge="Works"
+    icon="flash"
+    intro="Ролики смонтированы из материала, который сняли сами заказчики. Листайте вбок, а чтобы посмотреть со звуком, нажмите на центральный."
+    title={['Примеры работ']}
+  />
+
+  <div class="vc" data-vc data-start={start}>
+    <div class="vc__stage">
+      <ul class="vc__track" data-vc-track>
+        {videos.map((v, i) => (
+          <li
+            class:list={['vc__slide', { 'vc__slide--wide': v.wide }]}
+            data-vc-slide
+            data-i={i}
+            data-title={v.title}
+            data-note={nb(v.note)}
+          >
+            <button type="button" class="vids__play" data-vid aria-label={`Смотреть ролик ${v.title}`}>
+              <video src={`/video/${v.file}.mp4`} poster={`/video/poster/${v.file}.webp`} preload="none" playsinline loop muted></video>
+              <i aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg></i>
+              <span class="vids__dur">{v.dur}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <button type="button" class="vc__nav vc__nav--prev" data-vc-prev aria-label="Предыдущий ролик" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <button type="button" class="vc__nav vc__nav--next" data-vc-next aria-label="Следующий ролик" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+
+    <div class="vc__cap">
+      <h3 data-vc-title>{videos[start].title}</h3>
+      <p data-vc-note>{nb(videos[start].note)}</p>
+    </div>
+
+    <ol class="vc__dots" data-vc-dots hidden>
+      {videos.map((v, i) => (
+        <li><button type="button" data-vc-dot={i} aria-label={`Ролик ${i + 1}: ${v.title}`}></button></li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  /* Лента без JS: обычная прокрутка вбок с прилипанием */
+  .vc__track{display:flex;gap:2.4rem;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:1.2rem;list-style:none;margin:0}
+  .vc__slide{flex:none;width:28rem;scroll-snap-align:center}
+  .vc__slide--wide{width:49.8rem}
+
+  /* Сцена включается только когда JS разложил карточки по дуге */
+  .vc{position:relative;margin-top:5.6rem}
+  .vc.is-on .vc__stage{height:var(--vc-h);perspective:170rem;perspective-origin:50% 44%;overflow:hidden;touch-action:pan-y}
+  .vc.is-on .vc__track{display:block;overflow:visible;padding:0;position:relative;height:100%;transform-style:preserve-3d;cursor:grab}
+  .vc.is-on .vc__track.is-held{cursor:grabbing}
+  /* Колонка у всех карточек одинаковой ширины, пропорции внутри свои.
+     Иначе горизонтальный ролик при той же высоте становится втрое шире
+     вертикальных и ломает шаг дуги. */
+  .vc.is-on .vc__slide{
+    position:absolute;left:50%;top:50%;width:var(--vc-w);height:auto;
+    transform:translate(-50%,-50%) translate3d(var(--x,0px),0,var(--z,0px)) rotateY(var(--r,0deg)) scale(var(--s,1));
+    opacity:var(--o,1);z-index:var(--zi,1);
+    transition:transform .55s var(--ease),opacity .45s var(--ease);
+    will-change:transform
+  }
+  .vc.is-on .vc__slide[hidden]{display:block;visibility:hidden}
+
+  /* Карточка ролика */
+  .vids__play{position:relative;display:block;width:100%;height:auto;aspect-ratio:9/16;border-radius:2rem;overflow:hidden;background:#0d0f0e;cursor:pointer;border:0;padding:0}
+  .vc__slide--wide .vids__play{aspect-ratio:16/9}
+  .vids__play video{width:100%;height:100%;object-fit:cover;display:block}
+  .vids__play i{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:6.4rem;height:6.4rem;border-radius:50%;background:rgba(255,255,255,.92);color:var(--ink);display:grid;place-items:center;transition:transform .2s var(--ease),background-color .2s var(--ease),opacity .2s var(--ease)}
+  .vids__play i svg{width:2.8rem;height:2.8rem;margin-left:.2rem}
+  .vids__play:hover i{transform:translate(-50%,-50%) scale(1.06);background:#fff}
+  .vids__play.is-on i{opacity:0;pointer-events:none}
+  .vids__dur{position:absolute;right:1.2rem;top:1.2rem;padding:.4rem 1rem;border-radius:1rem;background:rgba(10,14,12,.6);backdrop-filter:blur(.6rem);color:#fff;font-size:max(1.4rem,12px);font-weight:500;transition:opacity .2s var(--ease)}
+  .vids__play.is-on .vids__dur{opacity:0}
+  /* Боковые карточки притушены и не ловят клик по кнопке - по ним просто переходят в центр */
+  .vc.is-on .vc__slide:not(.is-active) .vids__play{cursor:pointer}
+  .vc.is-on .vc__slide:not(.is-active) .vids__play i{opacity:0}
+  .vc.is-on .vc__slide:not(.is-active) .vids__play::after{content:'';position:absolute;inset:0;background:rgba(243,246,242,.34);transition:opacity .45s var(--ease)}
+  .vc.is-on .vc__slide.is-active .vids__play::after{opacity:0}
+
+  /* Стрелки */
+  .vc__nav{position:absolute;top:calc(var(--vc-h) / 2);transform:translateY(-50%);width:5.6rem;height:5.6rem;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);display:grid;place-items:center;cursor:pointer;z-index:200;transition:background-color .2s var(--ease),border-color .2s var(--ease)}
+  .vc__nav:hover{background:var(--mint);border-color:var(--accent)}
+  .vc__nav svg{width:2.4rem;height:2.4rem}
+  .vc__nav--prev{left:1.6rem}
+  .vc__nav--next{right:1.6rem}
+  .vc__nav[disabled]{opacity:.35;cursor:default}
+  .vc__nav[disabled]:hover{background:var(--surface);border-color:var(--line)}
+
+  /* Подпись под каруселью */
+  .vc__cap{margin-top:3.2rem;text-align:center;min-height:9rem}
+  .vc__cap h3{font-size:max(2.4rem,17px);font-weight:500;letter-spacing:-.02em}
+  .vc__cap p{margin-top:.8rem;font-size:max(1.7rem,14px);line-height:1.45;color:var(--muted);max-width:62rem;margin-left:auto;margin-right:auto}
+
+  /* Точки */
+  .vc__dots{margin:2.4rem 0 0;padding:0;list-style:none;display:flex;justify-content:center;gap:.8rem}
+  .vc__dots button{width:.8rem;height:.8rem;padding:0;border:0;border-radius:50%;background:var(--line);cursor:pointer;transition:background-color .3s var(--ease),transform .3s var(--ease)}
+  .vc__dots button[aria-current='true']{background:var(--deep);transform:scale(1.4)}
+
+  @media (max-width:1023px){
+    .vc{margin-top:24px}
+    .vc__track{gap:12px}
+    .vc__slide{width:62vw}
+    .vc__slide--wide{width:86vw}
+    .vids__play{border-radius:14px}
+    .vids__play i{width:44px;height:44px}
+    .vids__play i svg{width:20px;height:20px}
+    .vc__nav{width:40px;height:40px}
+    .vc__nav svg{width:18px;height:18px}
+    .vc__nav--prev{left:4px}
+    .vc__nav--next{right:4px}
+    .vc__cap{margin-top:18px;min-height:76px}
+    .vc__cap h3{font-size:17px}
+    .vc__cap p{font-size:14px;padding:0 8px}
+    .vc__dots{margin-top:14px}
+    .vc__dots button{width:6px;height:6px}
+  }
+
+  /* Просили не анимировать - карточки просто встают на места */
+  @media (prefers-reduced-motion:reduce){
+    .vc.is-on .vc__slide{transition:none}
+    .vc.is-on .vc__slide .vids__play::after{transition:none}
+  }
+</style>
+
+<script>
+  // Раскладка карусели. Шаг и глубина считаются от ширины центральной карточки,
+  // поэтому на телефоне и на большом экране дуга выглядит одинаково.
+  const ANGLE = 38;   // разворот соседней карточки, градусы
+  const DEPTH = 130;  // насколько каждая следующая уходит вглубь, пикселей
+  const STEP = 0.82;  // сдвиг вбок, доля ширины карточки
+  const SHOWN = 3;    // сколько карточек видно по каждую сторону от центра
+  const FADE = [1, 1, 0.7, 0.3]; // прозрачность по удалению от центра
+
+  document.querySelectorAll<HTMLElement>('[data-vc]').forEach((root) => {
+    const track = root.querySelector<HTMLElement>('[data-vc-track]');
+    const slides = [...root.querySelectorAll<HTMLElement>('[data-vc-slide]')];
+    if (!track || slides.length < 2) return;
+
+    const prev = root.querySelector<HTMLButtonElement>('[data-vc-prev]');
+    const next = root.querySelector<HTMLButtonElement>('[data-vc-next]');
+    const dots = root.querySelector<HTMLElement>('[data-vc-dots]');
+    const capT = root.querySelector<HTMLElement>('[data-vc-title]');
+    const capN = root.querySelector<HTMLElement>('[data-vc-note]');
+    const dotBtns = [...root.querySelectorAll<HTMLButtonElement>('[data-vc-dot]')];
+
+    let at = Math.min(slides.length - 1, Math.max(0, +(root.dataset.start || 0)));
+    // Состояние перетаскивания: dragged гасит клик, который браузер шлет после протяжки
+    let startX = 0, startAt = 0, held = false, dragged = false;
+
+    // Ширина карточки. Считаем и от ширины окна, и от высоты: карточка вертикальная,
+    // и на низком экране она упирается именно в высоту, а не в ширину.
+    const resize = () => {
+      const wide = window.innerWidth >= 1024;
+      const w = wide
+        ? Math.max(200, Math.min(window.innerWidth * 0.22, window.innerHeight * 0.42, 360))
+        : Math.max(150, Math.min(window.innerWidth * 0.54, window.innerHeight * 0.34));
+      const h = Math.round(w * (16 / 9));
+      root.style.setProperty('--vc-w', `${Math.round(w)}px`);
+      root.style.setProperty('--vc-h', `${h}px`);
+      return Math.round(w);
+    };
+
+    const stopAll = (except?: HTMLVideoElement) => {
+      root.querySelectorAll<HTMLVideoElement>('[data-vid] video').forEach((v) => {
+        if (v === except) return;
+        v.pause(); v.controls = false; v.parentElement?.classList.remove('is-on');
+      });
+    };
+
+    function layout() {
+      const base = resize(); // ширина колонки, одна на все карточки
+
+      const n = slides.length;
+      const shown = Math.min(SHOWN, Math.floor((n - 1) / 2));
+
+      slides.forEach((s, i) => {
+        // Кольцо: берем кратчайший путь до карточки, поэтому дуга всегда
+        // симметрична и у ленты нет начала и конца
+        let d = i - at;
+        if (d > n / 2) d -= n;
+        if (d < -n / 2) d += n;
+        const ad = Math.abs(d);
+        const far = ad > shown;
+
+        s.style.setProperty('--x', `${d * base * STEP}px`);
+        s.style.setProperty('--z', `${-ad * DEPTH}px`);
+        // Угол у всех боковых один и тот же: если его наращивать, дальние карточки
+        // встают ребром и превращаются в полоски
+        s.style.setProperty('--r', `${Math.sign(d) * ANGLE}deg`);
+        s.style.setProperty('--s', `${Math.max(0.6, 1 - ad * 0.07)}`);
+        s.style.setProperty('--o', far ? '0' : String(FADE[ad]));
+        s.style.setProperty('--zi', `${100 - ad}`);
+        s.classList.toggle('is-active', d === 0);
+        s.toggleAttribute('hidden', far);
+
+        const btn = s.querySelector<HTMLButtonElement>('[data-vid]');
+        // Из потока фокуса убираем все, кроме центральной: по Tab не должно уносить вбок
+        if (btn) btn.tabIndex = d === 0 ? 0 : -1;
+
+        // Соседям заранее даем подтянуть первый кадр, дальним - нет
+        const v = s.querySelector<HTMLVideoElement>('video');
+        if (v && ad <= 1 && v.preload === 'none') v.preload = 'metadata';
+      });
+
+      const cur = slides[at];
+      if (capT) capT.textContent = cur.dataset.title || '';
+      if (capN) capN.textContent = cur.dataset.note || '';
+      dotBtns.forEach((b, i) => b.setAttribute('aria-current', String(i === at)));
+    }
+
+    function go(to: number) {
+      const n = slides.length;
+      const idx = ((to % n) + n) % n; // кольцо: с последней уходим на первую
+      if (idx === at) return;
+      stopAll();
+      at = idx;
+      layout();
+    }
+
+    // Включить или остановить ролик центральной карточки
+    function toggle(s: HTMLElement) {
+      const btn = s.querySelector<HTMLButtonElement>('[data-vid]');
+      const v = s.querySelector<HTMLVideoElement>('video');
+      if (!btn || !v) return;
+      if (v.paused) {
+        stopAll(v);
+        v.muted = false; v.controls = true; btn.classList.add('is-on');
+        v.play().catch(() => { v.muted = true; v.play().catch(() => {}); });
+      } else {
+        v.pause(); v.controls = false; btn.classList.remove('is-on');
+      }
+    }
+
+    // Клик разбираем на всей сцене, а не на каждой кнопке. Карточки развернуты в
+    // пространстве, и браузер считает их область попадания по повернутому
+    // четырехугольнику: мимо узкой боковой карточки промахнуться слишком легко.
+    track.addEventListener('click', (e) => {
+      if (dragged) return;
+      const li = (e.target as HTMLElement).closest<HTMLElement>('[data-vc-slide]');
+      const i = li ? slides.indexOf(li) : -1;
+
+      // Мимо карточек - считаем это просьбой листнуть в ту сторону
+      if (i === -1) {
+        const r = track.getBoundingClientRect();
+        go(at + ((e as MouseEvent).clientX < r.left + r.width / 2 ? -1 : 1));
+        return;
+      }
+      if (i !== at) { go(i); return; }
+
+      // На играющем ролике показаны родные кнопки - не перехватываем их
+      const v = li!.querySelector<HTMLVideoElement>('video');
+      if (v?.controls && (e.target as HTMLElement).tagName === 'VIDEO') return;
+      toggle(li!);
+    });
+
+    prev?.addEventListener('click', () => go(at - 1));
+    next?.addEventListener('click', () => go(at + 1));
+    dotBtns.forEach((b, i) => b.addEventListener('click', () => go(i)));
+
+    // Стрелками с клавиатуры, когда карусель в фокусе
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); go(at - 1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); go(at + 1); }
+    });
+
+    // Перетаскивание мышью и пальцем
+    track.addEventListener('pointerdown', (e) => {
+      if ((e.target as HTMLElement).closest('video[controls]')) return;
+      held = true; dragged = false; startX = e.clientX; startAt = at;
+      track.classList.add('is-held');
+    });
+    track.addEventListener('pointermove', (e) => {
+      if (!held) return;
+      const base = parseFloat(getComputedStyle(root).getPropertyValue('--vc-w'));
+      const shift = Math.round((startX - e.clientX) / (base * STEP));
+      if (Math.abs(startX - e.clientX) > 6) dragged = true;
+      if (shift !== at - startAt) go(startAt + shift);
+    });
+    const release = () => {
+      if (!held) return;
+      held = false;
+      track.classList.remove('is-held');
+      // Клик приходит сразу после отпускания - даем ему увидеть флаг и погасить себя
+      setTimeout(() => { dragged = false; }, 0);
+    };
+    track.addEventListener('pointerup', release);
+    track.addEventListener('pointercancel', release);
+    track.addEventListener('pointerleave', release);
+
+    let tick = 0;
+    window.addEventListener('resize', () => { clearTimeout(tick); tick = window.setTimeout(layout, 120); });
+
+    root.classList.add('is-on');
+    prev?.removeAttribute('hidden');
+    next?.removeAttribute('hidden');
+    dots?.removeAttribute('hidden');
+    layout();
+  });
+</script>

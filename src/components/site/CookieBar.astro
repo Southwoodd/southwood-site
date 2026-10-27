@@ -35,11 +35,19 @@ import { cookies as c, METRIKA_ID } from '../../i18n/ru';
   @keyframes ck-in{from{opacity:0;transform:translateY(2rem)}}
   .ck p{font-size:max(1.5rem,14px);line-height:1.45}
   .ck a{color:var(--deep);text-decoration:underline;text-underline-offset:.3rem;white-space:nowrap}
-  .ck div{display:flex;gap:.8rem}
-  .ck .btn{flex:1;height:4.8rem;font-size:max(1.5rem,14px)}
+  .ck div{display:flex;flex-wrap:wrap;gap:.8rem}
+  /* Кнопки по ширине текста со своими полями, а не растянутые ровно пополам:
+     при flex:1 длинная подпись упиралась в края кнопки */
+  .ck .btn{height:4.8rem;padding:0 2.8rem;font-size:max(1.5rem,14px)}
   @media (max-width:1023px){
     .ck{left:8px;right:8px;bottom:8px;width:auto;border-radius:20px;padding:16px;gap:12px}
-    .ck .btn{height:46px}
+    .ck .btn{height:46px;padding:0 22px}
+  }
+  /* На телефоне две кнопки в строку помещаются впритык и на узких экранах
+     переносятся разной ширины. Ставим в столбик - одинаково на любой ширине */
+  @media (max-width:480px){
+    .ck div{flex-direction:column}
+    .ck .btn{width:100%}
   }
   @media (prefers-reduced-motion:reduce){.ck{animation:none}}
 </style>

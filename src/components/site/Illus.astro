@@ -40,7 +40,10 @@ const bars = [165, 186, 178, 197, 193, 210, 268, 300, 285, 335];
         <p class="m-l m-l1">Штатный дизайнер + разработчик</p>
         <div class="m-pill"><span class="m-n">400 000</span><span class="m-sel"><b>₽</b>в месяц<Ic n="arrowdown" s={14} /></span></div>
         <p class="m-l m-l2">Я у вас на аутсорсе</p>
-        <div class="m-pill"><span class="m-n">от&nbsp;<i></i>&nbsp;000<span class="m-off" data-a="pop" style="--i:15">- 77%</span></span><span class="m-sel"><b>₽</b>в месяц<Ic n="arrowdown" s={14} /></span></div>
+        {/* Цифру рисует счетчик в CSS, в разметке ее нет, и в тексте страницы
+            оставалось "от 000". Читалке экрана хватает подписи на всей картинке,
+            а вот поиску нужен настоящий текст - поэтому дублируем скрытым */}
+        <div class="m-pill"><span class="m-n">от&nbsp;<i aria-hidden="true"></i><span class="sr-only">90</span>&nbsp;000<span class="m-off" data-a="pop" style="--i:15">&minus;77%</span></span><span class="m-sel"><b>₽</b>в месяц<Ic n="arrowdown" s={14} /></span></div>
         <span class="m-sw"><Ic n="arrow3" s={48} /></span>
       </div>
     )}

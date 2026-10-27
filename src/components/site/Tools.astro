@@ -1,0 +1,125 @@
+---
+// Инструменты, которыми я работаю. Блок на главной: показывает охват, а не
+// список из резюме. Поэтому в каждой группе рядом с названиями стоит строка
+// "и любой другой" - она и есть главное сообщение блока.
+//
+// Логотипы здесь намеренно не стоят. В наборе иконок есть только Figma, Claude
+// и ChatGPT, а три картинки на семь десятков названий читаются как случайность.
+// Либо единый набор на все, либо текст - середина выглядит неаккуратно.
+import Head from '../ui/Head.astro';
+import { nb } from '../../i18n/ru';
+
+interface Group { t: string; note: string; items: string[]; more?: string }
+
+const GROUPS: Group[] = [
+  {
+    t: 'AI: модели',
+    note: 'Разница между ними в характере, а не в принципе работы',
+    items: ['Claude', 'ChatGPT', 'Gemini', 'DeepSeek', 'Qwen', 'Kimi', 'Mistral', 'Grok', 'Llama'],
+    more: 'и любая новая: подход к ним один',
+  },
+  {
+    t: 'AI: в работе',
+    note: 'Не вместо работы, а чтобы ее было больше за те же часы',
+    items: ['Claude Code', 'Cursor', 'Codex', 'GitHub Copilot'],
+  },
+  {
+    t: 'Дизайн',
+    note: 'Макеты сайтов, приложений и внутренних панелей',
+    items: ['Figma', 'Sketch', 'Adobe XD', 'Penpot'],
+    more: 'и другие редакторы макетов',
+  },
+  {
+    t: 'Графика и видео',
+    note: 'Обложки, иллюстрации, монтаж и анимация в роликах',
+    items: ['Photoshop', 'Illustrator', 'After Effects', 'Premiere Pro', 'InDesign'],
+  },
+  {
+    t: 'Сайты и CMS',
+    note: 'Платформу выбираю под задачу и под того, кто поведет сайт дальше',
+    items: ['Tilda', 'WordPress', 'Битрикс', 'Webflow', 'Framer', 'Свой код на Astro'],
+    more: 'и любой другой конструктор или CMS',
+  },
+  {
+    t: 'CRM и учет',
+    note: 'Системы, которые связываю между собой и с сайтом',
+    items: ['Битрикс24', 'amoCRM', '1С', 'МойСклад', 'iiko', 'r_keeper', 'IDENT', 'Шеф-Эксперт', 'EspoCRM', 'Odoo'],
+    more: 'и любая другая, где есть доступ к данным',
+  },
+  {
+    t: 'Автоматизация',
+    note: 'Связки между сервисами, которые работают без человека',
+    items: ['n8n', 'Make', 'Zapier', 'Albato', 'ApiX-Drive', 'BotHelp', 'Google Apps Script'],
+    more: 'и любая платформа со сценариями',
+  },
+  {
+    t: 'Боты и каналы',
+    note: 'Где клиент пишет и куда уходит заявка',
+    items: ['Telegram', 'MAX', 'VK', 'WhatsApp', 'Instagram'],
+  },
+  {
+    t: 'Оплата',
+    note: 'Прием денег на сайте, в боте и в приложении',
+    items: ['ЮKassa', 'СБП', 'Эквайринг банков', 'CloudPayments', 'Robokassa'],
+    more: 'и любая платежная система с API',
+  },
+  {
+    t: 'Аналитика и поиск',
+    note: 'То, по чему потом считают результат',
+    items: ['Яндекс Метрика', 'Яндекс Вебмастер', 'Google Analytics', 'Search Console', 'Tag Manager'],
+  },
+];
+---
+
+<section class="section tls" id="instrumenty">
+  <Head
+    badge="Stack"
+    icon="setting"
+    intro="За каждой услугой стоит набор, в котором я работаю сам, а не список из резюме. Поэтому я называю срок и цену до начала работы, а не после."
+    title={['Чем я работаю']}
+  />
+
+  <ul class="tls__grid">
+    {GROUPS.map((g, i) => (
+      <li data-reveal style={`--d:${(i % 3) * 70}ms`}>
+        <h3>{g.t}</h3>
+        <p>{nb(g.note)}</p>
+        <ul class="tls__pills">
+          {g.items.map((t) => <li>{t}</li>)}
+          {g.more && <li class="tls__more">{nb(g.more)}</li>}
+        </ul>
+      </li>
+    ))}
+  </ul>
+
+  <p class="tls__foot" data-reveal>
+    {nb('Отдельно про открытый код: разворачиваю, дорабатываю и встраиваю в процессы любой open-source продукт. Если у задачи есть бесплатное решение, которое можно поставить к себе, я скажу об этом, а не продам лишнее.')}
+  </p>
+</section>
+
+<style>
+  .tls{padding-top:5.6rem;padding-bottom:5.6rem}
+  .tls__grid{margin-top:5.6rem;padding:0;list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
+  .tls__grid > li{background:var(--card);border-radius:2.4rem;padding:3.2rem;display:flex;flex-direction:column}
+  /* Если последняя карточка осталась одна в ряду - растягиваем ее на всю ширину.
+     Правило само отключится, когда групп станет кратное трем число */
+  .tls__grid > li:last-child:nth-child(3n+1){grid-column:1/-1}
+  .tls__grid h3{font-size:max(2.2rem,16px);line-height:1.2;font-weight:500;letter-spacing:-.02em}
+  .tls__grid > li > p{margin-top:1.2rem;font-size:max(1.7rem,14px);line-height:1.45;color:var(--muted)}
+  .tls__pills{margin:2.4rem 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:.8rem}
+  .tls__pills li{min-height:4.4rem;padding:0 1.8rem;border-radius:999px;background:var(--surface);display:flex;align-items:center;font-size:max(1.5rem,13px);font-weight:500;white-space:nowrap}
+  /* "И любой другой" - это обещание, а не инструмент, поэтому выглядит иначе */
+  .tls__pills .tls__more{background:transparent;border:1px dashed var(--line);color:var(--muted);font-weight:400;white-space:normal}
+  .tls__foot{margin-top:2rem;padding:2.4rem 3.2rem;border-radius:2.4rem;background:var(--mint);font-size:max(1.7rem,14px);line-height:1.45}
+
+  @media (max-width:1023px){
+    .tls{padding-top:32px;padding-bottom:32px}
+    .tls__grid{grid-template-columns:1fr;gap:8px;margin-top:24px}
+    .tls__grid > li{border-radius:16px;padding:18px}
+    .tls__grid h3{font-size:16px}
+    .tls__grid > li > p{margin-top:8px;font-size:14px}
+    .tls__pills{margin-top:14px;gap:6px}
+    .tls__pills li{min-height:34px;padding:0 12px;font-size:13px}
+    .tls__foot{margin-top:8px;padding:18px;border-radius:16px;font-size:14px}
+  }
+</style>
