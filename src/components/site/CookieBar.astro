@@ -1,9 +1,9 @@
 ---
 // Уведомление о cookies. Метрика подключается только после согласия на аналитику.
-import { cookies as c, METRIKA_ID } from '../../i18n/ru';
+import { cookies as c, METRIKA_ID, nb } from '../../i18n/ru';
 ---
 <div class="ck" id="cookie-bar" role="dialog" aria-label="Cookies" hidden>
-  <p>{c.text}</p>
+  <p>{nb(c.text)}</p>
   <a href="/privacy/#cookies">{c.more}</a>
   <div><button class="btn btn--white" type="button" data-cookie="all">{c.all}</button><button class="btn ck__ghost" type="button" data-cookie="tech">{c.tech}</button></div>
 </div>
