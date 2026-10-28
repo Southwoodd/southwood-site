@@ -48,7 +48,7 @@ const on = (href: string) => (path === href || (href !== '/' && path.startsWith(
     <button class="dock__menu" type="button" aria-expanded="false" aria-controls="dock-menu" data-dock-toggle>
       <span class="dock__burger"><i></i><i></i></span><span data-dock-label>Меню</span>
     </button>
-    <button class="dock__snd" type="button" data-snd-toggle aria-pressed="true" aria-label="Звуки сайта"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3l5-4v13l-5-4H4z"/><path class="snd-on" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="snd-off" d="m16 9.5 5 5m0-5-5 5"/></svg></button>
+    <button class="dock__snd" type="button" data-snd-toggle aria-pressed="true" aria-label="Звуки сайта"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3l5-4v13l-5-4H4z"/><path class="snd-on" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="snd-off" d="m16 9.5 5 5m0-5-5 5"/></svg></button><button class="dock__snd dock__thm" type="button" data-theme-toggle aria-pressed="false" aria-label="Тема сайта"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="thm-light"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2.5 12h2M19.5 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></g><g class="thm-dark"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></g></svg></button>
     <button class="dock__write" type="button" data-open="write">{header.cta}<Arrow /></button>
   </div>
 </div>
@@ -125,6 +125,9 @@ const on = (href: string) => (path === href || (href !== '/' && path.startsWith(
     .dock__menu{flex:none;padding:0 2.2rem;gap:1.2rem}
     .dock__menu:hover{background:color-mix(in srgb,var(--seg) 82%,var(--txt))}
     .dock__bar .dock__snd{width:6rem;flex:none;justify-content:center;cursor:pointer}
+    /* Тема нужна и на телефоне, где звука нет: своя ширина, не наследует скрытие звука */
+    .dock__bar .dock__thm{width:5.4rem}
+    .dock__thm[aria-pressed=false],.dock__thm[aria-pressed=true]{color:inherit}
     .dock__snd:hover{background:color-mix(in srgb,var(--seg) 82%,var(--txt))}
     .dock__snd svg{width:2.2rem;height:2.2rem}
     .dock__snd[aria-pressed=false]{color:var(--sub)}

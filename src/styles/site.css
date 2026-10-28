@@ -5,8 +5,28 @@
 :root{
   --bg:#f3f6f2;--surface:#fff;--ink:#0a0a0a;--ink-2:#111;--muted:#5a6b62;--grey-text:#6b7280;
   --accent:#7dab90;--deep:#3f6b56;--light:#bee0cc;--line:#d5e0d8;--card:#f3f3f3;--mint:#e8f0eb;--qatar:#8a1538;
+  /* Блоки, которые на светлой теме почти черные: шоурил, карточки кейсов, блок про AI.
+     Своей роли у них не было, цвет стоял по месту - и на темной странице они слились бы с фоном */
+  --feature:#0a0a0a;--on-feature:#fff;
   --font:'Onest',system-ui,-apple-system,'Segoe UI',sans-serif;
   --ease:cubic-bezier(.2,.7,.2,1);
+  color-scheme:light;
+}
+/* Темная тема. Три состояния: выбора нет - идем за системой, выбор есть - он сильнее.
+   Значения заданы дважды намеренно: иначе ручной выбор не переборет настройку системы */
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme=light]){
+    --bg:#0b100e;--surface:#18211e;--ink:#eef2ef;--ink-2:#e2e8e4;--muted:#a8b8b0;--grey-text:#7d8d86;
+    --line:#243029;--card:#121917;--mint:#16201c;--qatar:#d44f71;
+    --feature:var(--deep);
+    color-scheme:dark;
+  }
+}
+:root[data-theme=dark]{
+  --bg:#0b100e;--surface:#18211e;--ink:#eef2ef;--ink-2:#e2e8e4;--muted:#a8b8b0;--grey-text:#7d8d86;
+  --line:#243029;--card:#121917;--mint:#16201c;--qatar:#d44f71;
+  --feature:var(--deep);
+  color-scheme:dark;
 }
 html{font-size:10px;-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:14rem}
 @media (min-width:1024px) and (max-width:1919px){html{font-size:calc(100vw / 192)}}

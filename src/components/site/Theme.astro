@@ -1,0 +1,43 @@
+---
+// Светлая и темная темы. По умолчанию берется настройка системы, кнопка [data-theme-toggle]
+// перебивает ее вручную, выбор запоминается. Само значение выставляется до первой отрисовки
+// скриптом в head: если ждать этот модуль, темная страница успеет моргнуть белым.
+---
+<script>
+  const KEY = 'swTheme';
+  const root = document.documentElement;
+  const mq = matchMedia('(prefers-color-scheme: dark)');
+  // Цвет строки браузера на телефоне: иначе она остается светлой над темной страницей
+  const BAR = { light: '#f3f6f2', dark: '#0b100e' };
+
+  const picked = (): string | null => { try { const v = localStorage.getItem(KEY); return v === 'dark' || v === 'light' ? v : null; } catch { return null; } };
+  const isDark = () => (picked() || (mq.matches ? 'dark' : 'light')) === 'dark';
+
+  const sync = () => {
+    const dark = isDark();
+    document.querySelectorAll<HTMLMetaElement>('meta[name=theme-color]').forEach((m) => { m.content = dark ? BAR.dark : BAR.light; });
+    document.querySelectorAll<HTMLElement>('[data-theme-toggle]').forEach((b) => {
+      b.setAttribute('aria-pressed', String(dark));
+      const l = b.querySelector('[data-theme-label]'); if (l) l.textContent = dark ? 'темная' : 'светлая';
+      b.title = dark ? 'Включить светлую тему' : 'Включить темную тему';
+    });
+  };
+
+  document.addEventListener('click', (e) => {
+    const b = (e.target as HTMLElement).closest('[data-theme-toggle]'); if (!b) return;
+    const next = isDark() ? 'light' : 'dark';
+    root.dataset.theme = next;
+    try { localStorage.setItem(KEY, next); } catch {}
+    sync();
+    (window as any).swGoal?.(next === 'dark' ? 'theme_dark' : 'theme_light');
+  });
+
+  // Пока человек не выбрал сам, идем за системой и реагируем на ее переключение
+  mq.addEventListener('change', () => { if (!picked()) sync(); });
+  sync();
+</script>
+<style is:global>
+  [data-theme-toggle] .thm-dark{display:none}
+  [data-theme-toggle][aria-pressed=true] .thm-dark{display:block}
+  [data-theme-toggle][aria-pressed=true] .thm-light{display:none}
+</style>
