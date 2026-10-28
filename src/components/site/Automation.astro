@@ -42,7 +42,7 @@ import Arrow from './Arrow.astro';
           <dl><div><dt>{a.scenarios.was}</dt><dd>{nb(x.was)}</dd></div><div class="now"><dt>{a.scenarios.now}</dt><dd>{nb(x.now)}</dd></div></dl>
           <div class="au__scfoot">
             <p><b>{x.price}</b><span>{x.term} · {x.cond}</span></p>
-            <button class="btn btn--deep" type="button" data-open="lead" data-chip="link" data-task={`Сценарий: ${x.title}. `} data-context={`scenario:${x.key}`}>{a.scenarios.btn}<Arrow /></button>
+            <button class="btn btn--deep" type="button" data-open="lead" data-chip="link" data-task={`Сценарий: ${x.title}. `} data-context={`scenario:${x.key}`} data-ctx-name={x.title}>{a.scenarios.btn}<Arrow /></button>
           </div>
         </li>
       ))}

@@ -124,7 +124,10 @@ const S = f.study;
       const quiz = study
         ? ['Кто: ' + fd.get('who'), 'Опыт: ' + fd.get('exp'), 'Нейросети: ' + fd.get('ai'), 'Инструменты: ' + (fd.getAll('tools').join(', ') || 'не указаны'), 'Цель: ' + fd.get('goal')].join('\n')
         : '';
-      const body: Record<string, unknown> = { kind: 'lead', need: study ? ['study'] : fd.getAll('need'), needLabels: labels, name: fd.get('name'), company: study ? 'Частное лицо' : fd.get('company'), phone: fd.get('phone'), via, deadline: fd.get('deadline'), task: study ? quiz : fd.get('task'), page: location.pathname, context: form.dataset.context || (study ? 'study' : ''), consent: true };
+      // Рядом с адресом страницы и слагом источника шлем их названия словами:
+      // в сообщении должно стоять «Главная» и «набор Старт», а не «/» и «pack:start»
+      const pageName = document.querySelector<HTMLMetaElement>('meta[name="page-label"]')?.content || '';
+      const body: Record<string, unknown> = { kind: 'lead', need: study ? ['study'] : fd.getAll('need'), needLabels: labels, name: fd.get('name'), company: study ? 'Частное лицо' : fd.get('company'), phone: fd.get('phone'), via, deadline: fd.get('deadline'), task: study ? quiz : fd.get('task'), page: location.pathname, pageName, context: form.dataset.context || (study ? 'study' : ''), contextName: form.dataset.ctxName || '', consent: true };
       btn.disabled = true; btn.textContent = btn.dataset.sending!; btn.classList.add('is-busy'); failMsg.hidden = true;
       const post = (b: unknown) => fetch(form.dataset.endpoint!, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b) });
       try {

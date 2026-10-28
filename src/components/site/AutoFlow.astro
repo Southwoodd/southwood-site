@@ -3,8 +3,8 @@
 // На широком экране это схема с проводами, на телефоне те же шаги столбиком. Каждый второй проход показывает сбой и повтор.
 import Arrow from './Arrow.astro';
 import { FLOWS, type Flow } from '../../i18n/flows';
-interface Props { flow?: string; title?: string; intro?: string; context?: string }
-const { flow = 'trade', title, intro, context = 'service:avtomatizaciya:flow' } = Astro.props;
+interface Props { flow?: string; title?: string; intro?: string; context?: string; ctxName?: string }
+const { flow = 'trade', title, intro, context = 'service:avtomatizaciya:flow', ctxName = 'схема автоматизации' } = Astro.props;
 const F: Flow = FLOWS[flow] || FLOWS.trade;
 const h2 = title || F.title;
 const lead = intro || F.intro;
@@ -81,7 +81,7 @@ const r = (v: number) => `${v / 10}rem`;
 
   <div class="af__foot">
     <p>Это пример. Какие программы связать у вас и в каком порядке, разбираю на консультации и показываю прототип на ваших данных до основной оплаты.</p>
-    <button class="btn btn--white" type="button" data-open="lead" data-chips="link" data-context={context} data-goal="flow_cta">{F.cta}<Arrow /></button>
+    <button class="btn btn--white" type="button" data-open="lead" data-chips="link" data-context={context} data-ctx-name={ctxName} data-goal="flow_cta">{F.cta}<Arrow /></button>
   </div>
   <script type="application/json" data-af-cfg set:html={JSON.stringify(cfg)} is:inline></script>
 </section>

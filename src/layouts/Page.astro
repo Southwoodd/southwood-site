@@ -21,6 +21,9 @@ const graph = [
 ---
 <Site title={title} description={description} path={path} noindex={noindex} image={image}>
   <Fragment slot="head">
+    {/* Человеческое имя страницы: его забирает форма заявки, чтобы в сообщении
+        стояло «Главная», а не «/». Имя то же, что в меню и в хлебных крошках */}
+    <meta name="page-label" content={label} />
     {graph.length > 0 && <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@graph': graph })} />}
     <slot name="head" />
   </Fragment>

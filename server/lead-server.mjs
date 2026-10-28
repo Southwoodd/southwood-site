@@ -27,25 +27,38 @@ const VIA = { telegram: 'Telegram', max: 'MAX', call: 'позвонить', emai
 
 const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
 const esc = (x) => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-const source = (c) => (c === 'calc' ? 'калькулятор' : c === 'quiz' ? 'подбор по вопросам' : c.startsWith('pack:') ? `набор ${c.slice(5)}` : c.startsWith('case:') ? `кейс ${c.slice(5)}` : c.startsWith('scenario:') ? `сценарий автоматизации ${c.slice(9)}` : c);
+// Откуда пришла заявка. Название кнопка присылает словами, слаг остается
+// запасным вариантом: по «pack:start» непонятно, что за набор имелся в виду
+const KIND = { 'pack:': 'набор', 'case:': 'кейс', 'scenario:': 'сценарий автоматизации', 'service:': 'услуга', 'industry:': 'отрасль', 'reel:': 'шоурил' };
+const source = (c, name) => {
+  if (c === 'calc') return 'калькулятор';
+  if (c === 'quiz') return 'подбор по вопросам';
+  const p = Object.keys(KIND).find((k) => c.startsWith(k));
+  if (!p) return name || c;
+  const kind = KIND[p], n = name || c.slice(p.length);
+  // Название само может начинаться с того же слова («Набор Старт») - не повторяем его дважды
+  return n.toLowerCase().startsWith(kind.toLowerCase()) ? n : `${kind} ${n}`;
+};
+// Имя страницы словами, адрес в скобках. Для главной «/» названия мало что говорит
+const where = (path, name) => (name ? `${name} (${path})` : path);
 // Все поля формы по строкам. Для калькулятора и подбора расчет приходит файлом PDF, без него составом в тексте.
 function build(b) {
   if (b.consent !== true) return { error: 'consent' };
   if (b.website) return { spam: true };
-  const page = clean(b.page, 120);
+  const page = clean(b.page, 120), pageName = clean(b.pageName, 60);
   if (b.kind === 'write') {
     const msg = clean(b.msg, 1500), contact = clean(b.contact, 80), name = clean(b.name, 80), via = clean(b.via, 12);
     if (msg.length < 5 || contact.length < 3) return { error: 'fields' };
     const lines = ['Сообщение с сайта', '', `Сообщение: ${msg}`, '', `Ответить через: ${VIA[via] || via}`, `Контакт: ${contact}`];
     if (name) lines.push(`Имя: ${name}`);
-    if (page) lines.push(`Страница: ${page}`);
-    return { rec: { kind: 'write', msg, contact, via, name, page },
+    if (page) lines.push(`Страница: ${where(page, pageName)}`);
+    return { rec: { kind: 'write', msg, contact, via, name, page, pageName },
       subj: `Сообщение с сайта${name ? `: ${name}` : ''}`.slice(0, 120), reply: via === 'email' && EMAIL.test(contact) ? contact : '', text: lines.join('\n'), html: esc(lines.join('\n')), n: lines.join('\n').length };
   }
   const name = clean(b.name, 80), company = clean(b.company, 120), phone = clean(b.phone, 24), task = clean(b.task, 1500), via = clean(b.via, 12);
   const labels = Array.isArray(b.needLabels) ? b.needLabels.slice(0, 12).map((x) => clean(x, 40)) : [];
   if (name.length < 2 || company.length < 2 || phone.replace(/\D/g, '').length < 10 || !labels.length) return { error: 'fields' };
-  const ctx = clean(b.context, 60);
+  const ctx = clean(b.context, 60), ctxName = clean(b.contextName, 60);
   const dm = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(b.deadline || ''));
   const deadline = dm && MONTHS[+dm[2] - 1] ? `${+dm[3]} ${MONTHS[+dm[2] - 1]} ${dm[1]}` : '';
   let calc = null, pdf = null;
@@ -54,20 +67,20 @@ function build(b) {
     calc = { title: clean(b.calc.title, 60), text: clean(b.calc.text, 2000), link: /^https:\/\/southwood\.pw\/\S*$/.test(link) && link.length <= 2500 ? link : '' };
     if (typeof b.pdf === 'string' && b.pdf.length < 700_000) { const buf = Buffer.from(b.pdf, 'base64'); if (buf.length > 1000 && buf.subarray(0, 5).toString() === '%PDF-') pdf = buf; }
   }
-  const lines = [`Заявка с сайта${ctx ? `, ${source(ctx)}` : ''}`, '', `Имя: ${name}`, `Компания: ${company}`, `Телефон: ${phone}`, `Связаться: ${VIA[via] || via}`, `Нужно: ${labels.join(', ')}`];
+  const lines = [`Заявка с сайта${ctx ? `, ${source(ctx, ctxName)}` : ''}`, '', `Имя: ${name}`, `Компания: ${company}`, `Телефон: ${phone}`, `Связаться: ${VIA[via] || via}`, `Нужно: ${labels.join(', ')}`];
   if (deadline) lines.push(`Нужно к дате: ${deadline}`);
   if (task) lines.push(`Комментарий: ${task}`);
   if (calc) {
     lines.push('', `Расчет: ${calc.title || 'без суммы'}${pdf ? ', PDF во вложении' : ''}`);
     if (!pdf && calc.text) lines.push(calc.text);
   }
-  if (page) lines.push('', `Страница: ${page}`);
+  if (page) lines.push('', `Страница: ${where(page, pageName)}`);
   // В Telegram ссылка на расчет уходит словами, в письме адресом
   const LINK = 'Открыть расчет на сайте';
   const tgText = lines.join('\n') + (calc?.link ? `\n\n${LINK}` : '');
   const html = esc(lines.join('\n')) + (calc?.link ? `\n\n<a href="${esc(calc.link)}">${LINK}</a>` : '');
   if (calc?.link) lines.push('', `${LINK}: ${calc.link}`);
-  return { rec: { kind: 'lead', name, company, phone, via, need: labels, deadline: dm ? dm[0] : '', task, context: ctx, page, ...(calc ? { calc: { title: calc.title, text: calc.text, link: calc.link } } : {}) },
+  return { rec: { kind: 'lead', name, company, phone, via, need: labels, deadline: dm ? dm[0] : '', task, context: ctx, contextName: ctxName, page, pageName, ...(calc ? { calc: { title: calc.title, text: calc.text, link: calc.link } } : {}) },
     subj: `Заявка с сайта: ${name}, ${company}`.slice(0, 120), reply: '', text: lines.join('\n'), html, n: tgText.length, pdf, cap: `Расчет к заявке: ${name}, ${company}`.slice(0, 200) };
 }
 

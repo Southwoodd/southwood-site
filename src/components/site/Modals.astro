@@ -25,7 +25,7 @@ const tick = 'M11 1.83a9.17 9.17 0 1 0 0 18.34 9.17 9.17 0 0 0 0-18.34Zm4.38 7.0
         <ul class="mp__list">{p.items.map((i: any) => <li><svg viewBox="0 0 22 22" aria-hidden="true"><path d={tick} fill="currentColor" /></svg><div><b>{i.t}</b><p>{nb(i.d)}</p></div></li>)}</ul>
         <ol class="mp__steps">{p.steps.map((s: string, i: number) => <li><span>0{i + 1}</span>{nb(s)}</li>)}</ol>
         <div class="mp__actions">
-          <button class="btn btn--deep" type="button" data-open="lead" data-chips={p.chips} data-sub={`${p.name}. ${m.pack.leadSub}`} data-context={`pack:${k}`}>{m.pack.discuss}<Arrow /></button>
+          <button class="btn btn--deep" type="button" data-open="lead" data-chips={p.chips} data-sub={`${p.name}. ${m.pack.leadSub}`} data-context={`pack:${k}`} data-ctx-name={p.name}>{m.pack.discuss}<Arrow /></button>
           <a class="btn btn--grey" href={calc} data-pack={k} data-go="calc" data-close><span class="d">{m.pack.edit}</span><span class="mob">{m.pack.editM}</span></a>
         </div>
       </section>
@@ -37,7 +37,7 @@ const tick = 'M11 1.83a9.17 9.17 0 1 0 0 18.34 9.17 9.17 0 0 0 0-18.34Zm4.38 7.0
   const box = dlg.querySelector<HTMLElement>('.md__box')!;
   const panels = dlg.querySelectorAll<HTMLElement>('[data-panel]');
   type Calc = { text: string; link: string; title: string; pdf: () => Promise<Uint8Array> };
-  type Opts = { chips?: string[]; task?: string; sub?: string; msg?: string; context?: string; calc?: Calc };
+  type Opts = { chips?: string[]; task?: string; sub?: string; msg?: string; context?: string; ctxName?: string; calc?: Calc };
   const open = (name: string, o: Opts = {}) => {
     const panel = dlg.querySelector<HTMLElement>(`[data-panel="${name}"]`); if (!panel) return;
     panels.forEach((p) => { p.hidden = p !== panel; });
@@ -45,8 +45,13 @@ const tick = 'M11 1.83a9.17 9.17 0 1 0 0 18.34 9.17 9.17 0 0 0 0-18.34Zm4.38 7.0
     const form = panel.querySelector<HTMLFormElement>('form');
     if (form) {
       if (!form.querySelector<HTMLElement>('.lf__ok')!.hidden) form.dispatchEvent(new Event('lf:reset'));
-      if (name === 'lead') {
+      // Источник заявки нужен и форме консультации: без этого в сообщении
+      // оставалось глухое «study» вместо страницы услуги, с которой пришли
+      if (name === 'lead' || name === 'study') {
         form.dataset.context = o.context || '';
+        form.dataset.ctxName = o.ctxName || '';
+      }
+      if (name === 'lead') {
         (form as any).__calc = o.calc || null; // расчет из калькулятора уйдет вместе с заявкой файлом PDF
         form.querySelector('[data-sub-text]')!.textContent = o.sub || form.dataset.sub!;
         if (o.chips) form.querySelectorAll<HTMLInputElement>('input[name=need]').forEach((i) => { i.checked = o.chips!.includes(i.value); });
@@ -66,9 +71,9 @@ const tick = 'M11 1.83a9.17 9.17 0 1 0 0 18.34 9.17 9.17 0 0 0 0-18.34Zm4.38 7.0
     const el = t.closest<HTMLElement>('[data-open]');
     if (el && !el.matches('details')) {
       const d = el.dataset; const kind = d.open!;
-      if (kind === 'lead') open('lead', { chips: d.chips ? d.chips.split(',') : d.chip ? [d.chip] : undefined, task: d.task, sub: d.sub, context: d.context });
+      if (kind === 'lead') open('lead', { chips: d.chips ? d.chips.split(',') : d.chip ? [d.chip] : undefined, task: d.task, sub: d.sub, context: d.context, ctxName: d.ctxName });
       else if (kind === 'write') open('write', { msg: d.msg });
-      else if (kind === 'study') open('study', { context: d.context });
+      else if (kind === 'study') open('study', { context: d.context, ctxName: d.ctxName });
       else if (kind === 'pack') open('pack-' + d.pack);
       else if (kind === 'case') open('case-' + d.case);
       return;

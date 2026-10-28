@@ -56,7 +56,7 @@ import Arrow from './Arrow.astro';
       if (fd.get('website')) { done(); return; }
       btn.disabled = true; btn.textContent = btn.dataset.sending!; failMsg.hidden = true;
       try {
-        const r = await fetch(form.dataset.endpoint!, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind: 'write', msg: fd.get('msg'), via: w.value, contact: c, name: fd.get('name'), page: location.pathname, consent: true }) });
+        const r = await fetch(form.dataset.endpoint!, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind: 'write', msg: fd.get('msg'), via: w.value, contact: c, name: fd.get('name'), page: location.pathname, pageName: document.querySelector<HTMLMetaElement>('meta[name="page-label"]')?.content || '', consent: true }) });
         if (!r.ok) throw new Error(String(r.status));
         done(); (window as any).swGoal?.('write_sent');
       } catch { failMsg.hidden = false; btn.textContent = btn.dataset.retry!; }

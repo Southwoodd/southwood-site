@@ -37,13 +37,13 @@ import VidsCarousel from '../../components/site/VidsCarousel.astro';
       <div class="ph__cta">
         {s.slug === 'obuchenie-ai' ? (
           <>
-            <button class="btn btn--deep" type="button" data-open="study" data-context={`service:${s.slug}`}>Оставить заявку<Arrow /></button>
-            <button class="btn btn--grey" type="button" data-open="lead" data-chips={s.chipsForm} data-sub="Консультация по обучению. Отвечу лично, без менеджеров." data-context="study:consult">Консультация<Arrow /></button>
+            <button class="btn btn--deep" type="button" data-open="study" data-context={`service:${s.slug}`} data-ctx-name={s.menu}>Оставить заявку<Arrow /></button>
+            <button class="btn btn--grey" type="button" data-open="lead" data-chips={s.chipsForm} data-sub="Консультация по обучению. Отвечу лично, без менеджеров." data-context="study:consult" data-ctx-name="Консультация по обучению">Консультация<Arrow /></button>
           </>
         ) : (
           <>
             <a class="btn btn--deep" href={R_.calc} data-go="calc" data-goal="service_calc">Рассчитать стоимость<Arrow /></a>
-            <button class="btn btn--grey" type="button" data-open="lead" data-chips={s.chipsForm} data-context={`service:${s.slug}`}>Бесплатная консультация<Arrow /></button>
+            <button class="btn btn--grey" type="button" data-open="lead" data-chips={s.chipsForm} data-context={`service:${s.slug}`} data-ctx-name={s.menu}>Бесплатная консультация<Arrow /></button>
           </>
         )}
       </div>

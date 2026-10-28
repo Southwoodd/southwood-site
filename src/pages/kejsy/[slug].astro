@@ -36,7 +36,7 @@ const ld = [{
       <p class="ph__lead">{nb(c.lead)}</p>
       <div class="ph__cta">
         {(c.links as any[]).map((l, i) => <a class={i === 0 ? 'btn btn--deep' : 'btn btn--grey'} href={l.href} target="_blank" rel="noopener">{i === 0 && l.label !== 'Behance' && !l.label.includes(':') ? `Открыть ${l.label}` : l.label}<Arrow /></a>)}
-        {c.links.length === 0 && <button class="btn btn--deep" type="button" data-open="lead" data-task={task} data-context={`case:${c.key}`}>Обсудить похожую задачу<Arrow /></button>}
+        {c.links.length === 0 && <button class="btn btn--deep" type="button" data-open="lead" data-task={task} data-context={`case:${c.key}`} data-ctx-name={c.name}>Обсудить похожую задачу<Arrow /></button>}
       </div>
     </div>
     <dl class="ch__facts">
@@ -71,7 +71,7 @@ const ld = [{
       <p>{nb(c.like.length ? 'Это ориентир из каталога услуг для компании до 50 человек, а не стоимость этого проекта. Точную сумму называю после брифа и фиксирую в договоре.' : 'Такой проект считается после разбора задачи. Расскажите, что нужно, назову цену и срок.')}</p>
       <div class="ph__cta">
         <a class="btn btn--deep" href={serviceHref(srv.slug)}>{srv.menu}: цены и сроки<Arrow /></a>
-        <button class="btn btn--grey" type="button" data-open="lead" data-task={task} data-context={`case:${c.key}`}>Обсудить похожую задачу<Arrow /></button>
+        <button class="btn btn--grey" type="button" data-open="lead" data-task={task} data-context={`case:${c.key}`} data-ctx-name={c.name}>Обсудить похожую задачу<Arrow /></button>
       </div>
     </div>
     {c.like.length > 0 && <ul>{c.like.map((l) => <li><span>{l.name}</span><b>{nb(l.price)}</b></li>)}</ul>}

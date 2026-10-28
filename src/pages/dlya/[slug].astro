@@ -34,7 +34,7 @@ const ld = [
       <ul class="ph__chips"><li>от {n.from} тыс. ₽</li>{n.chips.map((c) => <li>{c}</li>)}</ul>
       <div class="ph__cta">
         <a class="btn btn--deep" href={R_.calc} data-go="calc" data-goal="industry_calc">Рассчитать стоимость<Arrow /></a>
-        <button class="btn btn--grey" type="button" data-open="lead" data-chips={n.chipsForm} data-context={`industry:${n.slug}`}>Бесплатная консультация<Arrow /></button>
+        <button class="btn btn--grey" type="button" data-open="lead" data-chips={n.chipsForm} data-context={`industry:${n.slug}`} data-ctx-name={n.menu}>Бесплатная консультация<Arrow /></button>
       </div>
     </div>
     {first && !first.noimg ? (
@@ -85,7 +85,7 @@ const ld = [
   </section>
 
   {n.flowChart ? (
-    <AutoFlow flow={n.flowChart} context={`industry:${n.slug}:flow`} />
+    <AutoFlow flow={n.flowChart} context={`industry:${n.slug}:flow`} ctxName={`схема, ${n.menu}`} />
   ) : scn && (
     <section class="section sec sec--one">
       <Head badge="Scenario" icon="flash" intro={automation.scenarios.note} title={['Как это работает после']} />
