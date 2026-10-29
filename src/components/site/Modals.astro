@@ -90,7 +90,7 @@ const tick = 'M11 1.83a9.17 9.17 0 1 0 0 18.34 9.17 9.17 0 0 0 0-18.34Zm4.38 7.0
   .md{padding:0;border:0;background:none;max-width:none;max-height:none;width:100vw;height:100dvh;overflow:hidden;color:var(--ink)}
   .md[open]{display:grid;place-items:center}
   .md::backdrop{background:rgba(16,28,22,.72);backdrop-filter:blur(6px);animation:md-fade .3s both}
-  .md__box{position:relative;width:min(max(66.2rem,580px),calc(100vw - 4rem));max-height:calc(100dvh - 6rem);overflow:auto;overscroll-behavior:contain;background:#fff;border-radius:2.8rem;box-shadow:0 4rem 10rem rgba(0,0,0,.35);animation:md-in .4s var(--ease) both;scrollbar-width:thin}
+  .md__box{position:relative;width:min(max(66.2rem,580px),calc(100vw - 4rem));max-height:calc(100dvh - 6rem);overflow:auto;overscroll-behavior:contain;background:var(--surface);border-radius:2.8rem;box-shadow:0 4rem 10rem rgba(0,0,0,.35);animation:md-in .4s var(--ease) both;scrollbar-width:thin}
   .md[data-kind=pack] .md__box{width:min(max(74.4rem,640px),calc(100vw - 4rem))}
   .md[data-kind=case] .md__box{width:min(max(110rem,880px),calc(100vw - 4rem))}
   @media (min-width:1300px){.md[data-kind=lead] .md__box,.md[data-kind=study] .md__box,.md[data-kind=write] .md__box{width:min(max(104rem,900px),calc(100vw - 8rem))}}
@@ -112,7 +112,7 @@ const tick = 'M11 1.83a9.17 9.17 0 1 0 0 18.34 9.17 9.17 0 0 0 0-18.34Zm4.38 7.0
   .mp__price{margin-top:2.4rem;background:var(--card);border-radius:2rem;padding:2.4rem 2.8rem;display:flex;justify-content:space-between;align-items:center;gap:2rem}
   .mp__price b{font-size:3.6rem;line-height:1.1;font-weight:500;letter-spacing:-.03em}
   .mp__price p{margin-top:.8rem;max-width:42rem;font-size:max(1.3rem,12px);line-height:1.4;color:var(--muted)}
-  .mp__price span{flex:none;height:3.6rem;padding:0 1.4rem;border-radius:999px;background:#fff;font-size:max(1.5rem,13px);font-weight:500;display:flex;align-items:center}
+  .mp__price span{flex:none;height:3.6rem;padding:0 1.4rem;border-radius:999px;background:var(--surface);font-size:max(1.5rem,13px);font-weight:500;display:flex;align-items:center}
   .mp__label{margin-top:2.8rem;font-size:max(1.3rem,12px);color:var(--muted)}
   .mp__list{margin-top:1.6rem;display:grid;gap:1.8rem}
   .mp__list li{display:flex;gap:1.4rem}
@@ -170,7 +170,7 @@ const tick = 'M11 1.83a9.17 9.17 0 1 0 0 18.34 9.17 9.17 0 0 0 0-18.34Zm4.38 7.0
   @media (max-width:1023px){
     .md[open]{place-items:end center}
     .md__box,.md[data-kind] .md__box{width:100%;max-width:640px;max-height:94dvh;border-radius:24px 24px 0 0;animation-name:md-up}
-    .md__box::before{content:'';position:sticky;top:8px;display:block;width:36px;height:4px;margin:8px auto -12px;border-radius:2px;background:#d5ddd8;z-index:3}
+    .md__box::before{content:'';position:sticky;top:8px;display:block;width:36px;height:4px;margin:8px auto -12px;border-radius:2px;background:var(--line);z-index:3}
     @keyframes md-up{from{transform:translateY(60px);opacity:0}}
     .md__close{top:12px;margin:12px 12px -48px 0;width:36px;height:36px}
     .md__panel--form :global(.lf){padding:28px 16px 20px}

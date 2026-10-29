@@ -8,6 +8,8 @@
   /* Бордовый работает и подложкой под белым текстом, и цветом текста на странице.
      Темной теме это две разные задачи: подложку надо поднять, акцент - осветлить */
   --qatar-bg:#8a1538;
+  /* Ошибки в формах. На темном фоне исходный красный дает 3.47, поэтому там он светлее */
+  --err:#d23b3b;--err-bg:#fbeaea;
   /* Блоки, которые на светлой теме почти черные: шоурил, карточки кейсов, блок про AI.
      Своей роли у них не было, цвет стоял по месту - и на темной странице они слились бы с фоном */
   --feature:#0a0a0a;--on-feature:#fff;
@@ -20,14 +22,14 @@
 @media (prefers-color-scheme:dark){
   :root:not([data-theme=light]){
     --bg:#0b100e;--surface:#18211e;--ink:#eef2ef;--ink-2:#e2e8e4;--muted:#a8b8b0;--grey-text:#7d8d86;
-    --line:#243029;--card:#121917;--mint:#16201c;--qatar:#d44f71;--qatar-bg:#a81d48;
+    --line:#243029;--card:#121917;--mint:#16201c;--qatar:#d44f71;--qatar-bg:#a81d48;--err:#ec8080;--err-bg:#2a1718;
     --feature:var(--deep);
     color-scheme:dark;
   }
 }
 :root[data-theme=dark]{
   --bg:#0b100e;--surface:#18211e;--ink:#eef2ef;--ink-2:#e2e8e4;--muted:#a8b8b0;--grey-text:#7d8d86;
-  --line:#243029;--card:#121917;--mint:#16201c;--qatar:#d44f71;--qatar-bg:#a81d48;
+  --line:#243029;--card:#121917;--mint:#16201c;--qatar:#d44f71;--qatar-bg:#a81d48;--err:#ec8080;--err-bg:#2a1718;
   --feature:var(--deep);
   color-scheme:dark;
 }
