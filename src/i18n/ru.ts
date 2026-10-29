@@ -45,8 +45,7 @@ export const header = {
 };
 
 export const hero = {
-  badge: '9+ лет опыта · Full-Stack Product Designer',
-  badgeShort: '9+ лет опыта · Product Designer',
+  badge: '9+ лет опыта · Product Designer AI Native',
   // Срок в заголовке не называем: сайт собирается за неделю, бот за пару дней,
   // а CRM за две недели не внедряется. Одна цифра на все три обещает то,
   // чего не бывает, и первым это заметит тот, кто в теме разбирается
