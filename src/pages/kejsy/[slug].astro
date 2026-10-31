@@ -57,6 +57,7 @@ const ld = [{
     <div class="ch__head"><Badge icon="shield" reveal>Done</Badge><h2>Что сделано</h2></div>
     <ol class="ch__done">{c.done.map((d: string, i: number) => <li data-reveal style={`--d:${(i % 2) * 80}ms`}><span>{String(i + 1).padStart(2, '0')}</span><p>{nb(d)}</p></li>)}</ol>
     {c.how && <div class="ch__how"><h3>Как это работает</h3><p>{nb(c.how)}</p></div>}
+    {c.stack && <div class="ch__how ch__stack"><h3>Инструменты и технологии</h3><ul>{c.stack.map((s: string) => <li>{s}</li>)}</ul></div>}
   </section>
 
   <section class="section sec sec--deep ch__res">
@@ -113,6 +114,8 @@ const ld = [{
   .ch__how{margin-top:2rem;background:#fff;border-radius:2.4rem;padding:3.2rem;display:grid;grid-template-columns:28rem 1fr;gap:2rem}
   .ch__how h3{font-size:max(1.5rem,12px);font-weight:400;color:var(--grey-text)}
   .ch__how p{font-size:max(2rem,15px);line-height:1.45;max-width:110rem}
+  .ch__stack ul{display:flex;flex-wrap:wrap;gap:.8rem;align-content:start}
+  .ch__stack li{height:3.8rem;padding:0 1.6rem;border-radius:999px;background:var(--mint);display:flex;align-items:center;font-size:max(1.5rem,13px);font-weight:500;white-space:nowrap}
   .ch__res{display:grid;grid-template-columns:1fr 1fr;gap:6rem 8rem;align-items:center}
   .ch__big span{color:rgba(255,255,255,.7);display:block}
   .ch__big b{display:block;margin-top:3.2rem;font-size:15rem;line-height:.95;font-weight:400;letter-spacing:-.05em}
@@ -137,7 +140,7 @@ const ld = [{
   .ch__next>p{display:flex;gap:1.2rem;flex:none}
   .ch__next .btn{height:6.4rem;padding:0 2.8rem;font-size:max(1.8rem,15px)}
   /* телефон: вместо rem берем нижнюю границу в px */
-  @media (max-width:1023px){.ch__tags li{font-size:13px}.ch__facts dt{font-size:12px}.ch__two h2,.ch__next span,.ch__big span{font-size:12px}.ch__two p{font-size:17px}.ch__done span{font-size:12px}.ch__done p{font-size:15px}.ch__how h3{font-size:12px}.ch__how p{font-size:15px}.ch__big small{font-size:13px}.ch__sum{font-size:18px}.ch__metrics span{font-size:12px}.ch__metrics s{font-size:14px}.ch__like>div>p{font-size:15px}.ch__like li{font-size:15px}.ch__next div p{font-size:15px}.ch__next .btn{font-size:15px}}
+  @media (max-width:1023px){.ch__tags li{font-size:13px}.ch__facts dt{font-size:12px}.ch__two h2,.ch__next span,.ch__big span{font-size:12px}.ch__two p{font-size:17px}.ch__done span{font-size:12px}.ch__done p{font-size:15px}.ch__how h3{font-size:12px}.ch__how p{font-size:15px}.ch__big small{font-size:13px}.ch__sum{font-size:18px}.ch__metrics span{font-size:12px}.ch__metrics s{font-size:14px}.ch__like>div>p{font-size:15px}.ch__like li{font-size:15px}.ch__next div p{font-size:15px}.ch__next .btn{font-size:15px}.ch__stack li{font-size:13px}}
   @media (max-width:1023px){
     .ch__tags{margin-top:16px;gap:6px}.ch__tags li{height:30px;padding:0 12px;font-size:13px}
     .ch h1{margin-top:14px;font-size:34px;line-height:38px}
@@ -151,6 +154,7 @@ const ld = [{
     .ch__done{margin-top:20px;grid-template-columns:1fr;gap:8px}
     .ch__done li{border-radius:18px;padding:18px;min-height:0;grid-template-columns:36px 1fr}
     .ch__how{margin-top:8px;border-radius:18px;padding:18px;grid-template-columns:1fr;gap:8px}
+    .ch__stack ul{gap:6px}.ch__stack li{height:30px;padding:0 12px}
     .ch__big b{margin-top:14px;font-size:64px}.ch__big b.long{font-size:30px}.ch__big small{margin-top:12px}
     .ch__sum{font-size:18px;line-height:26px}
     .ch__metrics{grid-template-columns:1fr;gap:8px}.ch__metrics li{border-radius:18px;padding:18px}.ch__metrics b{font-size:22px}
