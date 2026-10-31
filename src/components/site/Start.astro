@@ -34,6 +34,20 @@ import Illus from './Illus.astro';
   .st__head .head__intro{color:#fff}
   .st__grid{position:relative;margin-top:9.6rem;display:grid;grid-template-columns:1fr 1fr;gap:2rem}
   .st__card{display:block;position:relative;height:100%;background:#fff;border-radius:3.2rem;overflow:hidden;transition:transform .35s var(--ease),box-shadow .35s var(--ease)}
+  /* Карточки белые в обеих темах - и мокапы внутри пинаем светлыми,
+     иначе темная палитра иллюстраций положит темные панели на белый лист */
+  @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .st__card :global(.il){
+    --il-panel:#fff;--il-line:#f0f0f0;--il-ink:#0a0a0a;--il-ink2:#000;
+    --il-soft:#f7f7f9;--il-row:#eee;--il-pill:#f3f4f3;
+    --il-fade:#fff;--il-sheet:#fff;
+    --il-mut:#5e5e5e;--il-dots:#6b7280;
+    --il-gear:#f6f6f6;--il-gear-ic:#afafaf;--il-bar:#d9d9d9;--il-green-t:#1f4d3a}}
+  :root[data-theme=dark] .st__card :global(.il){
+    --il-panel:#fff;--il-line:#f0f0f0;--il-ink:#0a0a0a;--il-ink2:#000;
+    --il-soft:#f7f7f9;--il-row:#eee;--il-pill:#f3f4f3;
+    --il-fade:#fff;--il-sheet:#fff;
+    --il-mut:#5e5e5e;--il-dots:#6b7280;
+    --il-gear:#f6f6f6;--il-gear-ic:#afafaf;--il-bar:#d9d9d9;--il-green-t:#1f4d3a}
   .st__card:hover{transform:translateY(-.6rem);box-shadow:0 2.4rem 5rem rgba(10,30,20,.22)}
   .st__body{padding:0 4rem 5rem;text-align:center}
   .st__body h3{font-size:4.8rem;line-height:4.4rem;font-weight:500;letter-spacing:-.03em;color:#111}
