@@ -91,7 +91,7 @@ const start = Math.max(0, videos.findIndex((v) => !v.wide));
   .vids__play{position:relative;display:block;width:100%;height:auto;aspect-ratio:9/16;border-radius:2rem;overflow:hidden;background:#0d0f0e;cursor:pointer;border:0;padding:0}
   .vc__slide--wide .vids__play{aspect-ratio:16/9}
   .vids__play video{width:100%;height:100%;object-fit:cover;display:block}
-  .vids__play i{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:6.4rem;height:6.4rem;border-radius:50%;background:rgba(255,255,255,.92);color:var(--ink);display:grid;place-items:center;transition:transform .2s var(--ease),background-color .2s var(--ease),opacity .2s var(--ease)}
+  .vids__play i{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:6.4rem;height:6.4rem;border-radius:50%;background:rgba(255,255,255,.92);color:#0a0a0a;display:grid;place-items:center;transition:transform .2s var(--ease),background-color .2s var(--ease),opacity .2s var(--ease)}
   .vids__play i svg{width:2.8rem;height:2.8rem;margin-left:.2rem}
   .vids__play:hover i{transform:translate(-50%,-50%) scale(1.06);background:#fff}
   .vids__play.is-on i{opacity:0;pointer-events:none}

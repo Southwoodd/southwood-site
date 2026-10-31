@@ -43,13 +43,13 @@ const ld = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: f
   .fq__handle{margin-top:2rem;font-size:max(1.6rem,13px);font-weight:500;color:var(--light)}
   .fq__handle:hover{text-decoration:underline;text-underline-offset:.4rem}
   .fq__list{display:grid;gap:1rem}
-  .fq details{background:#fff;border-radius:2rem;padding:2.4rem 2.6rem;transition:box-shadow .3s var(--ease)}
+  .fq details{background:var(--surface);border-radius:2rem;padding:2.4rem 2.6rem;transition:box-shadow .3s var(--ease)}
   .fq details:hover{box-shadow:0 1rem 3rem rgba(10,30,20,.06)}
   .fq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:1.6rem}
   .fq summary::-webkit-details-marker{display:none}
   .fq summary h3{font-size:max(2rem,16px);line-height:1.3;font-weight:500;letter-spacing:-.02em}
-  .fq summary i{flex:none;position:relative;width:2.8rem;height:2.8rem;border-radius:50%;background:var(--ink);transition:background-color .25s var(--ease),transform .35s var(--ease)}
-  .fq summary i::before,.fq summary i::after{content:'';position:absolute;left:28%;right:28%;top:calc(50% - 1px);height:2px;border-radius:1px;background:#fff}
+  .fq summary i{flex:none;position:relative;width:2.8rem;height:2.8rem;border-radius:50%;background:var(--feature);transition:background-color .25s var(--ease),transform .35s var(--ease)}
+  .fq summary i::before,.fq summary i::after{content:'';position:absolute;left:28%;right:28%;top:calc(50% - 1px);height:2px;border-radius:1px;background:var(--on-feature)}
   .fq summary i::after{transform:rotate(90deg);transition:opacity .2s}
   .fq details[open] summary i{background:var(--deep);transform:rotate(180deg)}
   .fq details[open] summary i::after{opacity:0}

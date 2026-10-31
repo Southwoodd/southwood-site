@@ -66,14 +66,14 @@ const cur = (href: string) => (!href.includes('#') && path.startsWith(href) ? 'p
 </script>
 
 <style>
-  .hdr{position:sticky;top:3rem;z-index:50;height:10rem;background:#fff;border-radius:2.8rem;display:flex;align-items:center;padding:0 4rem;gap:3rem;transition:box-shadow .3s var(--ease),height .3s var(--ease)}
+  .hdr{position:sticky;top:3rem;z-index:50;height:10rem;background:var(--surface);border-radius:2.8rem;display:flex;align-items:center;padding:0 4rem;gap:3rem;transition:box-shadow .3s var(--ease),height .3s var(--ease)}
   .hdr.is-stuck{box-shadow:0 1rem 4rem rgba(20,32,26,.1);height:8rem}
-  .hdr__brand{display:flex;align-items:center;gap:1.2rem;color:var(--deep);font-size:2.4rem;font-weight:500;white-space:nowrap;--logo-dot:var(--accent)}
+  .hdr__brand{display:flex;align-items:center;gap:1.2rem;color:var(--deep-t);font-size:2.4rem;font-weight:500;white-space:nowrap;--logo-dot:var(--accent)}
   .hdr__brand :global(svg){width:3.2rem;height:3.2rem}
   .hdr__right{display:flex;align-items:center;gap:1.6rem}
   .lang{display:flex;gap:.2rem;padding:.4rem;border-radius:999px;background:var(--card);font-size:max(1.4rem,12px);font-weight:500;color:var(--muted)}
   .lang>*{padding:.8rem 1.2rem;border-radius:999px;line-height:1.3}
-  .lang__on{background:var(--ink);color:#fff}
+  .lang__on{background:var(--feature);color:var(--on-feature)}
   .lang a:hover{color:var(--ink)}
   .hdr__cta{height:5.6rem;padding:0 2.4rem;font-size:max(1.6rem,14px)}
   .hdr__cta-short,.hdr__burger{display:none}
@@ -86,8 +86,8 @@ const cur = (href: string) => (!href.includes('#') && path.startsWith(href) ? 'p
     .hdr__right .lang,.hdr__cta-full,.hdr__cta :global(.arrow){display:none}
     .hdr__right{margin-left:auto;gap:6px}
     .hdr__cta{height:44px;padding:0 16px;font-size:14px}.hdr__cta-short{display:inline}
-    .hdr__burger{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:999px;background:var(--ink)}
-    .hdr__burger i{grid-area:1/1;width:18px;height:2px;border-radius:1px;background:#fff;transition:transform .35s var(--ease)}
+    .hdr__burger{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:999px;background:var(--feature)}
+    .hdr__burger i{grid-area:1/1;width:18px;height:2px;border-radius:1px;background:var(--on-feature);transition:transform .35s var(--ease)}
     .hdr__burger i:first-child{transform:translateY(-3.5px)}
     .hdr__burger i:last-child{transform:translateY(3.5px)}
     .hdr__burger[aria-expanded=true] i:first-child{transform:rotate(45deg)}
@@ -105,10 +105,10 @@ const cur = (href: string) => (!href.includes('#') && path.startsWith(href) ? 'p
     .menu[hidden]{display:none}
     .menu::before{content:'';position:fixed;z-index:1;left:0;right:0;top:0;height:var(--mt,76px);background:var(--bg)}
     .menu__grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .tile{background:#fff;border-radius:22px;padding:14px;min-height:124px;display:flex;flex-direction:column;justify-content:space-between;color:var(--ink)}
+    .tile{background:var(--surface);border-radius:22px;padding:14px;min-height:124px;display:flex;flex-direction:column;justify-content:space-between;color:var(--ink)}
     .tile__top{display:flex;justify-content:space-between;align-items:flex-start}
     .tile__top :global(.arrow){width:16px;height:16px}
-    .tile__dot{width:38px;height:38px;border-radius:999px;background:var(--mint);color:var(--deep);display:grid;place-items:center}
+    .tile__dot{width:38px;height:38px;border-radius:999px;background:var(--mint);color:var(--deep-t);display:grid;place-items:center}
     .tile__dot :global(svg){width:20px;height:20px}
     .tile__text{display:flex;flex-direction:column;gap:2px}
     .tile b{font-size:22px;line-height:26px;font-weight:500}
@@ -119,7 +119,7 @@ const cur = (href: string) => (!href.includes('#') && path.startsWith(href) ? 'p
     .menu__qatar span{display:flex;flex-direction:column;gap:2px}
     .menu__qatar b{font-size:17px;line-height:22px;font-weight:500}.menu__qatar small{font-size:13px;line-height:17px;opacity:.7}
     .menu__qatar :global(.arrow){width:16px;height:16px}
-    .menu__contact{margin-top:auto;background:var(--ink);color:#fff;border-radius:26px;padding:18px 14px 14px;display:flex;flex-direction:column;gap:12px}
+    .menu__contact{margin-top:auto;background:var(--feature);color:var(--on-feature);border-radius:26px;padding:18px 14px 14px;display:flex;flex-direction:column;gap:12px}
     .menu__contact>div:first-child{display:flex;flex-direction:column;gap:2px;padding-left:4px}
     .menu__contact b{font-size:20px;line-height:24px;font-weight:500}.menu__contact small{font-size:13px;opacity:.6}
     .menu__write{height:54px;font-size:16px;width:100%}

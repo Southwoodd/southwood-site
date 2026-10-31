@@ -63,7 +63,7 @@ const links = [...footer.sectionLinks, ...(BLOG_LIVE ? [{ label: 'Блог', hre
   .ft__legal{margin-top:4rem;padding-top:4rem;border-top:1px solid rgba(255,255,255,.2);display:flex;align-items:center;gap:3.2rem;font-size:max(1.4rem,12px);line-height:1.43;color:rgba(255,255,255,.65)}
   .ft__legal>div:first-child{margin-right:auto;display:flex;flex-direction:column;gap:.4rem}
   .ft__links{display:flex;gap:2.4rem;color:#fff;font-weight:500}
-  .ft__links a{text-decoration:underline;text-underline-offset:.3em}
+  .ft__links a{text-decoration:underline;text-underline-offset:.3em;white-space:nowrap}
   .ft__top{display:inline-flex;align-items:center;gap:.8rem;height:4.2rem;padding:0 1.4rem 0 1.8rem;border-radius:999px;background:rgba(255,255,255,.14);color:#fff;font-weight:500;transition:background-color .2s}
   .ft__top:hover{background:rgba(255,255,255,.24)}
   @media (max-width:1023px){
@@ -79,7 +79,8 @@ const links = [...footer.sectionLinks, ...(BLOG_LIVE ? [{ label: 'Блог', hre
     .ft__col ul{gap:10px;font-size:16px}
     .ft__hints small{font-size:13px}
     .ft__legal{margin-top:20px;padding-top:20px;flex-direction:column;align-items:flex-start;gap:14px;font-size:12px;line-height:17px}
-    .ft__links{flex-direction:column;gap:10px;font-size:13px}
+    /* На узких экранах ссылки на документы уходят выше юридического текста */
+    .ft__links{flex-direction:column;gap:10px;font-size:13px;order:-1}
     .ft__top{height:40px;font-size:14px}
   }
 </style>

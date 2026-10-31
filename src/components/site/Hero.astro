@@ -56,6 +56,10 @@ const icons: [string, number, number, number, number][] = [
   .hero{height:79.8rem;overflow:hidden}
   .hero__icons{position:absolute;inset:0;pointer-events:none}
   .hero__icons img{position:absolute;height:auto;max-width:none;mix-blend-mode:multiply;will-change:transform}
+  /* У иконок белая подложка без прозрачности, поэтому они сложены multiply: на темной
+     странице умножение гасит их до черного, и там их просто нет */
+  @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .hero__icons{display:none}}
+  :root[data-theme=dark] .hero__icons{display:none}
   .hero__in{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:10rem}
   .hero__badge-short{display:none}
   .hero__title{width:92rem;margin-top:5rem;font-size:6.9rem;line-height:7.2rem;font-weight:500;letter-spacing:-.03em;color:var(--ink-2);text-wrap:balance}

@@ -55,13 +55,13 @@ const link = (t: string) => nb(esc(t)).replace(/https:\/\/southwood\.pw(\/[a-z]+
 <style>
   .tp{padding:10rem 4rem}
   .tp__crumbs{display:flex;gap:1rem;font-size:max(1.6rem,13px);color:var(--muted)}
-  .tp__crumbs a:hover{color:var(--deep)}
+  .tp__crumbs a:hover{color:var(--deep-t)}
   .tp h1{margin-top:3.2rem;font-size:6.4rem;line-height:1.08;font-weight:500;letter-spacing:-.035em;max-width:150rem}
   .tp__lead{margin-top:2.8rem;max-width:78rem;font-size:max(2.2rem,16px);line-height:1.36;color:var(--muted)}
   .tp__meta{margin-top:3.2rem;display:flex;flex-wrap:wrap;gap:1rem}
   .tp__meta span,.tp__meta a{height:3.6rem;padding:0 1.4rem;border-radius:999px;font-size:max(1.5rem,13px);font-weight:500;display:inline-flex;align-items:center;gap:.8rem}
-  .tp__meta span{background:var(--mint);color:var(--deep)}
-  .tp__meta a{background:var(--card)}.tp__meta a:hover{background:var(--light)}
+  .tp__meta span{background:var(--mint);color:var(--deep-t)}
+  .tp__meta a{background:var(--card)}.tp__meta a:hover{background:var(--tint)}
   .tp__meta :global(.arrow){width:1.6rem;height:1.6rem}
   .tp__grid{margin-top:7.2rem;display:grid;grid-template-columns:89rem 1fr;align-items:start}
   .tp__grid--plain{grid-template-columns:1fr;padding-left:89rem}
@@ -69,15 +69,15 @@ const link = (t: string) => nb(esc(t)).replace(/https:\/\/southwood\.pw(\/[a-z]+
   .tp__toc>span{font-size:max(1.4rem,12px);color:var(--muted)}
   .tp__toc ol{display:grid;gap:1.4rem}
   .tp__toc a{font-size:max(1.7rem,14px);transition:color .2s}
-  .tp__toc a:hover,.tp__toc a.on{color:var(--deep)}
+  .tp__toc a:hover,.tp__toc a.on{color:var(--deep-t)}
   .tp__toc a.on{font-weight:500}
   .tp__body{max-width:84rem;display:grid;gap:5.6rem}
   .tp__body section{display:grid;gap:1.8rem;scroll-margin-top:14rem}
   .tp__body h2{font-size:3rem;line-height:1.2;font-weight:500;letter-spacing:-.02em;margin-bottom:.4rem}
   .tp__body p{font-size:max(1.8rem,15px);line-height:1.55}
-  .tp__body :global(a){color:var(--deep);text-decoration:underline;text-underline-offset:.3rem}
+  .tp__body :global(a){color:var(--deep-t);text-decoration:underline;text-underline-offset:.3rem}
   .tp__cookie{height:4.4rem;padding:0 1.8rem;border-radius:999px;background:var(--card);font-size:max(1.5rem,14px);font-weight:500}
-  .tp__cookie:hover{background:var(--light)}
+  .tp__cookie:hover{background:var(--tint)}
   .tp__contact{background:var(--deep);color:#fff;padding:4rem;display:flex;align-items:center;gap:1.6rem}
   .tp__contact div{flex:1}
   .tp__contact h2{font-size:3rem;font-weight:500;letter-spacing:-.02em}

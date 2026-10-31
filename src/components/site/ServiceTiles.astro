@@ -38,9 +38,10 @@ const { head = true, all = 'services' } = Astro.props;
   .stl__grid a:hover :global(.arrow){transform:translate(.2rem,-.2rem)}
   .stl h3{font-size:2.6rem;line-height:1.15;font-weight:500;letter-spacing:-.02em}
   .stl p{font-size:max(1.6rem,14px);line-height:1.45;color:var(--muted)}
-  .stl b{margin-top:auto;width:fit-content;height:4rem;padding:0 1.6rem;border-radius:999px;background:#fff;display:flex;align-items:center;font-size:max(1.5rem,13px);font-weight:500}
+  .stl b{margin-top:auto;width:fit-content;height:4rem;padding:0 1.6rem;border-radius:999px;background:var(--surface);display:flex;align-items:center;font-size:max(1.5rem,13px);font-weight:500}
   .stl__all a{background:var(--deep);color:#fff}.stl__all a:hover{background:#35594a}
-  .stl__all p{color:rgba(255,255,255,.8)}.stl__all b{color:var(--ink-2)}
+  /* Белая пилюля на зеленой плитке остается белой с темным текстом в обеих темах */
+  .stl__all p{color:rgba(255,255,255,.8)}.stl__all b{background:#fff;color:#111}
   /* телефон: вместо rem берем нижнюю границу в px */
   @media (max-width:1023px){.stl p{font-size:14px}.stl b{font-size:13px}}
   @media (max-width:1023px){

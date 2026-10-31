@@ -33,7 +33,7 @@ import { cookies as c, METRIKA_ID, nb } from '../../i18n/ru';
 <style>
   /* Темная плашка поверх страницы: на светлом сайте ее видно сразу,
      и она не спорит с кнопками и итогом калькулятора под ней */
-  .ck{position:fixed;left:3rem;bottom:3rem;z-index:80;width:fit-content;max-width:calc(100vw - 6rem);background:var(--ink);color:#fff;border-radius:2.4rem;padding:2.4rem;box-shadow:0 2rem 6rem rgba(10,30,20,.28);display:grid;gap:.8rem;animation:ck-in .5s var(--ease) both}
+  .ck{position:fixed;left:3rem;bottom:3rem;z-index:80;width:fit-content;max-width:calc(100vw - 6rem);background:var(--feature);color:var(--on-feature);border-radius:2.4rem;padding:2.4rem;box-shadow:0 2rem 6rem rgba(10,30,20,.28);display:grid;gap:.8rem;animation:ck-in .5s var(--ease) both}
   .ck[hidden]{display:none}
   @keyframes ck-in{from{opacity:0;transform:translateY(2rem)}}
   /* Ширину карточки задает описание. Меряем перенос в ch, а не в rem: размер

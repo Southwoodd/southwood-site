@@ -171,6 +171,11 @@ a:hover .z-c1{translate:0 -10px}a:hover .z-c2{translate:0 -5px}
 .n-k li i{height:10px;border-radius:5px;background:#6b7280}
 .n-f{top:303px;height:335px;background:linear-gradient(rgba(243,243,243,0),#f3f3f3 83%)}
 
+/* Мокапы нарисованы светлыми и рассчитаны на светлую подложку: на темной странице
+   подкладываем белый лист, как у скриншота интерфейса в карточке */
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .il{background:#fff}}
+:root[data-theme=dark] .il{background:#fff}
+
 @media (prefers-reduced-motion:reduce){
   .il *,.il *::before,.il *::after{animation:none!important;transition:none!important}
   .il [data-a]{opacity:1!important}
