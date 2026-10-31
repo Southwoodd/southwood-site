@@ -84,16 +84,11 @@ const illus = [['zero', 880], ['task', 880], ['team', 880], ['support', 880], ['
   .ui__illus{margin-top:3rem;display:flex;flex-wrap:wrap;gap:2rem}
   .ui__illus li{width:calc(var(--fw) * .0495rem);display:grid;gap:1rem}
   .ui__illus li>div{border-radius:3.2rem;overflow:hidden;background:var(--card)}
-  .ui__illus li:nth-child(-n+4)>div{background:#fff;border:1px solid var(--line)}
-  /* Витрина: белые карточки держат светлую палитру мокапов в обеих темах */
-  @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .ui__illus li:nth-child(-n+4)>div :global(.il){
-    --il-panel:#fff;--il-line:#f0f0f0;--il-ink:#0a0a0a;--il-ink2:#000;
-    --il-soft:#f7f7f9;--il-row:#eee;--il-pill:#f3f4f3;--il-fade:#fff;--il-sheet:#fff;
-    --il-mut:#5e5e5e;--il-dots:#6b7280;--il-gear:#f6f6f6;--il-gear-ic:#afafaf;--il-bar:#d9d9d9;--il-green-t:#1f4d3a}}
-  :root[data-theme=dark] .ui__illus li:nth-child(-n+4)>div :global(.il){
-    --il-panel:#fff;--il-line:#f0f0f0;--il-ink:#0a0a0a;--il-ink2:#000;
-    --il-soft:#f7f7f9;--il-row:#eee;--il-pill:#f3f4f3;--il-fade:#fff;--il-sheet:#fff;
-    --il-mut:#5e5e5e;--il-dots:#6b7280;--il-gear:#f6f6f6;--il-gear-ic:#afafaf;--il-bar:#d9d9d9;--il-green-t:#1f4d3a}
+  /* Первые четыре повторяют карточки Start: белые на светлой, темные на темной */
+  .ui__illus li:nth-child(-n+4)>div{background:var(--ui-card,#fff);border:1px solid var(--line)}
+  .ui__illus li:nth-child(-n+4)>div :global(.il){--il-fade:var(--ui-card,#fff);--il-sheet:var(--ui-card,#fff)}
+  @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .ui__illus{--ui-card:#18211e}}
+  :root[data-theme=dark] .ui__illus{--ui-card:#18211e}
   @media (max-width:1023px){
     .ui__top,.ui__sec{padding:24px 20px}
     .ui h1{font-size:28px}.ui__sec>h2{font-size:22px;margin-bottom:20px}
