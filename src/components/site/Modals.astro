@@ -90,7 +90,7 @@ const tick = 'M11 1.83a9.17 9.17 0 1 0 0 18.34 9.17 9.17 0 0 0 0-18.34Zm4.38 7.0
   .md{padding:0;border:0;background:none;max-width:none;max-height:none;width:100vw;height:100dvh;overflow:hidden;color:var(--ink)}
   .md[open]{display:grid;place-items:center}
   .md::backdrop{background:rgba(16,28,22,.72);backdrop-filter:blur(6px);animation:md-fade .3s both}
-  .md__box{position:relative;width:min(max(66.2rem,580px),calc(100vw - 4rem));max-height:calc(100dvh - 6rem);overflow:auto;overscroll-behavior:contain;background:#fff;border-radius:2.8rem;box-shadow:0 4rem 10rem rgba(0,0,0,.35);animation:md-in .4s var(--ease) both;scrollbar-width:thin}
+  .md__box{position:relative;width:min(max(66.2rem,580px),calc(100vw - 4rem));max-height:calc(100dvh - 6rem);overflow:auto;overscroll-behavior:contain;background:var(--surface);border-radius:2.8rem;box-shadow:0 4rem 10rem rgba(0,0,0,.35);animation:md-in .4s var(--ease) both;scrollbar-width:thin}
   .md[data-kind=pack] .md__box{width:min(max(74.4rem,640px),calc(100vw - 4rem))}
   .md[data-kind=case] .md__box{width:min(max(110rem,880px),calc(100vw - 4rem))}
   @media (min-width:1300px){.md[data-kind=lead] .md__box,.md[data-kind=study] .md__box,.md[data-kind=write] .md__box{width:min(max(104rem,900px),calc(100vw - 8rem))}}
@@ -98,25 +98,28 @@ const tick = 'M11 1.83a9.17 9.17 0 1 0 0 18.34 9.17 9.17 0 0 0 0-18.34Zm4.38 7.0
   @keyframes md-in{from{opacity:0;transform:translateY(2.4rem) scale(.985)}}
   .md__box:focus{outline:0}
   .md__close{position:sticky;top:1.6rem;z-index:3;float:right;margin:1.6rem 1.6rem -5.2rem 0;width:3.6rem;height:3.6rem;border-radius:50%;background:var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Cpath d='m13.5 13.5 9 9m0-9-9 9' stroke='%230a0a0a' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") center/100% no-repeat;transition:background-color .2s}
-  .md__close:hover{background-color:var(--light)}
+  .md__close:hover{background-color:var(--tint)}
+  /* Крестик нарисован в data-uri: на темной теме меняем штрих на светлый */
+  @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .md__close{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Cpath d='m13.5 13.5 9 9m0-9-9 9' stroke='%23eef2ef' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E")}}
+  :root[data-theme=dark] .md__close{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Cpath d='m13.5 13.5 9 9m0-9-9 9' stroke='%23eef2ef' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E")}
   .md__panel[hidden]{display:none}
   .md__panel--form :global(.lf){border-radius:0;min-height:0}
   .md__panel--form :global(.lf header){padding-right:4rem}
   .md__panel--form :global(.lf__main){gap:2.4rem}
   .md__panel--pack{padding:4rem}
   .mp__head{display:flex;gap:1.6rem;align-items:center;padding-right:4rem}
-  .mp__ico{flex:none;width:5.6rem;height:5.6rem;border-radius:50%;background:var(--card);color:var(--deep)}
+  .mp__ico{flex:none;width:5.6rem;height:5.6rem;border-radius:50%;background:var(--card);color:var(--deep-t)}
   .mp__ico :global(svg){width:5.6rem;height:5.6rem}
   .mp__head h3{font-size:3rem;line-height:1.2;font-weight:500;letter-spacing:-.03em}
   .mp__head p{margin-top:.2rem;font-size:max(1.5rem,13px);color:var(--muted)}
   .mp__price{margin-top:2.4rem;background:var(--card);border-radius:2rem;padding:2.4rem 2.8rem;display:flex;justify-content:space-between;align-items:center;gap:2rem}
   .mp__price b{font-size:3.6rem;line-height:1.1;font-weight:500;letter-spacing:-.03em}
   .mp__price p{margin-top:.8rem;max-width:42rem;font-size:max(1.3rem,12px);line-height:1.4;color:var(--muted)}
-  .mp__price span{flex:none;height:3.6rem;padding:0 1.4rem;border-radius:999px;background:#fff;font-size:max(1.5rem,13px);font-weight:500;display:flex;align-items:center}
+  .mp__price span{flex:none;height:3.6rem;padding:0 1.4rem;border-radius:999px;background:var(--surface);font-size:max(1.5rem,13px);font-weight:500;display:flex;align-items:center}
   .mp__label{margin-top:2.8rem;font-size:max(1.3rem,12px);color:var(--muted)}
   .mp__list{margin-top:1.6rem;display:grid;gap:1.8rem}
   .mp__list li{display:flex;gap:1.4rem}
-  .mp__list svg,.mc__done svg{flex:none;width:2.4rem;height:2.4rem;color:var(--deep)}
+  .mp__list svg,.mc__done svg{flex:none;width:2.4rem;height:2.4rem;color:var(--deep-t)}
   .mp__list b{font-size:max(1.8rem,15px);font-weight:500}
   .mp__list p{margin-top:.2rem;font-size:max(1.5rem,13px);line-height:1.4;color:var(--muted)}
   .mp__steps{margin-top:2.8rem;display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
@@ -137,8 +140,8 @@ const tick = 'M11 1.83a9.17 9.17 0 1 0 0 18.34 9.17 9.17 0 0 0 0-18.34Zm4.38 7.0
   .mc__label{display:block;margin-top:4rem;font-size:max(1.4rem,12px);color:var(--muted)}
   .mc__awards{margin-top:2rem;display:flex;flex-wrap:wrap;align-items:center;gap:.8rem}
   .mc__awards .mc__label{margin:0 .6rem 0 0}
-  .mc__awards a{height:3.4rem;padding:0 1.4rem;border-radius:999px;background:var(--mint);color:var(--deep);font-size:max(1.5rem,13px);font-weight:500;display:inline-flex;align-items:center;white-space:nowrap;transition:background-color .2s}
-  .mc__awards a:hover{background:var(--light)}
+  .mc__awards a{height:3.4rem;padding:0 1.4rem;border-radius:999px;background:var(--mint);color:var(--deep-t);font-size:max(1.5rem,13px);font-weight:500;display:inline-flex;align-items:center;white-space:nowrap;transition:background-color .2s}
+  .mc__awards a:hover{background:var(--tint)}
   .mc__two{display:grid;grid-template-columns:1fr 1fr;gap:4.8rem}
   .mc__two p{margin-top:1.2rem;font-size:max(1.8rem,15px);line-height:1.5}
   .mc__done{margin-top:1.6rem;display:grid;gap:1.4rem}
@@ -150,7 +153,7 @@ const tick = 'M11 1.83a9.17 9.17 0 1 0 0 18.34 9.17 9.17 0 0 0 0-18.34Zm4.38 7.0
   .mc__metrics li{border:1px solid var(--line);border-radius:1.8rem;padding:2.4rem;display:grid;gap:.8rem;align-content:start;min-height:16rem}
   .mc__metrics span{font-size:max(1.3rem,12px);color:var(--muted)}
   .mc__metrics s{font-size:max(1.4rem,12px);color:var(--muted)}
-  .mc__metrics b{margin-top:.6rem;font-size:2.4rem;line-height:1.25;font-weight:500;letter-spacing:-.02em;color:var(--deep)}
+  .mc__metrics b{margin-top:.6rem;font-size:2.4rem;line-height:1.25;font-weight:500;letter-spacing:-.02em;color:var(--deep-t)}
   .mc__sum{margin-top:1.6rem;font-size:max(1.8rem,15px);line-height:1.5}
   .mc__term{margin-top:3.2rem;display:flex;align-items:center;gap:1.2rem}
   .mc__term .mc__label{margin:0}
@@ -170,7 +173,7 @@ const tick = 'M11 1.83a9.17 9.17 0 1 0 0 18.34 9.17 9.17 0 0 0 0-18.34Zm4.38 7.0
   @media (max-width:1023px){
     .md[open]{place-items:end center}
     .md__box,.md[data-kind] .md__box{width:100%;max-width:640px;max-height:94dvh;border-radius:24px 24px 0 0;animation-name:md-up}
-    .md__box::before{content:'';position:sticky;top:8px;display:block;width:36px;height:4px;margin:8px auto -12px;border-radius:2px;background:#d5ddd8;z-index:3}
+    .md__box::before{content:'';position:sticky;top:8px;display:block;width:36px;height:4px;margin:8px auto -12px;border-radius:2px;background:var(--line);z-index:3}
     @keyframes md-up{from{transform:translateY(60px);opacity:0}}
     .md__close{top:12px;margin:12px 12px -48px 0;width:36px;height:36px}
     .md__panel--form :global(.lf){padding:28px 16px 20px}

@@ -21,7 +21,11 @@ const calc = calcHref(Astro.url.pathname);
   <div class="fn__form" data-reveal style="--d:120ms"><LeadForm /></div>
 </section>
 <style>
-  .fn{background:var(--ink);color:#fff;padding:4rem;display:grid;grid-template-columns:100fr 76fr;gap:2rem}
+  .fn{background:var(--feature);color:var(--on-feature);padding:4rem;display:grid;grid-template-columns:100fr 76fr;gap:2rem}
+  /* На темной теме футер зеленый: финальный блок уходит в тон карточек,
+     чтобы соседние секции не сливались. Форма на нем остается --surface и читается */
+  @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .fn{background:var(--card)}}
+  :root[data-theme=dark] .fn{background:var(--card)}
   .fn__left{padding:2rem 4rem 0 2rem;display:flex;flex-direction:column;align-items:flex-start}
   .fn__badge{display:inline-flex;align-items:center;gap:.8rem;height:3.6rem;padding:0 1.4rem;border-radius:999px;background:rgba(255,255,255,.1);font-size:max(1.5rem,13px);font-weight:500}
   .fn__badge i{width:.8rem;height:.8rem;border-radius:50%;background:var(--accent);animation:fn-pulse 2s ease-in-out infinite}
@@ -31,7 +35,7 @@ const calc = calcHref(Astro.url.pathname);
   .fn__text{margin-top:2.4rem;max-width:61rem;font-size:max(2.2rem,16px);line-height:1.36;color:rgba(255,255,255,.7)}
   .fn__steps{margin-top:auto;padding-top:6rem;width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
   .fn__steps li{background:rgba(255,255,255,.07);border-radius:2.4rem;padding:2.4rem;min-height:18.2rem;display:flex;flex-direction:column;gap:1.4rem}
-  .fn__steps b{width:3.6rem;height:3.6rem;border-radius:50%;background:var(--accent);color:var(--ink);display:grid;place-items:center;font-size:max(1.6rem,13px);font-weight:500}
+  .fn__steps b{width:3.6rem;height:3.6rem;border-radius:50%;background:var(--accent);color:#0a0a0a;display:grid;place-items:center;font-size:max(1.6rem,13px);font-weight:500}
   .fn__steps h3{font-size:max(2.2rem,16px);line-height:1.27;font-weight:500;letter-spacing:-.02em}
   .fn__steps p{margin-top:1.4rem;font-size:max(1.5rem,13px);line-height:1.4;color:rgba(255,255,255,.6)}
   .fn__open,.fn__note{display:none}

@@ -29,20 +29,22 @@ import Ui from '../ui/Ui.astro';
 <style>
   .pc{padding:10rem 4rem}
   .pc__grid{margin-top:10rem;display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
-  .pc__grid li{position:relative;min-height:36rem;background:var(--card);border-radius:3.2rem;padding:4rem;display:grid;align-items:end;transition:translate .35s var(--ease)}
+  /* Верхний отступ резервирует зону иконки: при длинном тексте заголовок не наезжает на нее */
+  .pc__grid li{position:relative;min-height:36rem;background:var(--card);border-radius:3.2rem;padding:11rem 4rem 4rem;display:grid;align-items:end;transition:translate .35s var(--ease)}
   .pc__grid li:hover{translate:0 -.6rem}
   .pc__grid li.hot{background:var(--deep);color:#fff}
   .pc__step{width:100%}
   .pc__step summary{display:block}
   .pc__ico{position:absolute;left:4rem;top:4rem}
   .pc__num{position:absolute;right:4rem;top:5.6rem;line-height:1}
-  .pc__ico{width:4.8rem;height:4.8rem;border-radius:50%;background:#fff;color:var(--deep)}
+  .pc__ico{width:4.8rem;height:4.8rem;border-radius:50%;background:var(--surface);color:var(--deep-t)}
   .pc__ico :global(svg){width:4.8rem;height:4.8rem}
   .pc__num{font-size:max(1.4rem,12px)}
   .pc__step h3{font-size:4rem;line-height:4.4rem;font-weight:500;letter-spacing:-.03em}
   .pc__step p{margin-top:1.2rem;font-size:max(1.8rem,14px);line-height:1.34}
-  .pc__tag{margin-top:2rem;height:3.2rem;padding:0 1.4rem;border-radius:999px;background:#fff;color:var(--ink);font-size:max(1.4rem,12px);font-weight:500;display:inline-flex;align-items:center}
-  .hot .pc__tag{color:var(--deep)}
+  .pc__tag{margin-top:2rem;height:3.2rem;padding:0 1.4rem;border-radius:999px;background:var(--surface);color:var(--ink);font-size:max(1.4rem,12px);font-weight:500;display:inline-flex;align-items:center}
+  /* На зеленой карточке пилюля остается белой с темным текстом в обеих темах */
+  .hot .pc__tag{background:#fff;color:var(--deep)}
   @media (max-width:1023px){
     .pc{padding:56px 12px 12px}
     .pc :global(.head){padding:0 8px 8px;align-items:center}

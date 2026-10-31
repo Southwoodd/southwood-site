@@ -30,7 +30,7 @@ import Arrow from './Arrow.astro';
   </div>
 </section>
 <style>
-  .qt{background:var(--qatar);color:#fff;padding:10rem 4rem}
+  .qt{background:var(--qatar-bg);color:#fff;padding:10rem 4rem}
   .qt__head :global(.badge){--badge-bg:#fff;color:var(--qatar);font-weight:500}
   .qt__head :global(.badge svg){color:var(--qatar)}
   .qt__head .head__text{max-width:88.9rem}
@@ -41,12 +41,12 @@ import Arrow from './Arrow.astro';
   .qt__facts b{font-size:4.4rem;line-height:4.8rem;font-weight:500;letter-spacing:-.03em}
   .qt__facts p{font-size:max(1.6rem,13px);color:rgba(255,255,255,.7)}
   .qt__srv{margin-top:2rem;display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
-  .qt__srv li{background:#fff;color:var(--ink);border-radius:2.4rem;padding:2.8rem;min-height:18.6rem;display:flex;flex-direction:column;align-items:flex-start;gap:1.2rem;transition:translate .35s var(--ease)}
+  .qt__srv li{background:#fff;color:#0a0a0a;border-radius:2.4rem;padding:2.8rem;min-height:18.6rem;display:flex;flex-direction:column;align-items:flex-start;gap:1.2rem;transition:translate .35s var(--ease)}
   .qt__srv li:hover{translate:0 -.5rem}
   .qt__srv details{width:100%}
   .qt__srv h3{font-size:2.4rem;line-height:3rem;font-weight:500;letter-spacing:-.02em}
   .qt__srv details p{margin-top:1.2rem;font-size:max(1.6rem,13px);line-height:1.38;color:rgba(10,10,10,.7)}
-  .qt__price{height:3.2rem;padding:0 1.4rem;border-radius:999px;background:rgba(138,21,56,.1);color:var(--qatar);font-size:max(1.4rem,12px);font-weight:500;display:inline-flex;align-items:center}
+  .qt__price{height:3.2rem;padding:0 1.4rem;border-radius:999px;background:rgba(138,21,56,.1);color:#8a1538;font-size:max(1.4rem,12px);font-weight:500;display:inline-flex;align-items:center}
   .qt__bottom{margin-top:2rem;background:rgba(255,255,255,.07);border-radius:2.4rem;padding:2.4rem 2.8rem;display:flex;align-items:center;gap:1.6rem}
   .qt__bottom p{flex:1;font-size:max(1.6rem,13px);line-height:1.38;color:rgba(255,255,255,.75)}
   .qt__talk,.qt__site{height:5.8rem;padding:0 2.4rem;font-size:max(1.7rem,15px)}
@@ -72,7 +72,7 @@ import Arrow from './Arrow.astro';
     .qt__bottom{margin-top:12px;border-radius:20px;padding:18px;flex-direction:column;align-items:stretch;gap:10px}
     .qt__bottom p{font-size:15px;line-height:21px;margin-bottom:4px}
     .qt__talk,.qt__site{height:56px;font-size:16px;width:100%}
-    .qt__talk{background:#fff;color:var(--ink);border:0}
+    .qt__talk{background:#fff;color:#0a0a0a;border:0}
     .qt__talk :global(.arrow){display:block}
     .qt__site{background:none;border:1px solid rgba(255,255,255,.4);color:#fff}
   }

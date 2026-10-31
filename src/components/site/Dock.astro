@@ -48,7 +48,7 @@ const on = (href: string) => (path === href || (href !== '/' && path.startsWith(
     <button class="dock__menu" type="button" aria-expanded="false" aria-controls="dock-menu" data-dock-toggle>
       <span class="dock__burger"><i></i><i></i></span><span data-dock-label>Меню</span>
     </button>
-    <button class="dock__snd" type="button" data-snd-toggle aria-pressed="true" aria-label="Звуки сайта"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3l5-4v13l-5-4H4z"/><path class="snd-on" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="snd-off" d="m16 9.5 5 5m0-5-5 5"/></svg></button>
+    <button class="dock__snd" type="button" data-snd-toggle aria-pressed="true" aria-label="Звуки сайта"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3l5-4v13l-5-4H4z"/><path class="snd-on" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="snd-off" d="m16 9.5 5 5m0-5-5 5"/></svg></button><button class="dock__snd dock__thm" type="button" data-theme-toggle aria-pressed="false" aria-label="Тема сайта"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="thm-light"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2.5 12h2M19.5 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></g><g class="thm-dark"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></g></svg></button>
     <button class="dock__write" type="button" data-open="write">{header.cta}<Arrow /></button>
   </div>
 </div>
@@ -107,16 +107,30 @@ const on = (href: string) => (path === href || (href !== '/' && path.startsWith(
     .dock-scrim{display:block;position:fixed;inset:0;z-index:59;background:rgba(10,14,12,.42);backdrop-filter:blur(.4rem);animation:dkFade .3s var(--ease)}
     .dock-scrim[hidden]{display:none}
     @keyframes dkFade{from{opacity:0}to{opacity:1}}
-    .dock{--dk:#0a0a0a;--seg:#1c1c1c;--txt:#fff;--sub:rgba(255,255,255,.5);--cta:var(--light);--cta-txt:var(--ink);--logo-bg:#fff;
+    .dock{--dk:#0a0a0a;--seg:#1c1c1c;--txt:#fff;--sub:rgba(255,255,255,.5);--cta:var(--light);--cta-txt:#0a0a0a;--logo-bg:#fff;--logo-fg:var(--deep);
+      --panel:#fff;--panel-txt:var(--ink);--panel-line:#e6e6e6;--panel-hover:var(--mint);--link:var(--deep);--cta-hover:#35594a;--qatar-hover:#9d1a41;
       display:block;position:fixed;left:50%;bottom:2.4rem;z-index:60;transform:translateX(-50%);width:max-content;max-width:calc(100vw - 4rem);
       background:var(--dk);border-radius:2.6rem;padding:.8rem;box-shadow:0 1.6rem 4.8rem rgba(10,20,15,.28);
       transition:width .5s var(--ease),background-color .35s var(--ease),box-shadow .35s var(--ease)}
     .dock.is-ready{width:var(--dock-w)}
     .dock.is-open{width:min(118rem,calc(100vw - 4rem))}
-    .dock--light:not(.is-open){--dk:#fff;--seg:#f3f3f3;--txt:var(--ink);--sub:var(--grey-text);--cta:var(--deep);--cta-txt:#fff;--logo-bg:var(--mint);box-shadow:0 1.6rem 4.8rem rgba(0,0,0,.3)}
+    .dock--light:not(.is-open){--dk:#fff;--seg:#f3f3f3;--txt:var(--ink);--sub:var(--grey-text);--cta:var(--deep);--cta-txt:#fff;--logo-bg:var(--mint);--logo-fg:var(--deep);box-shadow:0 1.6rem 4.8rem rgba(0,0,0,.3)}
+    /* Темная тема. Светлый и темный тона дока схлопываются в один: они нужны были,
+       чтобы спорить с содержимым под доком, а темная страница везде темная.
+       Селектор с :root перебивает .dock--light по весу, отдельное правило не нужно */
+    @media (prefers-color-scheme:dark){
+      :root:not([data-theme=light]) .dock{--dk:#18211e;--seg:#243029;--txt:#eef2ef;--sub:#a8b8b0;--logo-bg:#243029;--logo-fg:var(--accent);
+      --panel:#121917;--panel-txt:#eef2ef;--panel-line:#243029;--panel-hover:#1d2724;--link:var(--accent);
+      --cta:var(--light);--cta-txt:#0a0a0a;--cta-hover:#4a7d64;--qatar-hover:#bd2b55;
+      box-shadow:0 1.6rem 4.8rem rgba(0,0,0,.5)}
+    }
+    :root[data-theme=dark] .dock{--dk:#18211e;--seg:#243029;--txt:#eef2ef;--sub:#a8b8b0;--logo-bg:#243029;--logo-fg:var(--accent);
+      --panel:#121917;--panel-txt:#eef2ef;--panel-line:#243029;--panel-hover:#1d2724;--link:var(--accent);
+      --cta:var(--light);--cta-txt:#0a0a0a;--cta-hover:#4a7d64;--qatar-hover:#bd2b55;
+      box-shadow:0 1.6rem 4.8rem rgba(0,0,0,.5)}
     .dock__bar{display:flex;gap:.8rem;height:6rem}
     .dock__bar>*{border-radius:1.8rem;background:var(--seg);color:var(--txt);display:flex;align-items:center;white-space:nowrap;font-size:max(1.6rem,13px);font-weight:500;transition:background-color .35s var(--ease),color .35s var(--ease)}
-    .dock__bar .dock__logo{width:6rem;flex:none;justify-content:center;background:var(--logo-bg);color:var(--deep);--logo-dot:var(--accent)}
+    .dock__bar .dock__logo{width:6rem;flex:none;justify-content:center;background:var(--logo-bg);color:var(--logo-fg);--logo-dot:var(--accent)}
     .dock__logo :global(svg){width:3.2rem;height:3.2rem}
     .dock__name{flex:1 1 auto;min-width:0;padding:0 2.2rem;gap:1.1rem;overflow:hidden}
     .dock__name b{font-weight:500}
@@ -125,6 +139,9 @@ const on = (href: string) => (path === href || (href !== '/' && path.startsWith(
     .dock__menu{flex:none;padding:0 2.2rem;gap:1.2rem}
     .dock__menu:hover{background:color-mix(in srgb,var(--seg) 82%,var(--txt))}
     .dock__bar .dock__snd{width:6rem;flex:none;justify-content:center;cursor:pointer}
+    /* Тема нужна и на телефоне, где звука нет: своя ширина, не наследует скрытие звука */
+    .dock__bar .dock__thm{width:5.4rem}
+    .dock__thm[aria-pressed=false],.dock__thm[aria-pressed=true]{color:inherit}
     .dock__snd:hover{background:color-mix(in srgb,var(--seg) 82%,var(--txt))}
     .dock__snd svg{width:2.2rem;height:2.2rem}
     .dock__snd[aria-pressed=false]{color:var(--sub)}
@@ -132,7 +149,7 @@ const on = (href: string) => (path === href || (href !== '/' && path.startsWith(
     .dock__burger i{grid-area:1/1;width:1.8rem;height:.2rem;border-radius:1px;background:currentColor;transition:transform .35s var(--ease)}
     .dock__burger i:first-child{transform:translateY(-.35rem)}.dock__burger i:last-child{transform:translateY(.35rem)}
     .is-open .dock__burger i:first-child{transform:rotate(45deg)}.is-open .dock__burger i:last-child{transform:rotate(-45deg)}
-    .is-open .dock__menu{background:#fff;color:var(--ink)}
+    .is-open .dock__menu{background:var(--panel);color:var(--panel-txt)}
     .dock__bar .dock__write{flex:none;padding:0 2.6rem;gap:1.4rem;background:var(--cta);color:var(--cta-txt)}
     .dock__write:hover{filter:brightness(1.06)}
     .dock__write :global(.arrow){width:1.8rem;height:1.8rem;transition:transform .25s var(--ease)}
@@ -146,33 +163,33 @@ const on = (href: string) => (path === href || (href !== '/' && path.startsWith(
     .dock__in a{transition:background-color .2s var(--ease),color .2s var(--ease)}
     .dock__in :global(.arrow){width:1.6rem;height:1.6rem;flex:none;transition:transform .25s var(--ease)}
     .dock__in a:hover :global(.arrow){transform:translate(.2rem,-.2rem)}
-    .dk-srv{grid-row:1;grid-column:1;background:#fff;color:var(--ink);border-radius:2rem;padding:2.4rem 2.4rem 1.2rem;display:flex;flex-direction:column}
+    .dk-srv{grid-row:1;grid-column:1;background:var(--panel);color:var(--panel-txt);border-radius:2rem;padding:2.4rem 2.4rem 1.2rem;display:flex;flex-direction:column}
     .dk-srv__top{display:flex;justify-content:space-between;align-items:center;padding-bottom:2.4rem}
     .dk-srv__top b{font-size:2.8rem;line-height:1;font-weight:500;letter-spacing:-.03em}
-    .dk-srv__top a{display:flex;align-items:center;gap:.8rem;font-size:max(1.5rem,12px);font-weight:500;color:var(--deep)}
+    .dk-srv__top a{display:flex;align-items:center;gap:.8rem;font-size:max(1.5rem,12px);font-weight:500;color:var(--link)}
     .dk-srv ul{flex:1;display:flex;flex-direction:column}
-    .dk-srv li{flex:1;border-top:1px solid #e6e6e6;display:flex}
+    .dk-srv li{flex:1;border-top:1px solid var(--panel-line);display:flex}
     .dk-srv li a{flex:1;display:flex;align-items:center;justify-content:space-between;gap:1.2rem;font-size:max(1.8rem,14px);font-weight:500;min-height:3.4rem}
-    .dk-srv li a:hover,.dk-srv a[aria-current]{color:var(--deep)}
+    .dk-srv li a:hover,.dk-srv a[aria-current]{color:var(--link)}
     .dk-tiles{grid-row:1;grid-column:2/-1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:.8rem}
-    .dk-tile{background:#fff;color:var(--ink);border-radius:2rem;padding:2rem;display:flex;flex-direction:column;justify-content:space-between}
-    .dk-tile:hover{background:var(--mint)}
+    .dk-tile{background:var(--panel);color:var(--panel-txt);border-radius:2rem;padding:2rem;display:flex;flex-direction:column;justify-content:space-between}
+    .dk-tile:hover{background:var(--panel-hover)}
     .dk-tile__top{display:flex;justify-content:space-between;align-items:flex-start}
-    .dk-tile__top i{width:4rem;height:4rem;border-radius:50%;background:var(--mint);color:var(--deep);display:grid;place-items:center}
+    .dk-tile__top i{width:4rem;height:4rem;border-radius:50%;background:var(--panel-hover);color:var(--link);display:grid;place-items:center}
     .dk-tile__top i :global(svg){width:2rem;height:2rem}
     .dk-tile__text{display:grid;gap:.4rem}
     .dk-tile b{font-size:3rem;line-height:1;font-weight:500;letter-spacing:-.03em}
     .dk-tile small{font-size:max(1.4rem,12px);color:var(--muted)}
-    .dk-tile--accent{background:var(--deep);color:#fff}.dk-tile--accent:hover{background:#35594a}
+    .dk-tile--accent{background:var(--deep);color:#fff}.dk-tile--accent:hover{background:var(--cta-hover)}
     .dk-tile--accent small{color:rgba(255,255,255,.75)}.dk-tile--accent i{background:rgba(255,255,255,.16);color:#fff}
     .dk-tile[aria-current]:not(.dk-tile--accent){box-shadow:inset 0 0 0 .2rem var(--deep)}
-    .dk-row{grid-row:2;grid-column:4/-1;background:#fff;color:var(--ink);border-radius:2rem;padding:0 2.4rem;display:flex;align-items:center;justify-content:space-between;gap:1.6rem}
-    .dk-row:hover{background:var(--mint)}
+    .dk-row{grid-row:2;grid-column:4/-1;background:var(--panel);color:var(--panel-txt);border-radius:2rem;padding:0 2.4rem;display:flex;align-items:center;justify-content:space-between;gap:1.6rem}
+    .dk-row:hover{background:var(--panel-hover)}
     .dk-row span{display:grid;gap:.3rem}
     .dk-row b{font-size:max(1.9rem,14px);font-weight:500}.dk-row small{font-size:max(1.4rem,12px);color:var(--muted)}
-    .dk-row--qatar{grid-column:1/4;background:var(--qatar);color:#fff}.dk-row--qatar:hover{background:#9d1a41}
+    .dk-row--qatar{grid-column:1/4;background:var(--qatar-bg);color:#fff}.dk-row--qatar:hover{background:var(--qatar-hover)}
     .dk-row--qatar small{color:rgba(255,255,255,.7)}
-    .dk-ask{grid-row:3;grid-column:1/-1;background:var(--seg);color:#fff;border-radius:2rem;padding:0 2rem 0 2.8rem;display:flex;align-items:center;justify-content:space-between;gap:2rem}
+    .dk-ask{grid-row:3;grid-column:1/-1;background:var(--seg);color:var(--txt);border-radius:2rem;padding:0 2rem 0 2.8rem;display:flex;align-items:center;justify-content:space-between;gap:2rem}
     .dk-ask div{display:grid;gap:.4rem}
     .dk-ask b{font-size:2.2rem;font-weight:500;letter-spacing:-.02em}.dk-ask small{font-size:max(1.4rem,12px);color:rgba(255,255,255,.6)}
     .dk-ask p{display:flex;gap:.8rem}

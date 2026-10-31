@@ -7,6 +7,7 @@ import Dock from '../components/site/Dock.astro';
 import Final from '../components/site/Final.astro';
 import Footer from '../components/site/Footer.astro';
 import { WEBSITE, PERSON } from '../i18n/schema';
+import { footer as ft } from '../i18n/ru';
 export type Crumb = { label: string; href?: string };
 interface Props { title: string; description: string; path: string; label: string; crumbs?: Crumb[]; final?: boolean; noindex?: boolean; ld?: object[]; image?: string }
 const { title, description, path, label, crumbs = [], final = true, noindex = false, ld = [], image } = Astro.props;
@@ -37,4 +38,21 @@ const graph = [
     <Footer />
   </div>
   <Dock label={label} />
+  {/* Плавающая кнопка наверх: появляется после 500px прокрутки, живет над доком справа */}
+  <button class="totop" type="button" data-totop aria-label={ft.top}>{ft.top}<svg viewBox="0 0 14 14" width="14" height="14" fill="none" aria-hidden="true"><path d="M7 12V2M2.5 6.5 7 2l4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <script>
+    const tt = document.querySelector('[data-totop]');
+    if (tt) {
+      const toggle = () => tt.classList.toggle('is-show', scrollY > 500);
+      addEventListener('scroll', toggle, { passive: true });
+      toggle();
+      tt.addEventListener('click', () => scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }));
+    }
+  </script>
 </Site>
+<style>
+  .totop{position:fixed;right:3rem;bottom:3rem;z-index:55;display:inline-flex;align-items:center;gap:.8rem;height:4.8rem;padding:0 1.6rem 0 2rem;border-radius:999px;background:var(--feature);color:var(--on-feature);font-weight:500;font-size:max(1.5rem,13px);box-shadow:0 1.2rem 3.2rem rgba(10,20,15,.28);opacity:0;transform:translateY(1.2rem);pointer-events:none;transition:opacity .25s var(--ease),transform .25s var(--ease),background-color .2s var(--ease)}
+  .totop.is-show{opacity:1;transform:none;pointer-events:auto}
+  .totop:hover{background:var(--feature-hover)}
+  @media (max-width:1023px){.totop{right:16px;bottom:16px;height:44px;padding:0 14px 0 18px;font-size:13px}}
+</style>
