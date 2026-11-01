@@ -15,7 +15,7 @@ const icons: [string, number, number, number, number][] = [
     {icons.map(([n, x, y, w, h]) => (
       <>
         <img class="hero__ic--l" src={`/img/hero/ic/${n}.webp`} alt="" width={w} height={h} decoding="async" style={`left:${x / 10}rem;top:${y / 10}rem;width:${w / 10}rem`} />
-        <img class="hero__ic--d" src={`/img/hero/ic-dark/${n}.webp`} alt="" width={w} height={h} decoding="async" style={`left:${x / 10}rem;top:${y / 10}rem;width:${w / 10}rem`} />
+        <img class="hero__ic--d" src={`/img/hero/ic-dark/${n}.svg`} alt="" width={w} height={h} decoding="async" style={`left:${x / 10}rem;top:${y / 10}rem;width:${w / 10}rem`} />
       </>
     ))}
   </div>
@@ -62,9 +62,9 @@ const icons: [string, number, number, number, number][] = [
   .hero__icons{position:absolute;inset:0;pointer-events:none}
   .hero__icons img{position:absolute;height:auto;max-width:none;mix-blend-mode:multiply;will-change:transform}
   /* У светлых иконок белая подложка без прозрачности, поэтому они сложены multiply.
-     Для темной страницы подложка убрана в прозрачность заранее (scripts/hero-ic-dark.py),
-     показываем темный набор без смешивания */
-  .hero__icons .hero__ic--d{display:none;mix-blend-mode:normal}
+     Темный набор - авторские SVG на зеленых плашках: показываем без смешивания,
+     приглушенные до еле заметной фоновой текстуры */
+  .hero__icons .hero__ic--d{display:none;mix-blend-mode:normal;opacity:.1}
   @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .hero__icons .hero__ic--l{display:none}
     :root:not([data-theme=light]) .hero__icons .hero__ic--d{display:block}}
   :root[data-theme=dark] .hero__icons .hero__ic--l{display:none}
