@@ -12,7 +12,12 @@ const icons: [string, number, number, number, number][] = [
 ---
 <section class="section hero" id="hero">
   <div class="hero__icons" aria-hidden="true" data-drift>
-    {icons.map(([n, x, y, w, h]) => <img src={`/img/hero/ic/${n}.webp`} alt="" width={w} height={h} decoding="async" style={`left:${x / 10}rem;top:${y / 10}rem;width:${w / 10}rem`} />)}
+    {icons.map(([n, x, y, w, h]) => (
+      <>
+        <img class="hero__ic--l" src={`/img/hero/ic/${n}.webp`} alt="" width={w} height={h} decoding="async" style={`left:${x / 10}rem;top:${y / 10}rem;width:${w / 10}rem`} />
+        <img class="hero__ic--d" src={`/img/hero/ic-dark/${n}.webp`} alt="" width={w} height={h} decoding="async" style={`left:${x / 10}rem;top:${y / 10}rem;width:${w / 10}rem`} />
+      </>
+    ))}
   </div>
   <div class="hero__in">
     <span class="badge" data-reveal>
@@ -56,10 +61,14 @@ const icons: [string, number, number, number, number][] = [
   .hero{height:79.8rem;overflow:hidden}
   .hero__icons{position:absolute;inset:0;pointer-events:none}
   .hero__icons img{position:absolute;height:auto;max-width:none;mix-blend-mode:multiply;will-change:transform}
-  /* У иконок белая подложка без прозрачности, поэтому они сложены multiply: на темной
-     странице умножение гасит их до черного, и там их просто нет */
-  @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .hero__icons{display:none}}
-  :root[data-theme=dark] .hero__icons{display:none}
+  /* У светлых иконок белая подложка без прозрачности, поэтому они сложены multiply.
+     Для темной страницы подложка убрана в прозрачность заранее (scripts/hero-ic-dark.py),
+     показываем темный набор без смешивания */
+  .hero__icons .hero__ic--d{display:none;mix-blend-mode:normal}
+  @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .hero__icons .hero__ic--l{display:none}
+    :root:not([data-theme=light]) .hero__icons .hero__ic--d{display:block}}
+  :root[data-theme=dark] .hero__icons .hero__ic--l{display:none}
+  :root[data-theme=dark] .hero__icons .hero__ic--d{display:block}
   .hero__in{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:10rem}
   .hero__title{width:92rem;margin-top:5rem;font-size:6.9rem;line-height:7.2rem;font-weight:500;letter-spacing:-.03em;color:var(--ink-2);text-wrap:balance}
   .hero__sub{margin-top:2rem;color:var(--grey-text);font-size:max(1.8rem,15px);line-height:1.22}
