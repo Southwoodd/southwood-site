@@ -1,7 +1,7 @@
 // PDF расчета на одну страницу A4. Собирается в браузере посетителя. На сервер уходит только вместе с заявкой из калькулятора.
 import { PDFDocument, PDFName, PDFString, rgb, type PDFFont, type PDFPage } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
-import { byId, fmtRange, servicesWord, SIZES, PRESETS, type Calc, type State } from './model';
+import { byId, fmtFrom, fmtRange, servicesWord, SIZES, PRESETS, type Calc, type State } from './model';
 
 const LOGO = 'M117.65 66.37A58 58 0 0 1 66.37 117.65L63.57 92.28A32.48 32.48 0 0 0 92.28 63.57ZM53.63 117.65A58 58 0 0 1 2.35 66.37L27.72 63.57A32.48 32.48 0 0 0 56.43 92.28ZM2.35 53.63A58 58 0 0 1 53.63 2.35L56.43 27.72A32.48 32.48 0 0 0 27.72 56.43Z';
 const hex = (h: string) => { const n = parseInt(h.slice(1), 16); return rgb(((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255); };
@@ -62,13 +62,13 @@ export async function buildPdf(s: State, c: Calc, url: string): Promise<Uint8Arr
 
   top += 28; rect(L, top, Rr - L, 102, SOFT, 16);
   text(c.large ? 'Больше 1,5 млн ₽' : 'Итого разово', L + 24, top + 22, 12, MUTED);
-  text(c.large ? 'Крупный проект' : c.onlyTbd ? 'После разбора' : fmtRange(c.total), L + 24, top + 44, 32, INK);
+  text(c.large ? 'Крупный проект' : c.onlyTbd ? 'После разбора' : fmtFrom(c.total), L + 24, top + 44, 32, INK);
   if (c.instOk) { text('или в рассрочку', Rr - 24, top + 22, 12, MUTED, { right: true }); text(`от ${c.monthly} тыс. ₽ × ${c.term} мес.`, Rr - 24, top + 44, 18, DEEP, { right: true }); text('без банка и процентов', Rr - 24, top + 72, 10, MUTED, { right: true }); }
   else text(`Срок ${c.large ? 'по этапам' : c.weeks}`, Rr - 24, top + 46, 14, DEEP, { right: true });
   top += 130;
   if (!c.large && !c.onlyTbd) {
     text('Тот же набор на рынке', L, top, 12, MUTED); top += 26;
-    const cw = (Rr - L - 20) / 3; const cols: [string, string, boolean][] = [['Мой расчет', fmtRange(c.total), true], ['Фрилансеры с биржи', fmtRange(c.birzha) + (c.count > 1 ? `, ${c.count} исп.` : ''), false], ['Агентство', fmtRange(c.studio), false]];
+    const cw = (Rr - L - 20) / 3; const cols: [string, string, boolean][] = [['Мой расчет', fmtFrom(c.total), true], ['Фрилансеры с биржи', fmtRange(c.birzha) + (c.count > 1 ? `, ${c.count} исп.` : ''), false], ['Агентство', fmtRange(c.studio), false]];
     cols.forEach((col, i) => { const x = L + i * (cw + 10); rect(x, top, cw, 66, col[2] ? DEEP : SOFT, 12); text(col[0], x + 14, top + 14, 10, col[2] ? WHITE : MUTED); text(col[1], x + 14, top + 33, 13, col[2] ? WHITE : INK, { bold: true }); });
     top += 76; text('Оценка по открытым прайсам студий и бирж, октябрь 2026', L, top, 9, MUTED); top += 34;
   }

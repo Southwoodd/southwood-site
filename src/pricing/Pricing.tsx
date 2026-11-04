@@ -4,14 +4,14 @@ import type { ComponentChildren } from 'preact';
 import icons from '../icons/ui.json';
 import QuizForm, { type QuizPayload } from './QuizForm';
 import { form as leadForm } from '../i18n/ru';
-import { AFTER, CHANNELS, DIAG, GROUPS, ITEMS, LINK_METHODS, PLATFORMS, PRESETS, REDESIGN, SIZES, TIERS, TILE_DEFAULT, byId, composition, compute, decode, encode, fmtRange, groupSummary, initial, itemPrice, servicesWord, type Calc, type GroupId, type State } from './model';
+import { AFTER, CHANNELS, DIAG, GROUPS, ITEMS, LINK_METHODS, PLATFORMS, PRESETS, REDESIGN, SIZES, TIERS, TILE_DEFAULT, byId, composition, compute, decode, encode, fmtFrom, fmtRange, groupSummary, initial, itemPrice, servicesWord, type Calc, type GroupId, type State } from './model';
 const WORK_HREF: Record<string, string> = { 'Роман Копосов': '/kejsy/roman-koposov/', 'Alfa Elite': '/kejsy/alfa-elite/', Caro: '/kejsy/caro/', 'Mono Coffee': '/kejsy/mono-coffee/', MeetFlow: '/kejsy/meetflow/' };
 
 const KEY = 'sw-calc-v1';
 const Ic = ({ n, c }: { n: keyof typeof icons; c?: string }) => <svg class={'ui-ic ' + (c || '')} viewBox={icons[n].vb} fill="none" aria-hidden="true" dangerouslySetInnerHTML={{ __html: icons[n].body }} />;
 const Arrow = () => <svg class="arrow" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M5 13 13 5M6.5 5H13v6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>;
 const nb = (s: string) => s.replace(/(^|[\s(«])(а|в|и|к|о|с|у|я|бы|во|да|до|же|за|из|ко|ли|на|не|ни|но|об|от|по|со|то|без|для|или|над|под|при|про|что|как) (?=\S)/gi, '$1$2 ');
-const price = (id: string, s: State) => { const it = byId[id]; const p = itemPrice(s, id); return it.tbd ? 'после разбора' : it.pct ? '+30% к сайту' : it.from ? `от ${p[0]} тыс. ₽` : fmtRange(p); };
+const price = (id: string, s: State) => { const it = byId[id]; const p = itemPrice(s, id); return it.tbd ? 'после разбора' : it.pct ? '+30% к сайту' : fmtFrom(p); };
 const short = (id: string, s: State) => { const it = byId[id]; const p = itemPrice(s, id); return it.tbd ? 'после разбора' : it.pct ? '+30%' : it.from ? `от ${p[0]}` : p[0] === p[1] ? `${p[0]}` : `${p[0]}–${p[1]}`; };
 
 function Seg({ opts, value, onChange, label, cls }: { opts: string[]; value: number; onChange: (i: number) => void; label?: string; cls?: string }) {
@@ -62,7 +62,7 @@ export default function Pricing() {
     if (fromLink) {
       const now = compute(fromLink.s).total; const was = fromLink.tot;
       const date = new Date(fromLink.t).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
-      setBanner({ date, diff: was && (was[0] !== now[0] || was[1] !== now[1]) ? `С тех пор цены изменились: было ${fmtRange(was)}, сейчас ${fmtRange(now)}` : 'Услуги отмечены как в расчете, цены пересчитаны на сегодня' });
+      setBanner({ date, diff: was && (was[0] !== now[0] || was[1] !== now[1]) ? `С тех пор цены изменились: было ${fmtFrom(was)}, сейчас ${fmtFrom(now)}` : 'Услуги отмечены как в расчете, цены пересчитаны на сегодня' });
       setS({ ...fromLink.s, done: fromLink.s.mode === 'quiz' ? true : fromLink.s.done });
       setTimeout(() => document.getElementById('pricing')?.scrollIntoView(), 50);
     } else {
@@ -121,7 +121,7 @@ export default function Pricing() {
   const payload = (): QuizPayload => {
     const needs = [...new Set(s.sel.map((id) => byId[id].group as string))]; if (s.after !== 'none') needs.push('support'); if (!needs.length) needs.push('unknown');
     const url = link(); const snap = s, calc = c;
-    return { needs, labels: needs.map((n) => leadForm.chips.find((x) => x.v === n)?.l || n), context: s.mode === 'quiz' ? 'quiz' : 'calc', calc: { text: composition(s, c), link: url, title: c.large ? 'Крупный проект' : c.onlyTbd ? 'После разбора' : fmtRange(c.total) }, pdf: async () => (await import('./pdf')).buildPdf(snap, calc, url) };
+    return { needs, labels: needs.map((n) => leadForm.chips.find((x) => x.v === n)?.l || n), context: s.mode === 'quiz' ? 'quiz' : 'calc', calc: { text: composition(s, c), link: url, title: c.large ? 'Крупный проект' : c.onlyTbd ? 'После разбора' : fmtFrom(c.total) }, pdf: async () => (await import('./pdf')).buildPdf(snap, calc, url) };
   };
   // Калькулятор: заявка через окно с формой. В подборе контакты спрашивает последний шаг.
   const discuss = () => {
@@ -152,7 +152,7 @@ export default function Pricing() {
           </button>
         ))}
       </div>
-      <button type="button" class={'pr-diag' + (s.diag ? ' on' : '')} role="checkbox" aria-checked={s.diag} onClick={() => up({ diag: !s.diag })}><i class="pr-check" />Не знаю, с чего начать. Диагностика за 30–50 тыс. ₽, засчитывается в проект</button>
+      <button type="button" class={'pr-diag' + (s.diag ? ' on' : '')} role="checkbox" aria-checked={s.diag} onClick={() => up({ diag: !s.diag })}><i class="pr-check" />Не знаю, с чего начать. Диагностика от 15 тыс. ₽, засчитывается в проект</button>
     </>),
     site: () => (<>
       {head('Какой сайт нужен?', 'Выберите один тип. Платформу и дополнения можно поменять в любой момент.')}
@@ -171,7 +171,7 @@ export default function Pricing() {
       <div class="pr-opts pr-opts--3">
         <Opt on={has('tgapp') && !both} title="Приложение в Telegram" desc="Открывается внутри мессенджера, без установки. Каталог, запись, заказ, оплата" sum={price('tgapp', s)} onClick={() => set(['tgapp'])} />
         <Opt on={has('phoneapp') && !both} title="Приложение для телефона" desc="Устанавливается на экран телефона, работает на iPhone и Android" sum={price('phoneapp', s)} onClick={() => set(['phoneapp'])} />
-        <Opt on={both} title="Оба сразу" desc="Одна база и один личный кабинет на два приложения" sum={fmtRange([pb[0][0] + pb[1][0], pb[0][1] + pb[1][1]])} onClick={() => set(['tgapp', 'phoneapp'])} />
+        <Opt on={both} title="Оба сразу" desc="Одна база и один личный кабинет на два приложения" sum={fmtFrom([pb[0][0] + pb[1][0], pb[0][1] + pb[1][1]])} onClick={() => set(['tgapp', 'phoneapp'])} />
       </div>
       {chips('Что добавить, можно несколько', ['lk', 'pay', 'booking'])}
     </>); },
@@ -195,7 +195,7 @@ export default function Pricing() {
     data: () => (<>
       {head('Какие цифры хотите видеть?', 'Можно выбрать оба варианта.')}
       {groupOpts(['dash', 'fin'], true)}
-      {has('dash') && <Seg label="Откуда берем данные для дашборда. Каждый источник +20 тыс. ₽" opts={['1 источник', '2', '3', '4 и больше']} value={s.src - 1} onChange={(i) => up({ src: i + 1 })} />}
+      {has('dash') && <Seg label="Откуда берем данные для дашборда. Каждый источник +15 тыс. ₽" opts={['1 источник', '2', '3', '4 и больше']} value={s.src - 1} onChange={(i) => up({ src: i + 1 })} />}
     </>),
     link: () => (<>
       {head('Какие программы нужно связать?', 'Напишите своими словами. Например: IDENT, 1С Склад и 1С Бухгалтерия, чтобы остатки и оплаты сходились сами.')}
@@ -207,7 +207,7 @@ export default function Pricing() {
       </div>
       <Seg label="Как связываем" opts={LINK_METHODS.map((m) => m.l)} value={s.linkM} onChange={(i) => up({ linkM: i })} cls="pr-param--wide" />
       {chips('Еще по автоматизации', ['routine', 'oneprog'])}
-      <p class="pr-hint">{nb('От 80 тыс. ₽ за первую связку, +40 тыс. ₽ за каждую следующую программу. Точную цену назову после разбора, в течение дня.')}</p>
+      <p class="pr-hint">{nb('От 50 тыс. ₽ за первую связку, +30 тыс. ₽ за каждую следующую программу. Точную цену назову после разбора, в течение дня.')}</p>
     </>),
     fix: () => (<>
       {head('Что доработать на сайте?', 'Можно выбрать несколько.')}
@@ -239,7 +239,7 @@ export default function Pricing() {
     if (id === 'block') out.push(<Seg label="Блоков" opts={['1', '2', '3', '5']} value={[1, 2, 3, 5].indexOf(s.blockN) < 0 ? 3 : [1, 2, 3, 5].indexOf(s.blockN)} onChange={(i) => up({ blockN: [1, 2, 3, 5][i] })} />);
     if (id === 'dash') out.push(<Seg label="Источников данных" opts={['1', '2', '3', '4']} value={s.src - 1} onChange={(i) => up({ src: i + 1 })} />);
     if (id === 'link') out.push(<Seg label="Сколько программ" opts={['2', '3', '4', '5 и больше']} value={s.linkN - 2} onChange={(i) => up({ linkN: i + 2 })} />, <Seg label="Куда идут данные" opts={['В одну сторону', 'В обе стороны']} value={s.linkBoth ? 1 : 0} onChange={(i) => up({ linkBoth: i === 1 })} />, <Seg label="Как связать" opts={LINK_METHODS.map((m) => m.l)} value={s.linkM} onChange={(i) => up({ linkM: i })} />);
-    const hint = it.excl === 'siteType' ? `${platform.d} ${s.redesign ? REDESIGN.re : REDESIGN.new}` : it.excl === 'bot' ? `${s.ch.length > 1 ? `Выбрано каналов: ${s.ch.length}, +${(s.ch.length - 1) * 30}% к цене. ` : ''}Каждый дополнительный канал +30% к цене.${id === 'botAi' ? ' Оплата AI-запросов отдельно.' : ''}` : id === 'fixpack' ? 'Каждый пакет 10 часов, 25 тыс. ₽. Неиспользованные часы переносятся на следующий месяц.' : id === 'block' ? 'Каждый следующий блок дешевле на 20%.' : id === 'dash' ? 'Каждый дополнительный источник +20 тыс. ₽.' : id === 'concept' ? 'Мобильная версия входит.' : it.excl === 'crm' ? 'Лицензия CRM оплачивается отдельно.' : id === 'aihelp' ? 'Оплата AI-запросов отдельно.' : id === 'link' ? 'Как считается: 80 тыс. за связку двух программ, +40 тыс. за каждую следующую, обмен в обе стороны × 1,3, свой софт-посредник × 2, готовый модуль × 0,5. Точная цена после разбора ваших программ.' : '';
+    const hint = it.excl === 'siteType' ? `${platform.d} ${s.redesign ? REDESIGN.re : REDESIGN.new}` : it.excl === 'bot' ? `${s.ch.length > 1 ? `Выбрано каналов: ${s.ch.length}, +${(s.ch.length - 1) * 30}% к цене. ` : ''}Каждый дополнительный канал +30% к цене.${id === 'botAi' ? ' Оплата AI-запросов отдельно.' : ''}` : id === 'fixpack' ? 'Каждый пакет 10 часов, 25 тыс. ₽. Неиспользованные часы переносятся на следующий месяц.' : id === 'block' ? 'Каждый следующий блок дешевле на 20%.' : id === 'dash' ? 'Каждый дополнительный источник +15 тыс. ₽.' : id === 'concept' ? 'Мобильная версия входит.' : it.excl === 'crm' ? 'Лицензия CRM оплачивается отдельно.' : id === 'aihelp' ? 'Оплата AI-запросов отдельно.' : id === 'link' ? 'Как считается: от 50 тыс. за связку двух программ, +30 тыс. за каждую следующую, обмен в обе стороны × 1,3, свой софт-посредник × 2, готовый модуль × 0,5. Точная цена после разбора ваших программ.' : '';
     if (!out.length && !hint && !it.work) return null;
     return (<div class="pr-item__more">
       {out.length > 0 && <div class="pr-item__params">{out}</div>}
@@ -301,14 +301,14 @@ export default function Pricing() {
           <p class="pr-sum__note">{nb('Посмотрю задачу и пришлю оценку и срок в течение дня')}</p>
         </>) : (<>
           <p class="pr-sum__label">{inst ? `В месяц, ${c.term} ${c.term < 5 ? 'платежа' : 'платежей'}` : 'Разово'}</p>
-          <p class="pr-total" aria-live="polite">{empty || c.empty ? '0 ₽' : inst ? `от ${c.monthly} тыс. ₽` : fmtRange(c.total)}</p>
+          <p class="pr-total" aria-live="polite">{empty || c.empty ? '0 ₽' : inst ? `от ${c.monthly} тыс. ₽` : fmtFrom(c.total)}</p>
           {inst && <div class="pr-terms">{c.terms.map((t) => <button type="button" class={t.n === c.term ? 'on' : ''} disabled={!t.ok} onClick={() => setS((p) => ({ ...p, term: t.n }))}>{t.n} мес.</button>)}</div>}
           {inst && c.terms.some((t) => !t.ok) && <p class="pr-sum__note">{c.terms.filter((t) => !t.ok).map((t) => t.n).join(' и ')} мес. недоступно: платеж был бы меньше 15 тыс. ₽</p>}
           {!inst && c.lines.some((l) => l.pale) && <p class="pr-sum__note">{nb('Бледные строки пока стоят в типовом варианте, уточним на следующих шагах')}</p>}
           {!inst && !c.lines.some((l) => l.pale) && !empty && !c.empty && <p class="pr-sum__note">{c.tbd ? nb('Плюс своя задача: оценю после разбора и добавлю в смету') : nb('Фиксирую в договоре после брифа, доплат по ходу нет')}</p>}
         </>)}
         <dl class="pr-facts">
-          {!c.onlyTbd && <div><dt>{inst ? 'Всего' : 'В месяц'}</dt><dd>{inst ? `итого ${fmtRange(c.total)}, ${c.after.s}` : c.after.m}</dd></div>}
+          {!c.onlyTbd && <div><dt>{inst ? 'Всего' : 'В месяц'}</dt><dd>{inst ? `итого ${fmtFrom(c.total)}, ${c.after.s}` : c.after.m}</dd></div>}
           {!empty && !c.empty && !c.onlyTbd && <div><dt>Срок</dt><dd>{c.large ? 'по этапам, назову после разбора' : c.weeks}</dd></div>}
         </dl>
         {!c.large && !c.onlyTbd && !empty && !c.empty && (inst ? <p class="pr-sum__inst">{nb('Первый платеж до старта, остальные после запуска. Без банка и процентов')}</p>
@@ -321,9 +321,9 @@ export default function Pricing() {
             <button type="button" class="btn" disabled={pdf === 'busy'} onClick={savePdf}>{pdf === 'busy' ? 'Готовлю PDF…' : pdf === 'fail' ? 'Не получилось, повторить' : 'Скачать расчет в PDF'}</button>
             <button type="button" class="btn" onClick={copy}>{copied ? 'Ссылка скопирована' : 'Скопировать ссылку'}</button>
           </div>}
-          <p class="pr-sum__foot">{nb('Минимальный проект 60 тыс. ₽. Расчет можно переслать руководителю. Можно начать с диагностики за 30–50 тыс. ₽, она засчитывается в проект.')}</p>
+          <p class="pr-sum__foot">{nb('Минимальный проект 35 тыс. ₽. Расчет можно переслать руководителю. Можно начать с диагностики от 15 тыс. ₽, она засчитывается в проект.')}</p>
         </div>}
-        {kind === 'live' && <p class="pr-sum__foot">{nb('Минимальный проект 60 тыс. ₽. Можно начать с диагностики за 30–50 тыс. ₽, она засчитывается в проект.')}</p>}
+        {kind === 'live' && <p class="pr-sum__foot">{nb('Минимальный проект 35 тыс. ₽. Можно начать с диагностики от 15 тыс. ₽, она засчитывается в проект.')}</p>}
       </div>);
   };
   const rel = Math.max(c.studio[1], c.total[1], 1);
@@ -395,7 +395,7 @@ export default function Pricing() {
               <span class="pr-label">Готовые наборы</span>
               <div class="pr-presets">{Object.entries(PRESETS).map(([k, p]) => <button type="button" class={s.preset === k ? 'on' : ''} aria-pressed={s.preset === k} onClick={() => applyPreset(k)}>{p.name}</button>)}<button type="button" class={!s.preset && s.sel.length ? 'on' : ''} disabled>Свой набор</button></div>
               <p class="pr-calc__label"><span>Что собрать</span><small>любые услуги в любом сочетании</small></p>
-              <div class={'pr-item pr-item--solo' + (s.diag ? ' on' : '')}><button type="button" class="pr-item__head" role="checkbox" aria-checked={s.diag} onClick={() => up({ diag: !s.diag })}><i class="pr-check" /><span><b>{DIAG.name}</b><small>{DIAG.desc}</small></span><em>{fmtRange(DIAG.base)}</em></button></div>
+              <div class={'pr-item pr-item--solo' + (s.diag ? ' on' : '')}><button type="button" class="pr-item__head" role="checkbox" aria-checked={s.diag} onClick={() => up({ diag: !s.diag })}><i class="pr-check" /><span><b>{DIAG.name}</b><small>{DIAG.desc}</small></span><em>{fmtFrom(DIAG.base)}</em></button></div>
               {calcOrder.map((gid) => { const g = GROUPS.find((x) => x.id === gid)!; const all = ITEMS.filter((i) => i.group === gid); const n = all.filter((i) => has(i.id)).length; const isOpen = open[gid] ?? (n > 0 || gid === 'site'); return (
                 <section class={'pr-group' + (isOpen ? ' open' : '')}>
                   <button type="button" class="pr-group__head" aria-expanded={isOpen} onClick={() => setOpen((o) => ({ ...o, [gid]: !isOpen }))}>
@@ -420,7 +420,7 @@ export default function Pricing() {
         <div class="pr-compare">
           <div class="pr-compare__head"><h3>Сравните с другими вариантами</h3><span>Оценка по открытым прайсам студий и бирж, октябрь 2026</span></div>
           <div class="pr-compare__cols">
-            <div class="me"><span>Мой прайс</span><b>{fmtRange(c.total)}</b><i><u style={{ width: Math.max(8, (c.total[1] / rel) * 100) + '%' }} /></i><p>{nb('Один исполнитель, одна смета и одна ответственность за результат. Похожие задачи уже делал, ссылки есть в каталоге.')}</p></div>
+            <div class="me"><span>Мой прайс</span><b>{fmtFrom(c.total)}</b><i><u style={{ width: Math.max(8, (c.total[1] / rel) * 100) + '%' }} /></i><p>{nb('Один исполнитель, одна смета и одна ответственность за результат. Похожие задачи уже делал, ссылки есть в каталоге.')}</p></div>
             <div><span>Фрилансеры с биржи</span><b>{fmtRange(c.birzha)}</b><i><u style={{ width: Math.max(6, (c.birzha[1] / rel) * 100) + '%' }} /></i><p>{nb(`Дешевле, но это ${c.count > 1 ? c.count + ' разных исполнителей' : 'отдельный исполнитель'}. Искать, сравнивать и связывать их придется вам, отвечать за итог некому.`)}</p></div>
             <div><span>Агентство</span><b>{fmtRange(c.studio)}</b><i><u style={{ width: (c.studio[1] / rel) * 100 + '%' }} /></i><p>{nb(`Примерно в ${Math.max(2, Math.round(c.studio[1] / Math.max(c.total[1], 1)))} раза дороже: менеджеры, согласования, отдельный договор на поддержку после запуска.`)}</p></div>
           </div>
@@ -432,7 +432,7 @@ export default function Pricing() {
         </div>)}
 
       <div class={'pr-bar-m' + (empty ? ' is-empty' : '')}>
-        <div><small>{empty ? 'Отметьте, что нужно' : c.onlyTbd ? 'Своя задача' : `${servicesWord(c.count)} · ${c.large ? 'по этапам' : c.weeks}`}</small><b>{empty ? '0 ₽' : c.large ? 'Крупный проект' : c.onlyTbd ? 'После разбора' : fmtRange(c.total)}</b></div>
+        <div><small>{empty ? 'Отметьте, что нужно' : c.onlyTbd ? 'Своя задача' : `${servicesWord(c.count)} · ${c.large ? 'по этапам' : c.weeks}`}</small><b>{empty ? '0 ₽' : c.large ? 'Крупный проект' : c.onlyTbd ? 'После разбора' : fmtFrom(c.total)}</b></div>
         <button type="button" onClick={() => setSheet(true)} disabled={empty}>Состав</button>
       </div>
       {sheet && <div class="pr-sheet" role="dialog" aria-modal="true" aria-label="Состав сборки" onClick={(e) => { if (e.target === e.currentTarget) setSheet(false); }}><div><button type="button" class="pr-sheet__close" aria-label="Закрыть" onClick={() => setSheet(false)} />{summary('sheet')}</div></div>}
