@@ -12,7 +12,7 @@ const Ic = ({ n, c }: { n: keyof typeof icons; c?: string }) => <svg class={'ui-
 const Arrow = () => <svg class="arrow" viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M5 13 13 5M6.5 5H13v6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>;
 const nb = (s: string) => s.replace(/(^|[\s(«])(а|в|и|к|о|с|у|я|бы|во|да|до|же|за|из|ко|ли|на|не|ни|но|об|от|по|со|то|без|для|или|над|под|при|про|что|как) (?=\S)/gi, '$1$2 ');
 const price = (id: string, s: State) => { const it = byId[id]; const p = itemPrice(s, id); return it.tbd ? 'после разбора' : it.pct ? '+30% к сайту' : fmtFrom(p); };
-const short = (id: string, s: State) => { const it = byId[id]; const p = itemPrice(s, id); return it.tbd ? 'после разбора' : it.pct ? '+30%' : it.from ? `от ${p[0]}` : p[0] === p[1] ? `${p[0]}` : `${p[0]}–${p[1]}`; };
+const short = (id: string, s: State) => { const it = byId[id]; const p = itemPrice(s, id); return it.tbd ? 'после разбора' : it.pct ? '+30%' : p[0] === p[1] ? `${p[0]}` : `от ${p[0]}`; };
 
 function Seg({ opts, value, onChange, label, cls }: { opts: string[]; value: number; onChange: (i: number) => void; label?: string; cls?: string }) {
   return (
@@ -191,6 +191,12 @@ export default function Pricing() {
       <div class="pr-param"><span class="pr-label">Где работает. Первый канал входит в цену, каждый следующий +30%</span>
         <div class="pr-chips">{CHANNELS.map((ch, i) => <Chip on={s.ch.includes(i)} label={ch} sum={s.ch.includes(i) && s.ch[0] === i ? 'входит' : '+30%'} onClick={() => toggleCh(i)} />)}</div></div>
     </>),
+    ai: () => (<>
+      {head('Что должен делать ИИ-агент?', 'Агент работает сам: читает заявки и документы, отвечает клиентам, ведет данные в ваших системах.')}
+      {groupOpts(['aiPilot', 'aiAgent'], false)}
+      {chips('Что добавить, можно несколько', ['aiVoice', 'aiRag', 'aiContent', 'aiAudit'])}
+      <p class="pr-hint">{nb('Пилот на один процесс от 80 тыс. ₽ за 2–3 недели, агент внутри CRM или 1С от 150 тыс. ₽. Если не уверены, что процесс потянет агента, начните с аудита и ТЗ от 20 тыс. ₽: стоимость засчитывается в проект. Сопровождение агента от 15 тыс. ₽ в месяц, токены нейросети оплачиваете со своего аккаунта.')}</p>
+    </>),
     docs: () => (<>{head('Какие документы нужны?', 'Можно выбрать несколько.')}{groupOpts(['kp', 'pres', 'logo'], true)}</>),
     team: () => (<>{head('Что нужно команде?', 'Можно выбрать несколько.')}{groupOpts(['regs', 'aihelp', 'train'], true)}</>),
     data: () => (<>
@@ -223,7 +229,7 @@ export default function Pricing() {
         <Opt on={!s.urgent} title="Обычно" desc="Работаю в спокойном темпе, этапы по графику" sum={s.urgent ? 'без наценки' : c.weeks} onClick={() => up({ urgent: false })} />
         <Opt on={s.urgent} title="Срочно" desc="Нужно еще вчера: сроки вдвое короче, работаю в приоритете" sum="× 2 к цене" onClick={() => up({ urgent: true })} />
       </div></div>
-      <div class="pr-param"><span class="pr-label">После запуска</span><div class="pr-opts pr-opts--5">
+      <div class="pr-param"><span class="pr-label">После запуска</span><div class="pr-opts pr-opts--3">
         {AFTER.map((a) => <Opt on={s.after === a.v} title={a.l} desc={a.d} sum={a.p} onClick={() => up({ after: a.v })} />)}
       </div></div>
     </>),
@@ -411,7 +417,7 @@ export default function Pricing() {
               <p class="pr-calc__label"><span>Сроки</span><small>срочно: сроки вдвое короче, × 2 к цене</small></p>
               <Seg opts={['Обычно', 'Срочно × 2']} value={s.urgent ? 1 : 0} onChange={(i) => up({ urgent: i === 1 })} />
               <p class="pr-calc__label"><span>После запуска</span></p>
-              <div class="pr-opts pr-opts--5">{AFTER.map((a) => <Opt on={s.after === a.v} title={a.l} desc={a.d} sum={a.p} onClick={() => up({ after: a.v })} />)}</div>
+              <div class="pr-opts pr-opts--3">{AFTER.map((a) => <Opt on={s.after === a.v} title={a.l} desc={a.d} sum={a.p} onClick={() => up({ after: a.v })} />)}</div>
             </div>)}
         </div>
         {s.mode === 'calc' && <aside class="pr-aside">{summary()}</aside>}

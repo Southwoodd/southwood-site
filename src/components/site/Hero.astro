@@ -3,19 +3,24 @@ import Arrow from './Arrow.astro';
 import Reel from './Reel.astro';
 import { hero, nb } from '../../i18n/ru';
 import { R_ } from '../../i18n/routes';
-// Иконки фона: имя, x, y, ширина, высота в px макета 1920
-const icons: [string, number, number, number, number][] = [
-  ['bitrix', 10, -18, 220, 247], ['pdf', 405, 55, 93, 93], ['figma', 680, 129, 130, 143], ['gpt', 857, -33, 145, 171],
-  ['brave', 1093, 94, 66, 88], ['tilda', 1409, 181, 132, 157], ['hf', 1715, 32, 263, 297], ['yandex', 35, 246, 122, 171],
-  ['opera', 532, 399, 170, 172], ['docker', 297, 515, 243, 283], ['chrome', 1216, 489, 149, 171], ['claude', 1556, 548, 192, 225],
+// Иконки фона: имя, x, y, ширина, высота в px макета 1920.
+// Светлые webp нарисованы с запасом вокруг плашки, темные svg - плашка впритык,
+// поэтому у темного набора своя геометрия: dx, dy, d - по месту и размеру плашки на светлом
+const icons: [string, number, number, number, number, number, number, number][] = [
+  ['bitrix', 10, -18, 220, 247, 82, -7, 138], ['pdf', 405, 55, 93, 93, 408, 58, 87],
+  ['figma', 680, 129, 130, 143, 687, 138, 79], ['gpt', 857, -33, 145, 171, 897, -22, 97],
+  ['brave', 1093, 94, 66, 88, 1105, 98, 39], ['tilda', 1409, 181, 132, 157, 1442, 189, 91],
+  ['hf', 1715, 32, 263, 297, 1727, 45, 164], ['yandex', 35, 246, 122, 171, 61, 255, 63],
+  ['opera', 532, 399, 170, 172, 541, 408, 101], ['docker', 297, 515, 243, 283, 317, 526, 189],
+  ['chrome', 1216, 489, 149, 171, 1250, 497, 107], ['claude', 1556, 548, 192, 225, 1589, 560, 149],
 ];
 ---
 <section class="section hero" id="hero">
   <div class="hero__icons" aria-hidden="true" data-drift>
-    {icons.map(([n, x, y, w, h]) => (
+    {icons.map(([n, x, y, w, h, dx, dy, d]) => (
       <>
         <img class="hero__ic--l" src={`/img/hero/ic/${n}.webp`} alt="" width={w} height={h} decoding="async" style={`left:${x / 10}rem;top:${y / 10}rem;width:${w / 10}rem`} />
-        <img class="hero__ic--d" src={`/img/hero/ic-dark/${n}.svg`} alt="" width={w} height={h} decoding="async" style={`left:${x / 10}rem;top:${y / 10}rem;width:${w / 10}rem`} />
+        <img class="hero__ic--d" src={`/img/hero/ic-dark/${n}.svg`} alt="" width={d} height={d} decoding="async" style={`left:${dx / 10}rem;top:${dy / 10}rem;width:${d / 10}rem`} />
       </>
     ))}
   </div>
@@ -41,15 +46,20 @@ const icons: [string, number, number, number, number][] = [
   if (box && matchMedia('(min-width:1024px)').matches && !matchMedia('(prefers-reduced-motion:reduce)').matches) {
     const rnd = (a: number, b: number) => a + Math.random() * (b - a);
     let on = false;
+    // Шаг назначаем по таймеру, а не по transitionend: скрытый темой набор иконок
+    // события перехода не присылает и иначе застывал бы на месте до смены темы
     const step = (el: HTMLElement) => {
+      clearTimeout(Number(el.dataset.t));
       if (!on) { el.dataset.wait = '1'; return; }
       const r = box.clientWidth / 186 * rnd(2.5, 6); // радиус в rem макета
       const a = rnd(0, Math.PI * 2);
-      el.style.transition = `transform ${rnd(7, 13).toFixed(1)}s ease-in-out`;
+      const s = rnd(7, 13);
+      el.style.transition = `transform ${s.toFixed(1)}s ease-in-out`;
       el.style.transform = `translate(${(Math.cos(a) * r).toFixed(1)}px,${(Math.sin(a) * r).toFixed(1)}px) rotate(${rnd(-8, 8).toFixed(1)}deg)`;
+      el.dataset.t = String(setTimeout(() => step(el), s * 1000 + 50));
     };
     const els = [...box.querySelectorAll<HTMLElement>('img')];
-    els.forEach((el) => { el.dataset.wait = '1'; el.addEventListener('transitionend', () => step(el)); });
+    els.forEach((el) => { el.dataset.wait = '1'; });
     new IntersectionObserver(([e]) => {
       on = e.isIntersecting;
       if (on) els.forEach((el) => { if (el.dataset.wait) { delete el.dataset.wait; setTimeout(() => step(el), rnd(0, 1200)); } });
@@ -64,7 +74,7 @@ const icons: [string, number, number, number, number][] = [
   /* У светлых иконок белая подложка без прозрачности, поэтому они сложены multiply.
      Темный набор - авторские SVG на зеленых плашках: показываем без смешивания,
      приглушенные до еле заметной фоновой текстуры */
-  .hero__icons .hero__ic--d{display:none;mix-blend-mode:normal;opacity:.1}
+  .hero__icons .hero__ic--d{display:none;mix-blend-mode:normal;opacity:.05}
   @media (prefers-color-scheme:dark){:root:not([data-theme=light]) .hero__icons .hero__ic--l{display:none}
     :root:not([data-theme=light]) .hero__icons .hero__ic--d{display:block}}
   :root[data-theme=dark] .hero__icons .hero__ic--l{display:none}

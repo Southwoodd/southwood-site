@@ -3,7 +3,7 @@
 import type { APIRoute } from 'astro';
 import { site, hero, about, packages, process, faq, cases, automation } from '../i18n/ru';
 import data from '../i18n/modals.ru.json';
-import { ITEMS, GROUPS, PLATFORMS, fmtRange } from '../pricing/model';
+import { ITEMS, GROUPS, PLATFORMS, fmtFrom } from '../pricing/model';
 import { SERVICES, serviceHref, CASES, caseBy } from '../i18n/routes';
 import { INDUSTRIES, industryHref } from '../i18n/industries';
 import { LIVE_POSTS } from '../i18n/blog';
@@ -30,7 +30,7 @@ export const GET: APIRoute = () => {
     const items = ITEMS.filter((i) => i.group === g.id && !i.tbd && i.base[1] > 0);
     if (!items.length) continue;
     L.push(`### ${g.name}`, '');
-    for (const i of items) L.push(`- ${i.name}: ${i.from ? 'от ' : ''}${fmtRange(i.base)}. ${i.desc}.`);
+    for (const i of items) L.push(`- ${i.name}: ${fmtFrom(i.base)}. ${i.desc}.`);
     L.push('');
   }
   L.push('### Платформы для сайта', '', ...PLATFORMS.map((p) => `- ${clean(p.d)}`), '');

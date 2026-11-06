@@ -18,6 +18,7 @@ export const GROUPS = [
   { id: 'app', name: 'Приложения', sub: 'Telegram mini-app, приложение с сайта и нативное в магазинах', icon: 'custom', tile: 'Приложение', from: 25, step: 'Приложение', next: 'приложение' },
   { id: 'crm', name: 'Заявки и продажи', sub: 'CRM, связка с сайтом, аналитика, телефония, рассылки', icon: 'c_crm', tile: 'CRM и заявки', from: 15, step: 'CRM и заявки', next: 'CRM и заявки' },
   { id: 'bots', name: 'Боты', sub: 'Бот по сценарию или с AI в мессенджерах и на сайте', icon: 'p_brief', tile: 'Боты', from: 15, step: 'Боты', next: 'боты' },
+  { id: 'ai', name: 'ИИ-агенты', sub: 'Агент под процесс, голосовой агент, поиск по базе знаний, ИИ-контент', icon: 'ai', tile: 'ИИ-агенты', from: 20, step: 'ИИ-агенты', next: 'ИИ-агенты' },
   { id: 'docs', name: 'Документы', sub: 'Шаблоны КП и договоров, презентация, фирменный стиль', icon: 'c_fix', tile: 'Документы и КП', from: 15, step: 'Документы и КП', next: 'документы' },
   { id: 'team', name: 'Команда', sub: 'Регламенты, база знаний, AI-помощник, обучение', icon: 'p_launch', tile: 'Команда и регламенты', from: 15, step: 'Команда и регламенты', next: 'команда' },
   { id: 'data', name: 'Цифры', sub: 'Дашборд собственника и финансовая модель', icon: 'c_docs', tile: 'Цифры и отчеты', from: 20, step: 'Цифры и отчеты', next: 'цифры' },
@@ -55,6 +56,12 @@ export const ITEMS: Item[] = [
   I({ id: 'email', group: 'crm', name: 'Email-рассылки', desc: 'Письма по базе и автоматические цепочки', base: [10, 30], birzha: [10, 20], studio: [40, 100] }),
   I({ id: 'botScen', group: 'bots', excl: 'bot', name: 'Бот по сценарию', desc: 'Отвечает на частые вопросы кнопками и собирает контакт', base: [15, 45], birzha: [10, 25], studio: [50, 200] }),
   I({ id: 'botAi', group: 'bots', excl: 'bot', name: 'Бот с AI', desc: 'Отвечает своими словами по базе знаний компании и передает заявку в CRM', base: [35, 85], birzha: [30, 60], studio: [300, 600], work: 'Alfa Elite' }),
+  I({ id: 'aiAudit', group: 'ai', name: 'Аудит процесса и ТЗ на агента', short: 'Аудит и ТЗ на агента', desc: 'Разбираю процесс, считаю выгоду и пишу ТЗ. Стоимость засчитывается в проект', base: [20, 45], birzha: [10, 20], studio: [50, 150] }),
+  I({ id: 'aiPilot', group: 'ai', excl: 'aiKind', name: 'ИИ-агент, пилот на один процесс', short: 'Агент, пилот', desc: 'Один процесс за 2–3 недели: агент работает сам, вы смотрите на результат', base: [80, 180], birzha: [20, 80], studio: [200, 600], long: true }),
+  I({ id: 'aiAgent', group: 'ai', excl: 'aiKind', name: 'ИИ-агент с интеграцией CRM или 1С', short: 'Агент с интеграцией', desc: 'Агент работает внутри ваших систем: читает и пишет данные, ведет сделки', base: [150, 400], birzha: [50, 150], studio: [500, 1500], long: true }),
+  I({ id: 'aiVoice', group: 'ai', name: 'Голосовой ИИ-агент на звонки', short: 'Голосовой агент', desc: 'Принимает и совершает звонки, отвечает голосом и пишет итог в CRM', base: [100, 300], birzha: null, studio: [400, 1200], long: true }),
+  I({ id: 'aiRag', group: 'ai', name: 'Поиск по базе знаний компании', short: 'Поиск по базе знаний', desc: 'Ответы по вашим документам со ссылкой на источник, без выдумок', base: [45, 120], birzha: [20, 60], studio: [200, 500], long: true }),
+  I({ id: 'aiContent', group: 'ai', name: 'ИИ-контент: видео, озвучка и тексты', short: 'ИИ-контент', desc: 'Ролики с аватаром и озвучкой, карточки товаров и тексты на потоке', base: [25, 90], birzha: [10, 40], studio: [100, 300] }),
   I({ id: 'kp', group: 'docs', name: 'Шаблоны КП и договоров из CRM', short: 'Шаблоны КП и договоров', desc: 'Документ собирается из карточки сделки за минуты', base: [25, 55], birzha: [15, 40], studio: [100, 200], work: 'Alfa Elite' }),
   I({ id: 'pres', group: 'docs', name: 'Презентация компании', short: 'Презентация', desc: 'Для клиентов, партнеров или инвесторов. Структура, тексты, дизайн', base: [15, 65], birzha: [15, 40], studio: [100, 300], work: 'Alfa Elite' }),
   I({ id: 'promo', group: 'docs', name: 'Промо-ролик продукта', short: 'Промо-ролик', desc: 'Горизонтальное видео для сайта или презентации: сценарий, монтаж, графика', base: [30, 55], birzha: [10, 30], studio: [80, 300] }),
@@ -72,11 +79,12 @@ export const ITEMS: Item[] = [
 ];
 export const DIAG = { name: 'Начать с диагностики', desc: 'Разберу, что уже есть и где теряются заявки, дам план. Стоимость засчитывается в проект', base: [15, 30] as R };
 export const byId = Object.fromEntries(ITEMS.map((i) => [i.id, i])) as Record<string, Item>;
-export const TILE_DEFAULT: Record<GroupId, string> = { site: 'corp', app: 'tgapp', crm: 'crmBasic', bots: 'botScen', docs: 'kp', team: 'regs', data: 'dash', link: 'link', fix: 'fixpack' };
+export const TILE_DEFAULT: Record<GroupId, string> = { site: 'corp', app: 'tgapp', crm: 'crmBasic', bots: 'botScen', ai: 'aiPilot', docs: 'kp', team: 'regs', data: 'dash', link: 'link', fix: 'fixpack' };
 export const SIZES = [{ l: 'До 50 человек', s: 'до 50 человек', k: 1 }, { l: '50–150 человек', s: '50–150 человек', k: 1.15 }, { l: '150–300 человек', s: '150–300 человек', k: 1.3 }, { l: 'Больше 300', s: 'больше 300 человек', k: 1.3 }];
 export const AFTER = [
   { v: 'none', l: 'Без сопровождения', d: 'Сборка, запуск и обучение', p: '0 ₽', m: '0 ₽, без сопровождения', s: 'без сопровождения' },
   { v: 'care', l: 'Присмотр', d: 'Обновления, копии, мониторинг', p: '10 тыс. ₽ в месяц', m: '10 тыс. ₽, присмотр', s: 'присмотр' },
+  { v: 'agent', l: 'Сопровождение агента', d: 'Промпты, качество ответов, отчеты', p: 'от 15 тыс. ₽ в месяц', m: 'от 15 тыс. ₽, сопровождение агента', s: 'сопровождение агента' },
   { v: 'support', l: 'Поддержка', d: 'Правки и мелкие доработки', p: '30 тыс. ₽ в месяц', m: '30 тыс. ₽, поддержка', s: 'поддержка' },
   { v: 'team', l: 'В команду', d: 'Дизайнер и разработчик вместо найма', p: 'от 70 тыс. ₽ в месяц', m: 'от 70 тыс. ₽, в команду', s: 'в команду' },
   { v: 'full', l: 'Сопровождение целиком', d: 'Развиваю всю цифровую часть', p: '120 тыс. ₽ в месяц', m: '120 тыс. ₽, сопровождение целиком', s: 'сопровождение целиком' },
@@ -195,8 +203,8 @@ export function compute(s: State) {
   const site = ids.find((id) => byId[id].excl === 'siteType');
   if (site && (s.platform === 'tpl' || s.platform === 'zero')) ext.push({ name: 'Тильда 500–1 200 ₽', lo: 500, hi: 1200 });
   if (ids.some((id) => byId[id].excl === 'crm')) ext.push(s.crmSys === 1 ? { name: 'amoCRM 599–1 699 ₽ за пользователя', lo: 599, hi: 1699 } : { name: 'Битрикс24 2 490–6 990 ₽', lo: 2490, hi: 6990 });
-  if (ids.some((id) => ['botScen', 'botAi', 'link', 'aihelp', 'tgapp'].includes(id))) ext.push({ name: 'сервер от 500 ₽', lo: 500, hi: 800 });
-  const ai = ids.some((id) => ['botAi', 'aihelp'].includes(id));
+  if (ids.some((id) => ['botScen', 'botAi', 'link', 'aihelp', 'tgapp', 'aiPilot', 'aiAgent', 'aiVoice', 'aiRag'].includes(id))) ext.push({ name: 'сервер от 500 ₽', lo: 500, hi: 800 });
+  const ai = ids.some((id) => byId[id].group === 'ai' || ['botAi', 'aihelp'].includes(id));
   const extSum: R = [ext.reduce((a, e) => a + e.lo, 0), ext.reduce((a, e) => a + e.hi, 0)];
   const after = AFTER.find((a) => a.v === s.after)!;
   return { lines, count, sum, disc, total, large, tbd, onlyTbd, empty, own, sizedOn, terms, instOk, term, monthly, weeks, birzha, studio, ext, extSum, ai, after };
