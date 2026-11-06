@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Заголовки безопасности, оповещение о сбоях, автообновление программы заявок. Можно запускать повторно.
-# Запуск: curl -fsSL https://raw.githubusercontent.com/Southwoodd/southwood-site/claude/site-v2/server/harden.sh | sudo bash
+# Запуск: curl -fsSL https://raw.githubusercontent.com/Southwoodd/southwood-site/master/server/harden.sh | sudo bash
 set -euo pipefail
-R=https://raw.githubusercontent.com/Southwoodd/southwood-site/claude/site-v2/server
+R=https://raw.githubusercontent.com/Southwoodd/southwood-site/master/server
 say() { echo; echo "== $*"; }
 
 say "Заголовки безопасности"
