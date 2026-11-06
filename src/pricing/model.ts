@@ -15,61 +15,62 @@ export const PLATFORMS = [
 export const REDESIGN = { new: 'Новый сайт: структура, тексты, дизайн и сборка с нуля.', re: 'Редизайн: обновляю ваш сайт, переношу содержимое. 70% от цены нового.' };
 export const GROUPS = [
   { id: 'site', name: 'Сайты', sub: 'Сайт, магазин, личный кабинет, запись, оплата, SEO и тексты', icon: 'shop', tile: 'Сайт или магазин', from: 35, step: 'Сайт', next: 'сайт' },
-  { id: 'app', name: 'Приложения', sub: 'Telegram mini-app и приложение для телефона', icon: 'custom', tile: 'Приложение', from: 50, step: 'Приложение', next: 'приложение' },
-  { id: 'crm', name: 'Заявки и продажи', sub: 'CRM, связка с сайтом, аналитика, телефония, рассылки', icon: 'c_crm', tile: 'CRM и заявки', from: 30, step: 'CRM и заявки', next: 'CRM и заявки' },
-  { id: 'bots', name: 'Боты', sub: 'Бот по сценарию или с AI в мессенджерах и на сайте', icon: 'p_brief', tile: 'Боты', from: 20, step: 'Боты', next: 'боты' },
-  { id: 'docs', name: 'Документы', sub: 'Шаблоны КП и договоров, презентация, фирменный стиль', icon: 'c_fix', tile: 'Документы и КП', from: 25, step: 'Документы и КП', next: 'документы' },
-  { id: 'team', name: 'Команда', sub: 'Регламенты, база знаний, AI-помощник, обучение', icon: 'p_launch', tile: 'Команда и регламенты', from: 50, step: 'Команда и регламенты', next: 'команда' },
-  { id: 'data', name: 'Цифры', sub: 'Дашборд собственника и финансовая модель', icon: 'c_docs', tile: 'Цифры и отчеты', from: 40, step: 'Цифры и отчеты', next: 'цифры' },
-  { id: 'link', name: 'Автоматизация', sub: 'Связать программы между собой и убрать ручной перенос данных', icon: 'p_support', tile: 'Связать программы', from: 50, step: 'Связать программы', next: 'автоматизация' },
-  { id: 'fix', name: 'Доработки', sub: 'Правки, новые блоки, перенос, концепция, UX-аудит', icon: 'p_build', tile: 'Доработки сайта', from: 10, step: 'Доработки сайта', next: 'доработки' },
+  { id: 'app', name: 'Приложения', sub: 'Telegram mini-app, приложение с сайта и нативное в магазинах', icon: 'custom', tile: 'Приложение', from: 25, step: 'Приложение', next: 'приложение' },
+  { id: 'crm', name: 'Заявки и продажи', sub: 'CRM, связка с сайтом, аналитика, телефония, рассылки', icon: 'c_crm', tile: 'CRM и заявки', from: 15, step: 'CRM и заявки', next: 'CRM и заявки' },
+  { id: 'bots', name: 'Боты', sub: 'Бот по сценарию или с AI в мессенджерах и на сайте', icon: 'p_brief', tile: 'Боты', from: 15, step: 'Боты', next: 'боты' },
+  { id: 'docs', name: 'Документы', sub: 'Шаблоны КП и договоров, презентация, фирменный стиль', icon: 'c_fix', tile: 'Документы и КП', from: 15, step: 'Документы и КП', next: 'документы' },
+  { id: 'team', name: 'Команда', sub: 'Регламенты, база знаний, AI-помощник, обучение', icon: 'p_launch', tile: 'Команда и регламенты', from: 15, step: 'Команда и регламенты', next: 'команда' },
+  { id: 'data', name: 'Цифры', sub: 'Дашборд собственника и финансовая модель', icon: 'c_docs', tile: 'Цифры и отчеты', from: 20, step: 'Цифры и отчеты', next: 'цифры' },
+  { id: 'link', name: 'Автоматизация', sub: 'Связать программы между собой и убрать ручной перенос данных', icon: 'p_support', tile: 'Связать программы', from: 25, step: 'Связать программы', next: 'автоматизация' },
+  { id: 'fix', name: 'Доработки', sub: 'Правки, новые блоки, перенос, концепция, UX-аудит', icon: 'p_build', tile: 'Доработки сайта', from: 5, step: 'Доработки сайта', next: 'доработки' },
 ] as const;
 export type GroupId = (typeof GROUPS)[number]['id'];
 const I = (o: Item) => o;
 export const ITEMS: Item[] = [
   I({ id: 'landing', group: 'site', excl: 'siteType', name: 'Лендинг до 10 экранов', short: 'Лендинг', desc: 'Структура, тексты, дизайн и сборка, формы заявок', base: [35, 60], birzha: [15, 40], studio: [100, 250], work: 'Роман Копосов' }),
-  I({ id: 'corp', group: 'site', excl: 'siteType', name: 'Корпоративный сайт', short: 'Корпоративный', desc: 'Страницы услуг, о компании, контакты, формы заявок', base: [70, 130], birzha: [30, 80], studio: [250, 600], work: 'Alfa Elite' }),
-  I({ id: 'shop', group: 'site', excl: 'siteType', name: 'Интернет-магазин', short: 'Магазин', desc: 'Каталог, корзина, оплата картой и СБП, доставка', base: [90, 170], birzha: [40, 100], studio: [300, 800], work: 'Caro' }),
+  I({ id: 'corp', group: 'site', excl: 'siteType', name: 'Корпоративный сайт', short: 'Корпоративный', desc: 'Страницы услуг, о компании, контакты, формы заявок', base: [55, 145], birzha: [30, 80], studio: [250, 600], work: 'Alfa Elite' }),
+  I({ id: 'shop', group: 'site', excl: 'siteType', name: 'Интернет-магазин', short: 'Магазин', desc: 'Каталог, корзина, оплата картой и СБП, доставка', base: [75, 185], birzha: [40, 100], studio: [300, 800], work: 'Caro' }),
   I({ id: 'lang', group: 'site', name: 'Дополнительный язык сайта', short: 'Второй язык', desc: 'Перевод и версия сайта на другом языке', base: [0, 0], pct: 0.3, birzha: null, studio: null }),
-  I({ id: 'lk', group: 'site', name: 'Личный кабинет клиента', short: 'Личный кабинет', desc: 'Вход по телефону или почте, история заказов, документы', base: [50, 100], birzha: [30, 60], studio: [200, 500], long: true }),
-  I({ id: 'booking', group: 'site', name: 'Онлайн-запись или бронирование', short: 'Онлайн-запись', desc: 'Клиент сам выбирает время, запись падает в CRM', base: [20, 40], birzha: [10, 25], studio: [60, 150] }),
+  I({ id: 'lk', group: 'site', name: 'Личный кабинет клиента', short: 'Личный кабинет', desc: 'Вход по телефону или почте, история заказов, документы', base: [25, 150], birzha: [30, 60], studio: [200, 500], long: true }),
+  I({ id: 'booking', group: 'site', name: 'Онлайн-запись или бронирование', short: 'Онлайн-запись', desc: 'Клиент сам выбирает время, запись падает в CRM', base: [10, 45], birzha: [10, 25], studio: [60, 150] }),
   I({ id: 'pay', group: 'site', name: 'Онлайн-оплата', desc: 'Подключение эквайринга и СБП к сайту или боту', base: [10, 20], birzha: [5, 15], studio: [30, 60] }),
-  I({ id: 'quiz', group: 'site', name: 'Квиз или калькулятор на сайте', short: 'Квиз или калькулятор', desc: 'Клиент отвечает на вопросы и сразу видит цену или подборку', base: [15, 30], birzha: [5, 20], studio: [50, 120] }),
-  I({ id: 'seo', group: 'site', name: 'SEO и GEO', desc: 'Чтобы сайт находили в поиске и в ответах нейросетей', base: [20, 40], birzha: [10, 30], studio: [60, 150] }),
-  I({ id: 'texts', group: 'site', name: 'Тексты для сайта', short: 'Тексты', desc: 'Пишу тексты страниц по вашему бизнесу, без воды', base: [15, 35], birzha: [5, 20], studio: [50, 150] }),
-  I({ id: 'legal', group: 'site', name: 'Юридические документы для сайта', short: 'Юридические документы', desc: 'Политика обработки данных, согласия, оферта по 152-ФЗ', base: [10, 20], birzha: [5, 10], studio: [30, 80] }),
-  I({ id: 'tgapp', group: 'app', name: 'Telegram mini-app', short: 'Приложение в Telegram', desc: 'Каталог, запись или личный кабинет прямо в Telegram', base: [50, 100], birzha: [30, 70], studio: [200, 500] }),
-  I({ id: 'phoneapp', group: 'app', name: 'Приложение для телефона (PWA)', short: 'Приложение (PWA)', desc: 'PWA: устанавливается с сайта и работает как обычное приложение', base: [100, 200], birzha: [60, 150], studio: [500, 1500], work: 'Mono Coffee', long: true }),
-  I({ id: 'fixpack', group: 'fix', name: 'Правки, пакет 10 часов', short: 'Пакет правок', desc: 'Тексты, картинки, мелкие изменения на действующем сайте', base: [25, 25], birzha: [10, 20], studio: [20, 60] }),
-  I({ id: 'block', group: 'fix', name: 'Новый блок или раздел', short: 'Новый блок', desc: 'Дизайн и сборка одного нового блока на сайте', base: [10, 20], birzha: [5, 10], studio: [30, 60] }),
-  I({ id: 'migrate', group: 'fix', name: 'Перенос на другую платформу', short: 'Перенос сайта', desc: 'Например, с конструктора на Тильду или Битрикс без потери страниц', base: [25, 50], birzha: [15, 30], studio: [100, 200] }),
-  I({ id: 'concept', group: 'fix', name: 'Дизайн-концепция в Figma', short: 'Новая концепция', desc: 'Макет сайта без разработки, можно отдать своей команде', base: [40, 80], birzha: [20, 50], studio: [300, 600] }),
-  I({ id: 'audit', group: 'fix', name: 'UX-аудит сайта', short: 'UX-аудит', desc: 'Где сайт теряет заявки и что поправить в первую очередь', base: [15, 25], birzha: [5, 15], studio: [60, 150] }),
-  I({ id: 'crmBasic', group: 'crm', excl: 'crm', name: 'CRM, базовая настройка', short: 'Базовая настройка', desc: 'Воронка продаж, карточки клиентов, задачи менеджерам', base: [30, 50], birzha: [25, 50], studio: [150, 350], sized: true }),
-  I({ id: 'crmAuto', group: 'crm', excl: 'crm', name: 'CRM с автоматизацией', short: 'С автоматизацией', desc: 'Несколько воронок, автоматические задачи, распределение заявок, отчеты', base: [60, 150], birzha: [50, 100], studio: [250, 500], sized: true, work: 'Alfa Elite' }),
+  I({ id: 'quiz', group: 'site', name: 'Квиз или калькулятор на сайте', short: 'Квиз или калькулятор', desc: 'Клиент отвечает на вопросы и сразу видит цену или подборку', base: [15, 35], birzha: [5, 20], studio: [50, 120] }),
+  I({ id: 'seo', group: 'site', name: 'SEO и GEO', desc: 'Чтобы сайт находили в поиске и в ответах нейросетей', base: [15, 40], birzha: [10, 30], studio: [60, 150] }),
+  I({ id: 'texts', group: 'site', name: 'Тексты для сайта', short: 'Тексты', desc: 'Пишу тексты страниц по вашему бизнесу, без воды', base: [10, 20], birzha: [5, 20], studio: [50, 150] }),
+  I({ id: 'legal', group: 'site', name: 'Юридические документы для сайта', short: 'Юридические документы', desc: 'Политика обработки данных, согласия, оферта по 152-ФЗ', base: [10, 50], birzha: [5, 10], studio: [30, 80] }),
+  I({ id: 'tgapp', group: 'app', name: 'Telegram mini-app', short: 'Приложение в Telegram', desc: 'Каталог, запись или личный кабинет прямо в Telegram', base: [25, 170], birzha: [30, 70], studio: [200, 500] }),
+  I({ id: 'phoneapp', group: 'app', name: 'Приложение для телефона (PWA)', short: 'Приложение (PWA)', desc: 'PWA: устанавливается с сайта и работает как обычное приложение', base: [55, 205], birzha: [60, 150], studio: [500, 1500], work: 'Mono Coffee', long: true }),
+  I({ id: 'mobileapp', group: 'app', name: 'Приложение для телефона iOS, Android', short: 'Нативное приложение', desc: 'Нативное приложение в App Store и Google Play, с пуш-уведомлениями', base: [50, 250], birzha: [40, 120], studio: [600, 2000], long: true }),
+  I({ id: 'fixpack', group: 'fix', name: 'Правки, пакет 10 часов', short: 'Пакет правок', desc: 'Тексты, картинки, мелкие изменения на действующем сайте', base: [20, 20], birzha: [10, 20], studio: [20, 60] }),
+  I({ id: 'block', group: 'fix', name: 'Новый блок или раздел', short: 'Новый блок', desc: 'Дизайн и сборка одного нового блока на сайте', base: [5, 10], birzha: [5, 10], studio: [30, 60] }),
+  I({ id: 'migrate', group: 'fix', name: 'Перенос на другую платформу', short: 'Перенос сайта', desc: 'Например, с конструктора на Тильду или Битрикс без потери страниц', base: [30, 130], birzha: [15, 30], studio: [100, 200] }),
+  I({ id: 'concept', group: 'fix', name: 'Дизайн-концепция в Figma', short: 'Новая концепция', desc: 'Макет сайта без разработки, можно отдать своей команде', base: [25, 100], birzha: [20, 50], studio: [300, 600] }),
+  I({ id: 'audit', group: 'fix', name: 'UX-аудит сайта', short: 'UX-аудит', desc: 'Где сайт теряет заявки и что поправить в первую очередь', base: [15, 30], birzha: [5, 15], studio: [60, 150] }),
+  I({ id: 'crmBasic', group: 'crm', excl: 'crm', name: 'CRM, базовая настройка', short: 'Базовая настройка', desc: 'Воронка продаж, карточки клиентов, задачи менеджерам', base: [15, 50], birzha: [25, 50], studio: [150, 350], sized: true }),
+  I({ id: 'crmAuto', group: 'crm', excl: 'crm', name: 'CRM с автоматизацией', short: 'С автоматизацией', desc: 'Несколько воронок, автоматические задачи, распределение заявок, отчеты', base: [35, 70], birzha: [50, 100], studio: [250, 500], sized: true, work: 'Alfa Elite' }),
   I({ id: 'crmLink', group: 'crm', name: 'Связка сайта с CRM, UTM, Client ID', short: 'Связка сайта с CRM', desc: 'Каждая заявка попадает в CRM вместе с источником рекламы', base: [10, 30], birzha: [10, 25], studio: [50, 100] }),
   I({ id: 'goals', group: 'crm', name: 'Цели Яндекс Метрики', desc: 'Видно, какая реклама приводит заявки, а какая нет', base: [5, 15], birzha: [5, 10], studio: [30, 60] }),
-  I({ id: 'tel', group: 'crm', name: 'Телефония в CRM', short: 'Телефония', desc: 'Звонки записываются и попадают в карточку клиента', base: [10, 25], birzha: [10, 20], studio: [40, 80] }),
-  I({ id: 'msg', group: 'crm', name: 'Мессенджеры в CRM', short: 'Мессенджеры', desc: 'Переписка из мессенджеров в одной ленте с клиентом', base: [10, 20], birzha: [5, 15], studio: [30, 60] }),
-  I({ id: 'email', group: 'crm', name: 'Email-рассылки', desc: 'Письма по базе и автоматические цепочки', base: [15, 30], birzha: [10, 20], studio: [40, 100] }),
-  I({ id: 'botScen', group: 'bots', excl: 'bot', name: 'Бот по сценарию', desc: 'Отвечает на частые вопросы кнопками и собирает контакт', base: [20, 35], birzha: [10, 25], studio: [50, 200] }),
-  I({ id: 'botAi', group: 'bots', excl: 'bot', name: 'Бот с AI', desc: 'Отвечает своими словами по базе знаний компании и передает заявку в CRM', base: [50, 100], birzha: [30, 60], studio: [300, 600], work: 'Alfa Elite' }),
-  I({ id: 'kp', group: 'docs', name: 'Шаблоны КП и договоров из CRM', short: 'Шаблоны КП и договоров', desc: 'Документ собирается из карточки сделки за минуты', base: [25, 50], birzha: [15, 40], studio: [100, 200], work: 'Alfa Elite' }),
-  I({ id: 'pres', group: 'docs', name: 'Презентация компании', short: 'Презентация', desc: 'Для клиентов, партнеров или инвесторов. Структура, тексты, дизайн', base: [25, 50], birzha: [15, 40], studio: [100, 300], work: 'Alfa Elite' }),
-  I({ id: 'promo', group: 'docs', name: 'Промо-ролик продукта', short: 'Промо-ролик', desc: 'Горизонтальное видео для сайта или презентации: сценарий, монтаж, графика', base: [20, 45], birzha: [10, 30], studio: [80, 300] }),
-  I({ id: 'logo', group: 'docs', name: 'Логотип и фирменный стиль', desc: 'Логотип, цвета и шрифты для сайта и документов', base: [30, 70], birzha: [10, 30], studio: [150, 500] }),
-  I({ id: 'regs', group: 'team', name: 'Регламенты и база знаний', short: 'Регламенты', desc: 'Описание ключевых процессов, чтобы новичок вошел в работу без вас', base: [50, 80], birzha: [50, 80], studio: [300, 600], sized: true, long: true }),
-  I({ id: 'aihelp', group: 'team', name: 'AI-помощник для сотрудников', desc: 'Отвечает команде по регламентам и базе знаний', base: [60, 120], birzha: null, studio: [300, 600], sized: true, work: 'MeetFlow', long: true }),
-  I({ id: 'train', group: 'team', name: 'Обучение сотрудников CRM', short: 'Обучение работе в CRM', desc: 'Показываю на ваших сделках, оставляю запись и памятку', base: [10, 20], birzha: [5, 10], studio: [30, 60] }),
-  I({ id: 'aiDay', group: 'team', name: 'День обучения команды работе с AI', short: 'Обучение команды, день', desc: 'Шесть часов на ваших задачах: как собирать прототипы и проверять результат', base: [45, 45], birzha: null, studio: [100, 300] }),
-  I({ id: 'aiMonth', group: 'team', name: 'Сопровождение команды, месяц', short: 'Сопровождение команды', desc: 'День обучения, четыре разбора по часу и ответы в чате', base: [70, 70], birzha: null, studio: [200, 500] }),
-  I({ id: 'dash', group: 'data', name: 'Дашборд собственника', short: 'Дашборд', desc: 'Заявки, сделки и выручка на одном экране, обновляется сам', base: [40, 70], birzha: [20, 60], studio: [150, 300], sized: true, long: true }),
-  I({ id: 'fin', group: 'data', name: 'Финмодель и юнит-экономика', short: 'Финансовая модель', desc: 'Доходы, расходы и точка окупаемости. Меняете цифру и видите результат', base: [30, 60], birzha: [15, 40], studio: [150, 400], work: 'Mono Coffee' }),
-  I({ id: 'link', group: 'link', name: 'Связать программы между собой', short: 'Связка программ', desc: 'Обмен данными между учетом, CRM, кассой или складом. Например, Шеф-Эксперт и iiko, 1С и Битрикс24', base: [50, 80], from: true, birzha: null, studio: [300, 600], long: true }),
-  I({ id: 'routine', group: 'link', name: 'Автоматизация рутины', short: 'Убрать ручную рутину', desc: 'Уведомления, отчеты и перенос данных по расписанию, без участия сотрудников', base: [20, 40], from: true, birzha: [10, 30], studio: [100, 200] }),
+  I({ id: 'tel', group: 'crm', name: 'Телефония в CRM', short: 'Телефония', desc: 'Звонки записываются и попадают в карточку клиента', base: [10, 15], birzha: [10, 20], studio: [40, 80] }),
+  I({ id: 'msg', group: 'crm', name: 'Мессенджеры в CRM', short: 'Мессенджеры', desc: 'Переписка из мессенджеров в одной ленте с клиентом', base: [10, 15], birzha: [5, 15], studio: [30, 60] }),
+  I({ id: 'email', group: 'crm', name: 'Email-рассылки', desc: 'Письма по базе и автоматические цепочки', base: [10, 30], birzha: [10, 20], studio: [40, 100] }),
+  I({ id: 'botScen', group: 'bots', excl: 'bot', name: 'Бот по сценарию', desc: 'Отвечает на частые вопросы кнопками и собирает контакт', base: [15, 45], birzha: [10, 25], studio: [50, 200] }),
+  I({ id: 'botAi', group: 'bots', excl: 'bot', name: 'Бот с AI', desc: 'Отвечает своими словами по базе знаний компании и передает заявку в CRM', base: [35, 85], birzha: [30, 60], studio: [300, 600], work: 'Alfa Elite' }),
+  I({ id: 'kp', group: 'docs', name: 'Шаблоны КП и договоров из CRM', short: 'Шаблоны КП и договоров', desc: 'Документ собирается из карточки сделки за минуты', base: [25, 55], birzha: [15, 40], studio: [100, 200], work: 'Alfa Elite' }),
+  I({ id: 'pres', group: 'docs', name: 'Презентация компании', short: 'Презентация', desc: 'Для клиентов, партнеров или инвесторов. Структура, тексты, дизайн', base: [15, 65], birzha: [15, 40], studio: [100, 300], work: 'Alfa Elite' }),
+  I({ id: 'promo', group: 'docs', name: 'Промо-ролик продукта', short: 'Промо-ролик', desc: 'Горизонтальное видео для сайта или презентации: сценарий, монтаж, графика', base: [30, 55], birzha: [10, 30], studio: [80, 300] }),
+  I({ id: 'logo', group: 'docs', name: 'Логотип и фирменный стиль', desc: 'Логотип, цвета и шрифты для сайта и документов', base: [10, 110], birzha: [10, 30], studio: [150, 500] }),
+  I({ id: 'regs', group: 'team', name: 'Регламенты и база знаний', short: 'Регламенты', desc: 'Описание ключевых процессов, чтобы новичок вошел в работу без вас', base: [30, 85], birzha: [50, 80], studio: [300, 600], sized: true, long: true }),
+  I({ id: 'aihelp', group: 'team', name: 'AI-помощник для сотрудников', desc: 'Отвечает команде по регламентам и базе знаний', base: [55, 135], birzha: null, studio: [300, 600], sized: true, work: 'MeetFlow', long: true }),
+  I({ id: 'train', group: 'team', name: 'Обучение сотрудников CRM', short: 'Обучение работе в CRM', desc: 'Показываю на ваших сделках, оставляю запись и памятку', base: [15, 25], birzha: [5, 10], studio: [30, 60] }),
+  I({ id: 'aiDay', group: 'team', name: 'День обучения команды работе с AI', short: 'Обучение команды, день', desc: 'Шесть часов на ваших задачах: как собирать прототипы и проверять результат', base: [25, 40], birzha: null, studio: [100, 300] }),
+  I({ id: 'aiMonth', group: 'team', name: 'Сопровождение команды, месяц', short: 'Сопровождение команды', desc: 'День обучения, четыре разбора по часу и ответы в чате', base: [60, 155], birzha: null, studio: [200, 500] }),
+  I({ id: 'dash', group: 'data', name: 'Дашборд собственника', short: 'Дашборд', desc: 'Заявки, сделки и выручка на одном экране, обновляется сам', base: [25, 170], birzha: [20, 60], studio: [150, 300], sized: true, long: true }),
+  I({ id: 'fin', group: 'data', name: 'Финмодель и юнит-экономика', short: 'Финансовая модель', desc: 'Доходы, расходы и точка окупаемости. Меняете цифру и видите результат', base: [20, 90], birzha: [15, 40], studio: [150, 400], work: 'Mono Coffee' }),
+  I({ id: 'link', group: 'link', name: 'Связать программы между собой', short: 'Связка программ', desc: 'Обмен данными между учетом, CRM, кассой или складом. Например, Шеф-Эксперт и iiko, 1С и Битрикс24', base: [25, 350], from: true, birzha: null, studio: [300, 600], long: true }),
+  I({ id: 'routine', group: 'link', name: 'Автоматизация рутины', short: 'Убрать ручную рутину', desc: 'Уведомления, отчеты и перенос данных по расписанию, без участия сотрудников', base: [25, 50], from: true, birzha: [10, 30], studio: [100, 200] }),
   I({ id: 'oneprog', group: 'link', name: 'Одна программа вместо нескольких', desc: 'Своя система под ваши процессы, цена после разбора', base: [0, 0], tbd: true, birzha: null, studio: null }),
 ];
-export const DIAG = { name: 'Начать с диагностики', desc: 'Разберу, что уже есть и где теряются заявки, дам план. Стоимость засчитывается в проект', base: [15, 25] as R };
+export const DIAG = { name: 'Начать с диагностики', desc: 'Разберу, что уже есть и где теряются заявки, дам план. Стоимость засчитывается в проект', base: [15, 30] as R };
 export const byId = Object.fromEntries(ITEMS.map((i) => [i.id, i])) as Record<string, Item>;
 export const TILE_DEFAULT: Record<GroupId, string> = { site: 'corp', app: 'tgapp', crm: 'crmBasic', bots: 'botScen', docs: 'kp', team: 'regs', data: 'dash', link: 'link', fix: 'fixpack' };
 export const SIZES = [{ l: 'До 50 человек', s: 'до 50 человек', k: 1 }, { l: '50–150 человек', s: '50–150 человек', k: 1.15 }, { l: '150–300 человек', s: '150–300 человек', k: 1.3 }, { l: 'Больше 300', s: 'больше 300 человек', k: 1.3 }];
@@ -130,8 +131,8 @@ export function itemPrice(s: State, id: string): R {
   if (it.excl === 'bot') k *= 1 + 0.3 * (Math.max(1, s.ch.length) - 1);
   if (id === 'fixpack') k *= s.fixN;
   if (id === 'block') { let q = 0; for (let i = 0; i < s.blockN; i++) q += Math.pow(0.8, i); k *= q; }
-  if (id === 'dash') { a += 15 * (s.src - 1); b += 15 * (s.src - 1); }
-  if (id === 'link') { const m = LINK_METHODS[s.linkM].k * (s.linkBoth ? 1.3 : 1); a = (50 + 30 * (s.linkN - 2)) * m; b = a + 30 * m; k = 1; }
+  if (id === 'dash') { a += 10 * (s.src - 1); b += 10 * (s.src - 1); }
+  if (id === 'link') { const m = LINK_METHODS[s.linkM].k * (s.linkBoth ? 1.3 : 1); a = (25 + 15 * (s.linkN - 2)) * m; b = a * 2.5; k = 1; }
   if (id === 'lang') { const site = s.sel.find((x) => byId[x]?.excl === 'siteType'); const p = site ? itemPrice(s, site) : [0, 0]; return [r5(p[0] * 0.3), r5(p[1] * 0.3)]; }
   if (it.sized) k *= SIZES[s.size].k;
   return [r5(a * k), r5(b * k)];
@@ -178,7 +179,7 @@ export function compute(s: State) {
   const monthly = Math.ceil(total[0] / term);
   // срок
   let weeks = 'до 2 недель';
-  if (ids.some((id) => byId[id].long)) weeks = '1–2 месяца'; else if (total[0] >= 150) weeks = '2–3 недели'; else if (count > 0) weeks = '1–2 недели';
+  if (ids.some((id) => byId[id].long)) weeks = '1–2 месяца'; else if (total[0] >= 100) weeks = '2–3 недели'; else if (count > 0) weeks = '1–2 недели';
   if (s.urgent) weeks = ({ '1–2 месяца': '2–4 недели', '2–3 недели': '1–1,5 недели', '1–2 недели': 'до недели' } as Record<string, string>)[weeks] || weeks;
   // рынок
   const mk = (key: 'birzha' | 'studio'): R => {

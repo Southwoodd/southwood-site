@@ -167,11 +167,12 @@ export default function Pricing() {
       {chips('Что добавить к сайту, можно несколько', ['texts', 'seo', 'booking', 'pay', 'quiz', 'lk', 'lang', 'legal'])}
     </>),
     app: () => { const both = has('tgapp') && has('phoneapp'); const set = (ids: string[]) => up((p) => ({ sel: [...p.sel.filter((x) => byId[x].group !== 'app'), ...ids] })); const pb = [itemPrice(s, 'tgapp'), itemPrice(s, 'phoneapp')]; return (<>
-      {head('Какое приложение нужно?', 'Оба варианта работают с вашей CRM и оплатой.')}
-      <div class="pr-opts pr-opts--3">
+      {head('Какое приложение нужно?', 'Все варианты работают с вашей CRM и оплатой.')}
+      <div class="pr-opts pr-opts--4">
         <Opt on={has('tgapp') && !both} title="Приложение в Telegram" desc="Открывается внутри мессенджера, без установки. Каталог, запись, заказ, оплата" sum={price('tgapp', s)} onClick={() => set(['tgapp'])} />
-        <Opt on={has('phoneapp') && !both} title="Приложение для телефона" desc="Устанавливается на экран телефона, работает на iPhone и Android" sum={price('phoneapp', s)} onClick={() => set(['phoneapp'])} />
-        <Opt on={both} title="Оба сразу" desc="Одна база и один личный кабинет на два приложения" sum={fmtFrom([pb[0][0] + pb[1][0], pb[0][1] + pb[1][1]])} onClick={() => set(['tgapp', 'phoneapp'])} />
+        <Opt on={has('phoneapp') && !both} title="Приложение для телефона" desc="Ставится на экран с сайта, без магазинов приложений. Работает на iPhone и Android" sum={price('phoneapp', s)} onClick={() => set(['phoneapp'])} />
+        <Opt on={has('mobileapp')} title="Нативное приложение" desc="В App Store и Google Play, с пуш-уведомлениями и доступом к камере" sum={price('mobileapp', s)} onClick={() => set(['mobileapp'])} />
+        <Opt on={both} title="Telegram и телефон" desc="Одна база и один личный кабинет на два приложения" sum={fmtFrom([pb[0][0] + pb[1][0], pb[0][1] + pb[1][1]])} onClick={() => set(['tgapp', 'phoneapp'])} />
       </div>
       {chips('Что добавить, можно несколько', ['lk', 'pay', 'booking'])}
     </>); },
@@ -195,7 +196,7 @@ export default function Pricing() {
     data: () => (<>
       {head('Какие цифры хотите видеть?', 'Можно выбрать оба варианта.')}
       {groupOpts(['dash', 'fin'], true)}
-      {has('dash') && <Seg label="Откуда берем данные для дашборда. Каждый источник +15 тыс. ₽" opts={['1 источник', '2', '3', '4 и больше']} value={s.src - 1} onChange={(i) => up({ src: i + 1 })} />}
+      {has('dash') && <Seg label="Откуда берем данные для дашборда. Каждый источник +10 тыс. ₽" opts={['1 источник', '2', '3', '4 и больше']} value={s.src - 1} onChange={(i) => up({ src: i + 1 })} />}
     </>),
     link: () => (<>
       {head('Какие программы нужно связать?', 'Напишите своими словами. Например: IDENT, 1С Склад и 1С Бухгалтерия, чтобы остатки и оплаты сходились сами.')}
@@ -207,7 +208,7 @@ export default function Pricing() {
       </div>
       <Seg label="Как связываем" opts={LINK_METHODS.map((m) => m.l)} value={s.linkM} onChange={(i) => up({ linkM: i })} cls="pr-param--wide" />
       {chips('Еще по автоматизации', ['routine', 'oneprog'])}
-      <p class="pr-hint">{nb('От 50 тыс. ₽ за первую связку, +30 тыс. ₽ за каждую следующую программу. Точную цену назову после разбора, в течение дня.')}</p>
+      <p class="pr-hint">{nb('От 25 тыс. ₽ за первую связку, +15 тыс. ₽ за каждую следующую программу. Точную цену назову после разбора, в течение дня.')}</p>
     </>),
     fix: () => (<>
       {head('Что доработать на сайте?', 'Можно выбрать несколько.')}
@@ -239,7 +240,7 @@ export default function Pricing() {
     if (id === 'block') out.push(<Seg label="Блоков" opts={['1', '2', '3', '5']} value={[1, 2, 3, 5].indexOf(s.blockN) < 0 ? 3 : [1, 2, 3, 5].indexOf(s.blockN)} onChange={(i) => up({ blockN: [1, 2, 3, 5][i] })} />);
     if (id === 'dash') out.push(<Seg label="Источников данных" opts={['1', '2', '3', '4']} value={s.src - 1} onChange={(i) => up({ src: i + 1 })} />);
     if (id === 'link') out.push(<Seg label="Сколько программ" opts={['2', '3', '4', '5 и больше']} value={s.linkN - 2} onChange={(i) => up({ linkN: i + 2 })} />, <Seg label="Куда идут данные" opts={['В одну сторону', 'В обе стороны']} value={s.linkBoth ? 1 : 0} onChange={(i) => up({ linkBoth: i === 1 })} />, <Seg label="Как связать" opts={LINK_METHODS.map((m) => m.l)} value={s.linkM} onChange={(i) => up({ linkM: i })} />);
-    const hint = it.excl === 'siteType' ? `${platform.d} ${s.redesign ? REDESIGN.re : REDESIGN.new}` : it.excl === 'bot' ? `${s.ch.length > 1 ? `Выбрано каналов: ${s.ch.length}, +${(s.ch.length - 1) * 30}% к цене. ` : ''}Каждый дополнительный канал +30% к цене.${id === 'botAi' ? ' Оплата AI-запросов отдельно.' : ''}` : id === 'fixpack' ? 'Каждый пакет 10 часов, 25 тыс. ₽. Неиспользованные часы переносятся на следующий месяц.' : id === 'block' ? 'Каждый следующий блок дешевле на 20%.' : id === 'dash' ? 'Каждый дополнительный источник +15 тыс. ₽.' : id === 'concept' ? 'Мобильная версия входит.' : it.excl === 'crm' ? 'Лицензия CRM оплачивается отдельно.' : id === 'aihelp' ? 'Оплата AI-запросов отдельно.' : id === 'link' ? 'Как считается: от 50 тыс. за связку двух программ, +30 тыс. за каждую следующую, обмен в обе стороны × 1,3, свой софт-посредник × 2, готовый модуль × 0,5. Точная цена после разбора ваших программ.' : '';
+    const hint = it.excl === 'siteType' ? `${platform.d} ${s.redesign ? REDESIGN.re : REDESIGN.new}` : it.excl === 'bot' ? `${s.ch.length > 1 ? `Выбрано каналов: ${s.ch.length}, +${(s.ch.length - 1) * 30}% к цене. ` : ''}Каждый дополнительный канал +30% к цене.${id === 'botAi' ? ' Оплата AI-запросов отдельно.' : ''}` : id === 'fixpack' ? 'Каждый пакет 10 часов, 20 тыс. ₽. Неиспользованные часы переносятся на следующий месяц.' : id === 'block' ? 'Каждый следующий блок дешевле на 20%.' : id === 'dash' ? 'Каждый дополнительный источник +10 тыс. ₽.' : id === 'concept' ? 'Мобильная версия входит.' : it.excl === 'crm' ? 'Лицензия CRM оплачивается отдельно.' : id === 'aihelp' ? 'Оплата AI-запросов отдельно.' : id === 'link' ? 'Как считается: от 25 тыс. за связку двух программ, +15 тыс. за каждую следующую, обмен в обе стороны × 1,3, свой софт-посредник × 2, готовый модуль × 0,5. Точная цена после разбора ваших программ.' : '';
     if (!out.length && !hint && !it.work) return null;
     return (<div class="pr-item__more">
       {out.length > 0 && <div class="pr-item__params">{out}</div>}
